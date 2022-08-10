@@ -31,11 +31,11 @@ public class SignUpActivity extends AppCompatActivity {
         findViewById(R.id.gotoLoginButton).setOnClickListener(onClickListener);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+    @Override public void onBackPressed() {     // 뒤로가기 버튼을 눌렀을 때 종료
+        super.onBackPressed();
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {

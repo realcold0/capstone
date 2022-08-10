@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startMainActivity(){
         Intent intent = new Intent(this,MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);        // 로그인 후 메인화면에서 뒤로가기 버튼 누를 시 그대로 앱이 종료되게함
         startActivity(intent);
     }
 }

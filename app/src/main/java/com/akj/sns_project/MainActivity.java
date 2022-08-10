@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.logoutButton:
-                    FirebaseAuth.getInstance().signOut();
+                    FirebaseAuth.getInstance().signOut();   // 로그아웃
                     startSignUpActivity();
                     break;
             }
