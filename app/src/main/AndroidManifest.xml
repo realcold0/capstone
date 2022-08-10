@@ -16,7 +16,7 @@
         android:theme="@style/Theme.SNS_Project"
         tools:targetApi="31">
         <activity
-            android:name=".SignUpActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +38,7 @@
             android:name=".LoginActivity">
         </activity>
         <activity
-            android:name=".MainActivity">
+            android:name=".SignUpActivity">
         </activity>
     </application>
 
