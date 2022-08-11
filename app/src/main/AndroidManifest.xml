@@ -40,6 +40,9 @@
         <activity
             android:name=".SignUpActivity">
         </activity>
+        <activity
+            android:name=".PasswordResetActivity">
+        </activity>
     </application>
 
 </manifest>
