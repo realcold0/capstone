@@ -46,6 +46,13 @@
         <activity
             android:name=".MemberInitActivity">
         </activity>
+        <activity
+            android:name=".BasicAvtivity">
+        </activity>
+        <activity
+            android:name=".WritePostActivity">
+        </activity>
+
     </application>
 
 </manifest>

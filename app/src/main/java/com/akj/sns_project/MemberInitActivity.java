@@ -1,6 +1,7 @@
 package com.akj.sns_project;
 
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,13 +17,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class MemberInitActivity extends AppCompatActivity {
+public class MemberInitActivity extends BasicAvtivity {
     private static final String TAG = "MemberInitActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member_init);
+
 
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
     }
