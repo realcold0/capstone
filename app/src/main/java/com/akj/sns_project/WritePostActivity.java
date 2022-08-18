@@ -1,12 +1,16 @@
 package com.akj.sns_project;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,7 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class WritePostActivity extends BasicAvtivity{
+public class WritePostActivity extends BasicActivity {
     private static final String TAG = "WritePostActivity";
     private FirebaseUser user;
 
@@ -25,14 +29,33 @@ public class WritePostActivity extends BasicAvtivity{
         setContentView(R.layout.activity_write_post);
 
         findViewById(R.id.checkWrite).setOnClickListener(onClickListener);
+        findViewById(R.id.image).setOnClickListener(onClickListener);
+        findViewById(R.id.video).setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            switch (view.getId()){
+            switch (view.getId()) {
                 case R.id.checkWrite:
                     postUpdate();
+                    break;
+                case R.id.image:
+                    if (ContextCompat.checkSelfPermission(WritePostActivity.this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(WritePostActivity.this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        } else {
+                            startToast("권한을 허용해 주세요");
+                        }
+                    }else{
+                        myStartActivity(GalleryActivity.class);
+                    }
+                    break;
+
+                case R.id.video:
+                    myStartActivity(GalleryActivity.class);
                     break;
             }
         }
@@ -53,6 +76,20 @@ public class WritePostActivity extends BasicAvtivity{
         }
     }
 
+    @Override       // 권한 요청 받는거
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    myStartActivity(GalleryActivity.class);
+                } else {
+                    startToast("권한을 허용해 주세요");
+                }
+            }
+        }
+    }
+
     private void uploader(WriteInfo writeInfo){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("posts").add(writeInfo)
@@ -67,6 +104,12 @@ public class WritePostActivity extends BasicAvtivity{
 
                     }
                 });
+    }
+
+    private void myStartActivity(Class c){
+        Intent intent = new Intent(this,c);
+        //intent.putExtra("media",media);
+        startActivity(intent);
     }
 
     private void startToast(String msg){
