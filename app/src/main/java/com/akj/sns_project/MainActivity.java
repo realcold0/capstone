@@ -23,7 +23,6 @@ public class MainActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {  // 로그인된 유저가 있는지 없는지 체크 후 없을 경우 회원가입 페이지부터 시작

@@ -46,7 +46,11 @@ public class WritePostActivity extends BasicActivity {
                             != PackageManager.PERMISSION_GRANTED) {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(WritePostActivity.this,
                                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
                         } else {
+                            ActivityCompat.requestPermissions(WritePostActivity.this,
+                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    1);
                             startToast("권한을 허용해 주세요");
                         }
                     }else{

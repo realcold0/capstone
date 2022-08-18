@@ -1,46 +1,67 @@
 package com.akj.sns_project;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
+import com.bumptech.glide.Glide;
 
-    private String[] localDataSet;
+import java.util.ArrayList;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private CardView cardView;
+public class GalleryAdapter  extends RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder> {
+    private ArrayList<String> mDataset;
+    private Activity activity;
 
-        public ViewHolder(CardView view) {
-            super(view);
-            cardView = view;
+    public static class GalleryViewHolder extends RecyclerView.ViewHolder {
+        public CardView cardView;
+        public GalleryViewHolder(CardView v) {
+            super(v);
+            cardView = v;
         }
     }
 
-    public GalleryAdapter(String[] dataSet) {
-        localDataSet = dataSet;
+    public GalleryAdapter(Activity activity, ArrayList<String> myDataset) {
+        mDataset = myDataset;
+        this.activity = activity;
+    }
+
+    @NonNull
+    @Override
+    public GalleryAdapter.GalleryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_gallery, parent, false);
+
+        final GalleryViewHolder galleryViewHolder = new GalleryViewHolder(cardView);
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("profilePath", mDataset.get(galleryViewHolder.getAdapterPosition()));
+                activity.setResult(Activity.RESULT_OK, resultIntent);
+                activity.finish();
+            }
+        });
+
+        return galleryViewHolder;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        CardView view = (CardView) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_gallery, viewGroup, false);
+    public void onBindViewHolder(@NonNull final GalleryViewHolder holder, int position) {
+        CardView cardView = holder.cardView;
 
-        return new ViewHolder(view);
+
+        ImageView imageView = cardView.findViewById(R.id.imageView);
+        Glide.with(activity).load(mDataset.get(position)).centerCrop().override(500).into(imageView);
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        TextView textView = viewHolder.cardView.findViewById(R.id.textView);
-        textView.setText(localDataSet[position]);
-    }
-
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return localDataSet.length;
+        return mDataset.size();
     }
 }
