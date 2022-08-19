@@ -41,25 +41,11 @@ public class WritePostActivity extends BasicActivity {
                     postUpdate();
                     break;
                 case R.id.image:
-                    if (ContextCompat.checkSelfPermission(WritePostActivity.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(WritePostActivity.this,
-                                Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                        } else {
-                            ActivityCompat.requestPermissions(WritePostActivity.this,
-                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                    1);
-                            startToast("권한을 허용해 주세요");
-                        }
-                    }else{
-                        myStartActivity(GalleryActivity.class);
-                    }
+                    myStartActivity(GalleryActivity.class, "image");
                     break;
 
                 case R.id.video:
-                    myStartActivity(GalleryActivity.class);
+                    myStartActivity(GalleryActivity.class, "video");
                     break;
             }
         }
@@ -80,20 +66,6 @@ public class WritePostActivity extends BasicActivity {
         }
     }
 
-    @Override       // 권한 요청 받는거
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    myStartActivity(GalleryActivity.class);
-                } else {
-                    startToast("권한을 허용해 주세요");
-                }
-            }
-        }
-    }
-
     private void uploader(WriteInfo writeInfo){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("posts").add(writeInfo)
@@ -110,9 +82,9 @@ public class WritePostActivity extends BasicActivity {
                 });
     }
 
-    private void myStartActivity(Class c){
+    private void myStartActivity(Class c, String media ){
         Intent intent = new Intent(this,c);
-        //intent.putExtra("media",media);
+        intent.putExtra("media",media);
         startActivity(intent);
     }
 
