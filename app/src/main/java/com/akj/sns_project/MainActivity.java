@@ -57,7 +57,6 @@ public class MainActivity extends BasicActivity {
         }
 
 
-
         findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
         findViewById(R.id.floatingActionButton).setOnClickListener(onClickListener);
     }

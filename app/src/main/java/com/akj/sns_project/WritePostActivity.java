@@ -4,8 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -18,21 +20,40 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class WritePostActivity extends BasicActivity {
     private static final String TAG = "WritePostActivity";
     private FirebaseUser user;
+    private ArrayList<String> pathList = new ArrayList<>();
+    private LinearLayout parent;
+    private int pathCount, successCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_post);
+
+        parent = findViewById(R.id.contentsLayout);
 
         findViewById(R.id.checkWrite).setOnClickListener(onClickListener);
         findViewById(R.id.image).setOnClickListener(onClickListener);
@@ -46,10 +67,9 @@ public class WritePostActivity extends BasicActivity {
             case 0: {
                 if (resultCode == Activity.RESULT_OK) {
                     String profilePath = data.getStringExtra("profilePath");
+                    pathList.add(profilePath);
 
-                    LinearLayout parent = findViewById(R.id.contentsLayout);
-
-                    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
                     ImageView imageView = new ImageView(WritePostActivity.this);
                     imageView.setLayoutParams(layoutParams);
@@ -71,7 +91,7 @@ public class WritePostActivity extends BasicActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.checkWrite:
-                    postUpdate();
+                    storageUpload();
                     break;
                 case R.id.image:
                     myStartActivity(GalleryActivity.class, "image");
@@ -84,31 +104,82 @@ public class WritePostActivity extends BasicActivity {
         }
     };
 
-    private void postUpdate(){ // 글작성     part11 10분 16초
-        String title = ((EditText)findViewById(R.id.titleEditText)).getText().toString();
-        String contents = ((EditText)findViewById(R.id.contentsEditText)).getText().toString();
+    private void storageUpload() {
+        final String title = ((EditText) findViewById(R.id.titleEditText)).getText().toString();
 
-        if(title.length() > 0 && contents.length() > 0){
+        if (title.length() > 0) {
+            final ArrayList<String> contentsList = new ArrayList<>();
             user = FirebaseAuth.getInstance().getCurrentUser();
-            WriteInfo writeInfo  = new WriteInfo(title, contents, user.getUid());
-            uploader(writeInfo);
-        }else{
-            startToast("회원정보를 입력해주세요");
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+
+            for(int i = 0; i < parent.getChildCount(); i++){
+                View view = parent.getChildAt(i);
+                if(view instanceof EditText){
+                    String text = ((EditText)view).getText().toString();
+                    if(text.length() > 0){
+                        contentsList.add(text);
+                    }
+                } else {
+                    contentsList.add(pathList.get(pathCount));
+                    final StorageReference mountainImagesRef = storageRef.child("posts/" + user.getUid() + "/"+pathCount+".jpg");
+                    try {
+                        InputStream stream = new FileInputStream(new File(pathList.get(pathCount)));
+                        StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("index",""+(contentsList.size()-1)).build();
+                        UploadTask uploadTask = mountainImagesRef.putStream(stream, metadata);
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle unsuccessful uploads
+                                startToast("여기서 실패");
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                final int index = Integer.parseInt(taskSnapshot.getMetadata().getCustomMetadata("index"));
+                                mountainImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        contentsList.set(index, uri.toString());
+                                        successCount++;
+                                        if(pathList.size() == successCount){
+                                            //완료
+                                            WriteInfo writeInfo = new WriteInfo(title, contentsList, user.getUid(), new Date());
+                                            storeUpload(writeInfo);
+                                            for(int a = 0; a < contentsList.size(); a++){
+                                                Log.e("로그: ","콘덴츠: "+contentsList.get(a));
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    } catch (FileNotFoundException e) {
+                        Log.e("로그", "에러: " + e.toString());
+                    }
+                    pathCount++;
+                }
+            }
+        } else {
+            startToast("회원정보를 입력해주세요.");
         }
     }
 
-    private void uploader(WriteInfo writeInfo){
+
+    private void storeUpload(WriteInfo writeInfo){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("posts").add(writeInfo)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-
+                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                        finish();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+                })
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
+                        Log.w(TAG, "Error adding document", e);
                     }
                 });
     }
