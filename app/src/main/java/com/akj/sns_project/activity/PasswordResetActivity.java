@@ -1,4 +1,4 @@
-package com.akj.sns_project;
+package com.akj.sns_project.activity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.akj.sns_project.R;
+import com.akj.sns_project.activity.BasicActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

@@ -1,4 +1,4 @@
-package com.akj.sns_project;
+package com.akj.sns_project.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -55,8 +55,6 @@ public class GalleryAdapter  extends RecyclerView.Adapter<GalleryAdapter.Gallery
     @Override
     public void onBindViewHolder(@NonNull final GalleryViewHolder holder, int position) {
         CardView cardView = holder.cardView;
-
-
         ImageView imageView = cardView.findViewById(R.id.imageView);
         Glide.with(activity).load(mDataset.get(position)).centerCrop().override(500).into(imageView);
     }

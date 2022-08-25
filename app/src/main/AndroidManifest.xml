@@ -19,7 +19,7 @@
         android:theme="@style/Theme.SNS_Project"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,28 +38,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity">
+            android:name=".activity.LoginActivity">
         </activity>
         <activity
-            android:name=".SignUpActivity">
+            android:name=".activity.SignUpActivity">
         </activity>
         <activity
-            android:name=".PasswordResetActivity">
+            android:name=".activity.PasswordResetActivity">
         </activity>
         <activity
-            android:name=".MemberInitActivity">
+            android:name=".activity.MemberInitActivity">
         </activity>
         <activity
-            android:name=".BasicActivity">
+            android:name=".activity.BasicActivity">
         </activity>
         <activity
-            android:name=".WritePostActivity">
+            android:name=".activity.WritePostActivity">
         </activity>
         <activity
-            android:name=".GalleryActivity">
+            android:name=".activity.GalleryActivity">
         </activity>
         <activity
-            android:name=".CameraActivity">
+            android:name=".activity.CameraActivity">
         </activity>
 
     </application>

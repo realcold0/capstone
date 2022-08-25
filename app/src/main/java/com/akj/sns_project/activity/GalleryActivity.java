@@ -1,5 +1,5 @@
 
-package com.akj.sns_project;
+package com.akj.sns_project.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,12 +8,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.akj.sns_project.GalleryAdapter;
 import com.akj.sns_project.R;
+import com.akj.sns_project.activity.BasicActivity;
+import com.akj.sns_project.adapter.GalleryAdapter;
 
 import java.util.ArrayList;
 

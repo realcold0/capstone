@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.akj.sns_project;
+package com.akj.sns_project.fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -61,8 +61,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.akj.sns_project.AutoFitTextureView;
 import com.akj.sns_project.R;
+import com.akj.sns_project.view.AutoFitTextureView;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 
@@ -519,7 +519,7 @@ public class Camera2BasicFragment extends Fragment
      * @param height The height of available size for camera preview
      */
     @SuppressWarnings("SuspiciousNameCombination")
-    private void setUpCameraOutputs(int width, int height, int facingId) {
+    private void setUpCameraOutputs(int width, int height) {
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -643,7 +643,7 @@ public class Camera2BasicFragment extends Fragment
             requestCameraPermission();
             return;
         }
-        setUpCameraOutputs(width, height, facingId);
+        setUpCameraOutputs(width, height);
         configureTransform(width, height);
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);

@@ -1,4 +1,4 @@
-package com.akj.sns_project;
+package com.akj.sns_project.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.akj.sns_project.PasswordResetActivity;
 import com.akj.sns_project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

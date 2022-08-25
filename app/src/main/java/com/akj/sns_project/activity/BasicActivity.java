@@ -1,4 +1,4 @@
-package com.akj.sns_project;
+package com.akj.sns_project.activity;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
