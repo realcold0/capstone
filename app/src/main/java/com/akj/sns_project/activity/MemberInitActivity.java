@@ -5,8 +5,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,8 +20,6 @@ import androidx.core.content.ContextCompat;
 
 import com.akj.sns_project.MemberInfo;
 import com.akj.sns_project.R;
-import com.akj.sns_project.activity.BasicActivity;
-import com.akj.sns_project.activity.CameraActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,8 +53,8 @@ public class MemberInitActivity extends BasicActivity {
         profileImageVIew.setOnClickListener(onClickListener);
 
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
-        findViewById(R.id.gallery).setOnClickListener(onClickListener);
-        findViewById(R.id.picture).setOnClickListener(onClickListener);
+        findViewById(R.id.delete).setOnClickListener(onClickListener);
+        findViewById(R.id.videoModify).setOnClickListener(onClickListener);
     }
 
     @Override public void onBackPressed(){
@@ -96,10 +92,10 @@ public class MemberInitActivity extends BasicActivity {
                         cardview.setVisibility(View.VISIBLE);
                     }
                     break;
-                case R.id.picture:
+                case R.id.videoModify:
                     myStartActivity(CameraActivity.class);
                     break;
-                case R.id.gallery:
+                case R.id.delete:
                     if (ContextCompat.checkSelfPermission(MemberInitActivity.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
