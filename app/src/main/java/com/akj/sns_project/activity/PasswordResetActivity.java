@@ -3,6 +3,7 @@ package com.akj.sns_project.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,11 +44,14 @@ public class PasswordResetActivity extends BasicActivity {
         String email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
 
         if(email.length() > 0){
+            final RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);
+            loaderLayout.setVisibility(View.VISIBLE);
             mAuth.sendPasswordResetEmail(email)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                loaderLayout.setVisibility(View.GONE);
                                 startToast("이메일을 전송하였습니다");
                             }
                         }

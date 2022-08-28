@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -61,17 +62,21 @@ public class SignUpActivity extends BasicActivity {
 
         if(email.length() > 0 && password.length() > 0 && passwordCheck.length() > 0){
             if(password.equals(passwordCheck)){
+                final RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);
+                loaderLayout.setVisibility(View.VISIBLE);
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    loaderLayout.setVisibility(View.GONE);
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     startToast("회원가입에 성공하였습니다");
                                     myStartActivity(LoginActivity.class);
                                     // 성공했을때 UI
                                 } else {
                                     if (task.getException() != null) {
+                                        loaderLayout.setVisibility(View.GONE);
                                         startToast(task.getException().toString());
                                         // 실패했을때 UI
                                     }

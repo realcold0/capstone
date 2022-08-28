@@ -3,6 +3,9 @@ package com.akj.sns_project.activity;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,7 +15,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
+import com.akj.sns_project.adapter.GalleryAdapter;
+import com.akj.sns_project.adapter.MainAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,10 +26,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 
 public class MainActivity extends BasicActivity {
     private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,9 +43,9 @@ public class MainActivity extends BasicActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user == null) {  // 로그인된 유저가 있는지 없는지 체크 후 없을 경우 회원가입 페이지부터 시작
+        if (user == null) {
             myStartActivity(SignUpActivity.class);
-        }else{
+        } else {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference docRef = db.collection("users").document(user.getUid());
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -55,20 +67,48 @@ public class MainActivity extends BasicActivity {
                 }
             });
 
-        }
 
-        findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
+            db.collection("posts")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                ArrayList<PostInfo> postList = new ArrayList<>();
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    postList.add(new PostInfo(
+                                            document.getData().get("title").toString(),
+                                            (ArrayList<String>) document.getData().get("contents"),
+                                            document.getData().get("publisher").toString(),
+                                            new Date(document.getDate("createdAt").getTime())));
+                                }
+                                RecyclerView recyclerView = findViewById(R.id.recyclerView);
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+                                RecyclerView.Adapter mAdapter = new MainAdapter(MainActivity.this, postList);
+                                recyclerView.setAdapter(mAdapter);
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        }
+        //findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
         findViewById(R.id.floatingActionButton).setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View view) {
-            switch (view.getId()){
+        public void onClick(View v) {
+            switch (v.getId()) {
+                /*
                 case R.id.logoutButton:
-                    FirebaseAuth.getInstance().signOut();   // 로그아웃
+                    FirebaseAuth.getInstance().signOut();
                     myStartActivity(SignUpActivity.class);
                     break;
+                */
                 case R.id.floatingActionButton:
                     myStartActivity(WritePostActivity.class);
                     break;
@@ -76,11 +116,14 @@ public class MainActivity extends BasicActivity {
         }
     };
 
-    private void myStartActivity(Class c){
-        Intent intent = new Intent(this,c);
+    private void myStartActivity(Class c) {
+        Intent intent = new Intent(this, c);
         startActivity(intent);
     }
+
     private void startToast(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }
+
+

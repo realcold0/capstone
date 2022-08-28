@@ -17,11 +17,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.akj.sns_project.R;
-import com.akj.sns_project.WriteInfo;
+import com.akj.sns_project.PostInfo;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.api.Distribution;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -46,6 +45,7 @@ private LinearLayout parent;
 private RelativeLayout buttonsBackgroundLayout;
 private ImageView selectedImageView;
 private EditText selectedEditText;
+private RelativeLayout loaderLayout;
 private int pathCount, successCount;
 
 @Override
@@ -55,6 +55,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
     parent = findViewById(R.id.contentsLayout);
     buttonsBackgroundLayout = findViewById(R.id.buttonsBackgroundLayout);
+    loaderLayout = findViewById(R.id.loaderLayout);
 
     buttonsBackgroundLayout.setOnClickListener(onClickListener);
     findViewById(R.id.checkWrite).setOnClickListener(onClickListener);
@@ -181,6 +182,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
         final String title = ((EditText) findViewById(R.id.titleEditText)).getText().toString();
 
         if (title.length() > 0) {
+            loaderLayout.setVisibility(View.VISIBLE);
             final ArrayList<String> contentsList = new ArrayList<>();
             user = FirebaseAuth.getInstance().getCurrentUser();
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -220,8 +222,8 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                                             successCount++;
                                             if(pathList.size() == successCount){
                                                 //완료
-                                                WriteInfo writeInfo = new WriteInfo(title, contentsList, user.getUid(), new Date());
-                                                storeUpload(documentReference, writeInfo);
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date());
+                                                storeUpload(documentReference, postInfo);
                                                 for(int a = 0; a < contentsList.size(); a++){
                                                     Log.e("로그: ","콘덴츠: "+contentsList.get(a));
                                                 }
@@ -237,24 +239,30 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                     }
                 }
             }
+            if(pathList.size() == 0){   // 사진없이 글만 올리는 경우
+                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date());
+                storeUpload(documentReference, postInfo);
+            }
         } else {
             startToast("제목을 입력해주세요.");
         }
     }
 
 
-private void storeUpload(DocumentReference documentReference, WriteInfo writeInfo){
-    documentReference.set(writeInfo)
+private void storeUpload(DocumentReference documentReference, PostInfo postInfo){
+    documentReference.set(postInfo)
         .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "DocumentSnapshot successfully written!");
+                loaderLayout.setVisibility(View.GONE);
                 finish();
             }
         })
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                loaderLayout.setVisibility(View.GONE);
                 Log.w(TAG, "Error writing document", e);
             }
         });

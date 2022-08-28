@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ import java.io.InputStream;
 public class MemberInitActivity extends BasicActivity {
     private static final String TAG = "MemberInitActivity";
     private ImageView profileImageVIew;
+    private RelativeLayout loaderLayout;
     private String profilePath;
     private FirebaseUser user;
 
@@ -49,6 +51,7 @@ public class MemberInitActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member_init);
 
+        loaderLayout = findViewById(R.id.loaderLayout);
         profileImageVIew = findViewById(R.id.profileImageView);
         profileImageVIew.setOnClickListener(onClickListener);
 
@@ -81,7 +84,7 @@ public class MemberInitActivity extends BasicActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.checkButton:
-                    profileUpdate();
+                    storageUploader();
                     break;
                 case R.id.profileImageView:
                     CardView cardview = findViewById(R.id.buttonsCardview);
@@ -132,13 +135,14 @@ public class MemberInitActivity extends BasicActivity {
         }
     }
 
-    private void profileUpdate() {
+    private void storageUploader() {
         final String name = ((EditText) findViewById(R.id.nameEditText)).getText().toString();
         final String phoneNumber = ((EditText) findViewById(R.id.phoneNumberEditText)).getText().toString();
         final String birthDay = ((EditText) findViewById(R.id.birthDayEditText)).getText().toString();
         final String address = ((EditText) findViewById(R.id.addressEditText)).getText().toString();
 
         if (name.length() > 0 && phoneNumber.length() > 9 && birthDay.length() > 5 && address.length() > 0) {
+            loaderLayout.setVisibility(View.VISIBLE);
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             user = FirebaseAuth.getInstance().getCurrentUser();
@@ -146,7 +150,7 @@ public class MemberInitActivity extends BasicActivity {
 
             if(profilePath == null){
                 MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address);
-                uploader(memberInfo);
+                storeUploader(memberInfo);
             }else{
                 try {
                     InputStream stream = new FileInputStream(new File(profilePath));
@@ -166,7 +170,7 @@ public class MemberInitActivity extends BasicActivity {
                                 Uri downloadUri = task.getResult();
 
                                 MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address, downloadUri.toString());
-                                uploader(memberInfo);
+                                storeUploader(memberInfo);
                             } else {
                                 startToast("회원정보 전송에 실패했습니다");
                             }
@@ -181,13 +185,14 @@ public class MemberInitActivity extends BasicActivity {
         }
     }
 
-    private void uploader(MemberInfo memberInfo){
+    private void storeUploader(MemberInfo memberInfo){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").document(user.getUid()).set(memberInfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         startToast("회원정보 등록을 성공하였습니다.");
+                        loaderLayout.setVisibility(View.GONE);
                         finish();
                     }
                 })
@@ -195,6 +200,7 @@ public class MemberInitActivity extends BasicActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         startToast("회원정보 등록에 실패하였습니다.");
+                        loaderLayout.setVisibility(View.GONE);
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
