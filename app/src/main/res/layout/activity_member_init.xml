@@ -13,7 +13,7 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/titleTextView"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:gravity="center"
@@ -102,13 +102,13 @@
             android:padding="5dp">
 
             <Button
-                android:id="@+id/videoModify"
+                android:id="@+id/picture"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="사진촬영" />
 
             <Button
-                android:id="@+id/delete"
+                android:id="@+id/gallery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="갤러리" />

@@ -62,8 +62,8 @@ protected void onCreate(Bundle savedInstanceState) {
     findViewById(R.id.image).setOnClickListener(onClickListener);
     findViewById(R.id.video).setOnClickListener(onClickListener);
     findViewById(R.id.imageModify).setOnClickListener(onClickListener);
-    findViewById(R.id.videoModify).setOnClickListener(onClickListener);
-    findViewById(R.id.delete).setOnClickListener(onClickListener);
+    findViewById(R.id.picture).setOnClickListener(onClickListener);
+    findViewById(R.id.gallery).setOnClickListener(onClickListener);
     findViewById(R.id.contentsEditText).setOnFocusChangeListener(onFocusChangeListener);
     findViewById(R.id.titleEditText).setOnFocusChangeListener(new View.OnFocusChangeListener() {
         @Override
@@ -156,12 +156,12 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                 buttonsBackgroundLayout.setVisibility(View.GONE);
                 break;
 
-            case R.id.videoModify:
+            case R.id.picture:
                 myStartActivity(GalleryActivity.class, "video", 1);
                 buttonsBackgroundLayout.setVisibility(View.GONE);
                 break;
 
-            case R.id.delete:
+            case R.id.gallery:
                 parent.removeView((View) selectedImageView.getParent());
                 buttonsBackgroundLayout.setVisibility(View.GONE);
                 break;
@@ -201,7 +201,8 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                         }
                     } else {
                         contentsList.add(pathList.get(pathCount));
-                        final StorageReference mountainImagesRef = storageRef.child("posts/" + documentReference.getId() + "/"+pathCount+".jpg");
+                        String[] pathArray = pathList.get(pathCount).split("\\.");
+                        final StorageReference mountainImagesRef = storageRef.child("posts/" + documentReference.getId() + "/"+pathCount+"."+pathArray[pathArray.length - 1]);
                         try {
                             InputStream stream = new FileInputStream(new File(pathList.get(pathCount)));
                             StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("index",""+(contentsList.size()-1)).build();

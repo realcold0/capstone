@@ -56,8 +56,8 @@ public class MemberInitActivity extends BasicActivity {
         profileImageVIew.setOnClickListener(onClickListener);
 
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
-        findViewById(R.id.delete).setOnClickListener(onClickListener);
-        findViewById(R.id.videoModify).setOnClickListener(onClickListener);
+        findViewById(R.id.gallery).setOnClickListener(onClickListener);
+        findViewById(R.id.picture).setOnClickListener(onClickListener);
     }
 
     @Override public void onBackPressed(){
@@ -95,45 +95,16 @@ public class MemberInitActivity extends BasicActivity {
                         cardview.setVisibility(View.VISIBLE);
                     }
                     break;
-                case R.id.videoModify:
+                case R.id.picture:
                     myStartActivity(CameraActivity.class);
                     break;
-                case R.id.delete:
-                    if (ContextCompat.checkSelfPermission(MemberInitActivity.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(MemberInitActivity.this,
-                                Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                            ActivityCompat.requestPermissions(MemberInitActivity.this,
-                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                    1);
-                        } else {
-                            ActivityCompat.requestPermissions(MemberInitActivity.this,
-                                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                    1);
-                            startToast("권한을 허용해 주세요");
-                        }
-                    }else{
-                        myStartActivity(GalleryActivity.class, "image");
-                    }
+                case R.id.gallery:
+                    myStartActivity(GalleryActivity.class, "image");
                     break;
             }
         }
     };
 
-    @Override       // 권한 요청 받는거
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    myStartActivity(GalleryActivity.class, "image");
-                } else {
-                    startToast("권한을 허용해 주세요");
-                }
-            }
-        }
-    }
 
     private void storageUploader() {
         final String name = ((EditText) findViewById(R.id.nameEditText)).getText().toString();
