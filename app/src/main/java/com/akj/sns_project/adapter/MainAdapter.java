@@ -1,7 +1,6 @@
 package com.akj.sns_project.adapter;
 
 import android.app.Activity;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -20,10 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
+import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.api.Distribution;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -34,36 +32,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     private ArrayList<PostInfo> mDataset;
     private Activity activity;
     private FirebaseFirestore firebaseFirestore;
+    private OnPostListener onPostListener;
 
     static class MainViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
 
-        MainViewHolder(Activity activity, CardView v, PostInfo postInfo) {
+        MainViewHolder(CardView v) {
             super(v);
             cardView = v;
-
-            LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            ArrayList<String> contentsList = postInfo.getContents();
-
-            if (contentsLayout.getChildCount() == 0) {
-                for (int i = 0; i < contentsList.size(); i++) {
-                    String contents = contentsList.get(i);
-                    if (Patterns.WEB_URL.matcher(contents).matches()) {   // 글 내용에 사진이나 동영상이 있을 경우
-                        ImageView imageView = new ImageView(activity);
-                        imageView.setLayoutParams(layoutParams);
-                        imageView.setAdjustViewBounds(true);
-                        imageView.setScaleType(ImageView.ScaleType.FIT_XY); // 게시글 사진이 꽉차게 나오게끔
-                        contentsLayout.addView(imageView);
-                        //Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into(imageView);
-                    } else {          // 내용에 글만 있을 경우
-                        TextView textView = new TextView(activity);
-                        textView.setLayoutParams(layoutParams);
-                        //textView.setText(contents);
-                        contentsLayout.addView(textView);
-                    }
-                }
-            }
         }
     }
 
@@ -71,6 +47,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         mDataset = myDataset;
         this.activity = activity;
         firebaseFirestore = FirebaseFirestore.getInstance();
+    }
+
+    public void setOnPostListener(OnPostListener onPostListener){
+        this.onPostListener = onPostListener;
     }
 
     @Override
@@ -82,7 +62,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     @Override
     public MainAdapter.MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
-        final MainViewHolder mainViewHolder = new MainViewHolder(activity, cardView, mDataset.get(viewType));
+        final MainViewHolder mainViewHolder = new MainViewHolder(cardView);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,19 +90,44 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         createdAtTextView.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mDataset.get(position).getCreatedAt()));
 
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
-
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         ArrayList<String> contentsList = mDataset.get(position).getContents();
 
-        for (int i = 0; i < contentsList.size(); i++) {
-            String contents = contentsList.get(i);
-            if (Patterns.WEB_URL.matcher(contents).matches()) {   // 글 내용에 사진이나 동영상이 있을 경우
-                Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into((ImageView)contentsLayout.getChildAt(i));
-            } else {          // 내용에 글만 있을 경우
-                ((TextView)contentsLayout.getChildAt(i)).setText(contents);
+        if(contentsLayout.getTag() == null || !contentsLayout.getTag().equals(contentsList)){
+            contentsLayout.setTag(contentsList);
+            contentsLayout.removeAllViews();
+            if(contentsList.size() > 0){
+                for (int i = 0; i < contentsList.size(); i++) {
+                    String contents = contentsList.get(i);
+                    if (Patterns.WEB_URL.matcher(contents).matches()) {   // 글 내용에 사진이나 동영상이 있을 경우
+                        ImageView imageView = new ImageView(activity);
+                        imageView.setLayoutParams(layoutParams);
+                        imageView.setAdjustViewBounds(true);
+                        imageView.setScaleType(ImageView.ScaleType.FIT_XY); // 게시글 사진이 꽉차게 나오게끔
+                        contentsLayout.addView(imageView);
+                        Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into(imageView);
+                    } else {          // 내용에 글만 있을 경우
+                        TextView textView = new TextView(activity);
+                        textView.setLayoutParams(layoutParams);
+                        textView.setText(contents);
+                        contentsLayout.addView(textView);
+                    }
+                }
             }
         }
 
+        /*
+        for (int i = 0; i < contentsLayout.getChildCount(); i++) {
+            String contents = contentsList.get(i);
+            View view = contentsLayout.getChildAt(i);
+            if(view instanceof ImageView){
+                Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into((ImageView)contentsLayout.getChildAt(i));
+            }
 
+            if(view instanceof TextView){
+                ((TextView)view).setText(contents); // 내용에 글만 있을 경우
+            }
+        }*/
     }
 
     @Override
@@ -135,25 +140,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
+                String id = mDataset.get(position).getId();
                 switch (menuItem.getItemId()) {
                     case R.id.modify:
-
+                        onPostListener.onModify(id);
                         return true;
                     case R.id.delete:
-                        firebaseFirestore.collection("posts").document(mDataset.get(position).getId())
-                                .delete()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        startToast("게시글을 삭제하였습니다.");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        startToast("게시글을 삭제하지 못하였습니다.");
-                                    }
-                                });
+                        onPostListener.onDelete(id);
+
                         return true;
                     default:
                         return false;
