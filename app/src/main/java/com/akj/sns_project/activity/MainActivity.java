@@ -120,7 +120,7 @@ public class MainActivity extends BasicActivity {
 
         @Override
         public void onModify(String id) {
-
+            myStartActivity(WritePostActivity.class,id);
         }
     };
 
@@ -171,6 +171,12 @@ public class MainActivity extends BasicActivity {
 
     private void myStartActivity(Class c) {
         Intent intent = new Intent(this, c);
+        startActivity(intent);
+    }
+
+    private void myStartActivity(Class c, String id) {
+        Intent intent = new Intent(this, c);
+        intent.putExtra("id",id);
         startActivity(intent);
     }
 
