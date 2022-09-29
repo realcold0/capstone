@@ -56,6 +56,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="비밀번호 변경" />
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/googleLoginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
     </LinearLayout>

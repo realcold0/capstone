@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.akj.sns_project">
 
-    <uses-permission android:name="android.permission.INTERNET"/>   <!-- 인터넷 권한 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.CAMERA.autofocus"/>
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 권한 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA.autofocus" />
 
     <application
         android:allowBackup="true"
@@ -18,8 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SNS_Project"
         tools:targetApi="31">
+
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,35 +34,19 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="http"
-                    android:host="google.com" />
+                    android:host="google.com"
+                    android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.LoginActivity">
-        </activity>
-        <activity
-            android:name=".activity.SignUpActivity">
-        </activity>
-        <activity
-            android:name=".activity.PasswordResetActivity">
-        </activity>
-        <activity
-            android:name=".activity.MemberInitActivity">
-        </activity>
-        <activity
-            android:name=".activity.BasicActivity">
-        </activity>
-        <activity
-            android:name=".activity.WritePostActivity">
-        </activity>
-        <activity
-            android:name=".activity.GalleryActivity">
-        </activity>
-        <activity
-            android:name=".activity.CameraActivity">
-        </activity>
-
+        <activity android:name=".activity.MypageActivity"></activity>
+        <activity android:name=".activity.MainActivity"></activity>
+        <activity android:name=".activity.SignUpActivity"></activity>
+        <activity android:name=".activity.PasswordResetActivity"></activity>
+        <activity android:name=".activity.MemberInitActivity"></activity>
+        <activity android:name=".activity.BasicActivity"></activity>
+        <activity android:name=".activity.WritePostActivity"></activity>
+        <activity android:name=".activity.GalleryActivity"></activity>
+        <activity android:name=".activity.CameraActivity"></activity>
     </application>
 
 </manifest>
