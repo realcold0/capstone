@@ -30,7 +30,7 @@ public class GalleryActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
-        if (ContextCompat.checkSelfPermission(GalleryActivity.this,
+        if (ContextCompat.checkSelfPermission(GalleryActivity.this,     // 권한허용
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(GalleryActivity.this,
@@ -73,7 +73,7 @@ public class GalleryActivity extends BasicActivity {
         recyclerView.setAdapter(mAdapter);
     }
 
-    public ArrayList<String> getImagesPath(Activity activity) {
+    public ArrayList<String> getImagesPath(Activity activity) { // 사진 가져오는 부분
         Uri uri;
         ArrayList<String> listOfAllImages = new ArrayList<String>();
         Cursor cursor;
@@ -85,7 +85,7 @@ public class GalleryActivity extends BasicActivity {
         if (intent.getStringExtra("media").equals("video")) { // 비디오만 반환하게끔
             uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
             projection = new String[]{MediaStore.MediaColumns.DATA, MediaStore.Video.Media.BUCKET_DISPLAY_NAME};
-        } else { // 이미지만 반화하게끔
+        } else { // 이미지만 반환하게끔
             uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             projection = new String[]{MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
         }

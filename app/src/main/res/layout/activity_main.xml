@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    // 마지막 줄 tools:ignore="MissingConstraints" 이거 추가됨
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -28,4 +28,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_edit_24"
         tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="150dp"
+        android:layout_marginBottom="5dp"
+        android:text="로그아웃" />
+
 </RelativeLayout>

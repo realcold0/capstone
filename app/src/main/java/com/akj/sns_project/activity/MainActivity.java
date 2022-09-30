@@ -53,8 +53,8 @@ public class MainActivity extends BasicActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (firebaseUser == null) {
-            myStartActivity(SignUpActivity.class);
+        if (firebaseUser == null) {     // 로그인이 안되어 있으면
+            myStartActivity(LoginActivity.class);
         } else {
             firebaseFirestore = FirebaseFirestore.getInstance();
             DocumentReference documentReference = firebaseFirestore.collection("users").document(firebaseUser.getUid());
@@ -85,6 +85,7 @@ public class MainActivity extends BasicActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         findViewById(R.id.floatingActionButton).setOnClickListener(onClickListener);
+        findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
@@ -128,12 +129,12 @@ public class MainActivity extends BasicActivity {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                /*
+
                 case R.id.logoutButton:
                     FirebaseAuth.getInstance().signOut();
-                    myStartActivity(SignUpActivity.class);
+                    myStartActivity(LoginActivity.class);
                     break;
-                */
+
                 case R.id.floatingActionButton:
                     myStartActivity(WritePostActivity.class);
                     break;
@@ -183,6 +184,7 @@ public class MainActivity extends BasicActivity {
     private void startToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
 }
 
 

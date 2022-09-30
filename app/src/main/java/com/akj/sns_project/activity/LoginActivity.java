@@ -44,6 +44,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
         findViewById(R.id.gotoPasswordResetButton).setOnClickListener(onClickListener);
         findViewById(R.id.googleLoginButton).setOnClickListener(onClickListener);
+        findViewById(R.id.gotoSignUpButton).setOnClickListener(onClickListener);
 
 
         /*구글 로그인*/
@@ -82,6 +83,9 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
                 case R.id.gotoPasswordResetButton:
                     myStartActivity(PasswordResetActivity.class);
                     break;
+                case R.id.gotoSignUpButton:
+                    myStartActivity(SignUpActivity.class);
+                    break;
 
             }
         }
@@ -104,6 +108,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다");
                                 myStartActivity(MainActivity.class);
+                                finish();                       // 로그인 후 메인화면에서 뒤로가기 버튼 누를 시 그대로 앱이 종료되게함
                             } else {
                                 if (task.getException() != null) {
                                     loaderLayout.setVisibility(View.GONE);
@@ -160,7 +165,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void myStartActivity(Class c) {
+   private void myStartActivity(Class c) {
         Intent intent = new Intent(this, c);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);        // 로그인 후 메인화면에서 뒤로가기 버튼 누를 시 그대로 앱이 종료되게함
         startActivity(intent);
