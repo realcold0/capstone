@@ -51,9 +51,9 @@ public class MainActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 유저정보 받아오는 것 _ 대규
 
-        if (firebaseUser == null) {     // 로그인이 안되어 있으면
+        if (firebaseUser == null) {     // 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
         } else {
             firebaseFirestore = FirebaseFirestore.getInstance();
@@ -67,12 +67,12 @@ public class MainActivity extends BasicActivity {
                             if (document.exists()) {
                                 Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                             } else {
-                                Log.d(TAG, "No such document");
+                                Log.d(TAG, "No such document");     // 파이어베이스 유저정보에 유저정보가 없으면 멤베정보 입력하는 액티비티를 보여줌
                                 myStartActivity(MemberInitActivity.class);
                             }
                         }
                     } else {
-                        Log.d(TAG, "get failed with ", task.getException());
+                        Log.d(TAG, "get failed with ", task.getException());    // 정보 불러오는거 실패했을 경우
                     }
                 }
             });
@@ -101,7 +101,7 @@ public class MainActivity extends BasicActivity {
 
     OnPostListener onPostListener = new OnPostListener() {
         @Override
-        public void onDelete(String id) {
+        public void onDelete(String id) {       // 게시글 삭제 기능_대규
             firebaseFirestore.collection("posts").document(id)
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -122,7 +122,7 @@ public class MainActivity extends BasicActivity {
         @Override
         public void onModify(String id) {
             myStartActivity(WritePostActivity.class,id);
-        }
+        }   // 게시글 수정 기능_대규
     };
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -131,12 +131,12 @@ public class MainActivity extends BasicActivity {
             switch (v.getId()) {
 
                 case R.id.logoutButton:
-                    FirebaseAuth.getInstance().signOut();
-                    myStartActivity(LoginActivity.class);
+                    FirebaseAuth.getInstance().signOut();   // 파이어베이스에 로그아웃 신호 보내줌 _ 대규
+                    myStartActivity(LoginActivity.class);   // 로그인 액티비티로 이동 _ 대규
                     break;
 
                 case R.id.floatingActionButton:
-                    myStartActivity(WritePostActivity.class);
+                    myStartActivity(WritePostActivity.class);   // 글쓰기 버튼 클릭 시 이동 _ 대규
                     break;
             }
         }
@@ -145,12 +145,12 @@ public class MainActivity extends BasicActivity {
     private void postsUpdate(){
         if (firebaseUser != null) {
             CollectionReference collectionReference = firebaseFirestore.collection("posts");
-            collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()
+            collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                postList.clear();
+                                postList.clear();   // 초기화 하고 가져오는 방식으로 업데이트
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d(TAG, document.getId() + " => " + document.getData());
                                     postList.add(new PostInfo(
@@ -158,7 +158,7 @@ public class MainActivity extends BasicActivity {
                                             (ArrayList<String>) document.getData().get("contents"),
                                             document.getData().get("publisher").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
-                                            document.getId()));
+                                            document.getId())); // postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
                                 }
                                 mainAdapter.notifyDataSetChanged();
 

@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class PasswordResetActivity extends BasicActivity {
+public class PasswordResetActivity extends BasicActivity {  // 비밀번호 변경 클릭시 나오는 페이지 _ 대규
     private FirebaseAuth mAuth;
 
     @Override
@@ -33,14 +33,14 @@ public class PasswordResetActivity extends BasicActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.sendButton:
-                    send();
+                    send(); // 이메일 전송 _ 대규
                     break;
 
             }
         }
     };
 
-    private void send(){
+    private void send(){    // 이메일로 비밀번호 초기화할수있게 해줌
         String email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
 
         if(email.length() > 0){

@@ -92,35 +92,35 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
     };
 
     private void login() {
-        String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
-        String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
+        String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();      //텍스트 박스에 입력된 값을 email로 _ 대규
+        String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();    //텍스트 박스에 입력된 값을 Password로 _ 대규
 
-        if (email.length() > 0 && password.length() > 0) {
-            RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);
-            loaderLayout.setVisibility(View.VISIBLE);
-            mAuth.signInWithEmailAndPassword(email, password)
+        if (email.length() > 0 && password.length() > 0) {  // 텍스트 박스에 입력된 길이가 0 이상일때
+            RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);  // 실행될때 까지 로딩창 띄어줌
+            loaderLayout.setVisibility(View.VISIBLE);                       // 여기까지가 로딩창 띄어주는것 _ 대규
+            mAuth.signInWithEmailAndPassword(email, password)       // 로그인 과정 _ 대규
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            loaderLayout.setVisibility(View.GONE);
+                            loaderLayout.setVisibility(View.GONE);  // 실행 완료되고 나서 로딩창 닫아줌 _ 대규
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
-                                FirebaseUser user = mAuth.getCurrentUser();
+                                FirebaseUser user = mAuth.getCurrentUser();     // 로그인한 유저 정보 업데이트
                                 startToast("로그인에 성공하였습니다");
-                                myStartActivity(MainActivity.class);
+                                myStartActivity(MainActivity.class);    // 로그인 성공 후 메인 액티비티로
                                 finish();                       // 로그인 후 메인화면에서 뒤로가기 버튼 누를 시 그대로 앱이 종료되게함
                             } else {
                                 if (task.getException() != null) {
-                                    loaderLayout.setVisibility(View.GONE);
-                                    startToast(task.getException().toString());
+                                    loaderLayout.setVisibility(View.GONE);  // 실행 완료되고 나서 로딩창 닫아줌 _ 대규
+                                    startToast(task.getException().toString()); // 실패했을때 메세지 나중에 수정하기 _ 대규
                                     // 실패했을때 UI
                                 }
                             }
                         }
                     });
         } else {
-            RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);
-            loaderLayout.setVisibility(View.GONE);
+            RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);      // 로딩 창 _대규
+            loaderLayout.setVisibility(View.GONE);                              // 로딩 창 지우기 _ 대규
             startToast("이메일 또는 비밀번호를 입력해주세요");
         }
     }
@@ -159,7 +159,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
                     }
                 });
     }
-    // 구글 로그인 파트 마무리리
+    // 구글 로그인 파트 마무리    이 파트는 firebase에서 제공하는 구글 로그인 파트 _ 대규
 
    private void startToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
@@ -167,7 +167,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
 
    private void myStartActivity(Class c) {
         Intent intent = new Intent(this, c);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);        // 로그인 후 메인화면에서 뒤로가기 버튼 누를 시 그대로 앱이 종료되게함
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);        // 로그인 후 메인화면에서 뒤로가기 버튼 누를 시 그대로 앱이 종료되게함 _ 대규
         startActivity(intent);
     }
 

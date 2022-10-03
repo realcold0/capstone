@@ -18,7 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class SignUpActivity extends BasicActivity {
+public class SignUpActivity extends BasicActivity { // 회원가입 액티비티
     private FirebaseAuth mAuth;
 
     @Override
@@ -44,11 +44,11 @@ public class SignUpActivity extends BasicActivity {
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.checkButton:
+                case R.id.checkButton:      // 회원가입 하는 버튼 _ 대규
                     signUp();
                     break;
 
-                case R.id.gotoLoginButton:
+                case R.id.gotoLoginButton:      // 로그인하러 이동하기 _ 대규
                     myStartActivity(LoginActivity.class);
                     break;
             }
@@ -60,7 +60,7 @@ public class SignUpActivity extends BasicActivity {
         String password = ((EditText)findViewById(R.id.passwordEditText)).getText().toString();
         String passwordCheck = ((EditText)findViewById(R.id.passwordCheckEditText)).getText().toString();
 
-        if(email.length() > 0 && password.length() > 0 && passwordCheck.length() > 0){
+        if(email.length() > 0 && password.length() > 0 && passwordCheck.length() > 0){  // 아이디 비밀번호 입력받고 조건 확인 후 진행
             if(password.equals(passwordCheck)){
                 final RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);
                 loaderLayout.setVisibility(View.VISIBLE);

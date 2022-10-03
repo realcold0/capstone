@@ -60,7 +60,7 @@ public class MemberInitActivity extends BasicActivity {
         findViewById(R.id.picture).setOnClickListener(onClickListener);
     }
 
-    @Override public void onBackPressed(){
+    @Override public void onBackPressed(){  // 뒤로가기 버튼 시 메인액티비티로
         super.onBackPressed();
         finish();
     }
@@ -72,7 +72,7 @@ public class MemberInitActivity extends BasicActivity {
             case 0: {
                 if (resultCode == Activity.RESULT_OK) {
                     profilePath = data.getStringExtra("profilePath");
-                    Glide.with(this).load(profilePath).centerCrop().override(500).into(profileImageVIew);
+                    Glide.with(this).load(profilePath).centerCrop().override(500).into(profileImageVIew);   // 사진을 프로필 사진 imageview에 넣어줌 _ 대규
                 }
                 break;
             }
@@ -84,22 +84,22 @@ public class MemberInitActivity extends BasicActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.checkButton:
-                    storageUploader();
+                    storageUploader();  // 파이어베이스에 회원정보 업데이트 해줌_ 대규
                     break;
                 case R.id.profileImageView:
-                    CardView cardview = findViewById(R.id.buttonsCardview);
-                    if(cardview.getVisibility() == View.VISIBLE){
+                    CardView cardview = findViewById(R.id.buttonsCardview); // 이미지 뷰 눌렀을때 밑에 촬영버튼, 갤러리버튼 있는지
+                    if(cardview.getVisibility() == View.VISIBLE){   // 있으면 삭제
                         cardview.setVisibility(View.GONE);
                     }
                     else{
-                        cardview.setVisibility(View.VISIBLE);
+                        cardview.setVisibility(View.VISIBLE);   // 없으면 보여줌
                     }
                     break;
                 case R.id.picture:
-                    myStartActivity(CameraActivity.class);
+                    myStartActivity(CameraActivity.class);  // 촬영버튼 클릭시 카메라 실행
                     break;
                 case R.id.gallery:
-                    myStartActivity(GalleryActivity.class, "image");
+                    myStartActivity(GalleryActivity.class, "image");    // 갤러리에서 이미지만 보여주는 갤러리 실행
                     break;
             }
         }
@@ -112,17 +112,17 @@ public class MemberInitActivity extends BasicActivity {
         final String birthDay = ((EditText) findViewById(R.id.birthDayEditText)).getText().toString();
         final String address = ((EditText) findViewById(R.id.addressEditText)).getText().toString();
 
-        if (name.length() > 0 && phoneNumber.length() > 9 && birthDay.length() > 5 && address.length() > 0) {
+        if (name.length() > 0 && phoneNumber.length() > 9 && birthDay.length() > 5 && address.length() > 0) {   // 입력조건들 충족 시 파이어베이스 입력 _ 대규
             loaderLayout.setVisibility(View.VISIBLE);
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             user = FirebaseAuth.getInstance().getCurrentUser();
             final StorageReference mountainImagesRef = storageRef.child("users/" + user.getUid() + "/profileImage.jpg");
 
-            if(profilePath == null){
+            if(profilePath == null){    // 프로필 사진없이 입력시
                 MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address);
                 storeUploader(memberInfo);
-            }else{
+            }else{      // 프로필 사진 있을 경우 파이어베이스 올리는 방식 _ 대규
                 try {
                     InputStream stream = new FileInputStream(new File(profilePath));
                     UploadTask uploadTask = mountainImagesRef.putStream(stream);

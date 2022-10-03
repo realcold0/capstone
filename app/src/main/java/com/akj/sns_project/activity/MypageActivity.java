@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.akj.sns_project.R;
 import com.bumptech.glide.Glide;
 
-public class MypageActivity extends AppCompatActivity {
+public class MypageActivity extends AppCompatActivity { // 구글 아이디로 로그인시 넘어가는 페이지 어떻게 활용할지 고민중_ 대규
 
     private TextView tv_result;
     private ImageView iv_profile;

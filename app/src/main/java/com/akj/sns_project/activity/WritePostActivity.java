@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class WritePostActivity extends BasicActivity {
+public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비티 _ 대규
 private static final String TAG = "WritePostActivity";
 private FirebaseUser user;
 private ArrayList<String> pathList = new ArrayList<>();

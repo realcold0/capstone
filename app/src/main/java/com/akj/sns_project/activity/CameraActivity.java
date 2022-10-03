@@ -33,7 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity { // 카메라 기능 실행하는 액티비티 _ 대규
 
     private Camera2BasicFragment camera2BasicFragment;
 
