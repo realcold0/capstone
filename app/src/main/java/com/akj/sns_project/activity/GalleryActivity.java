@@ -90,8 +90,7 @@ public class GalleryActivity extends BasicActivity {        // 사진 올리기 
             projection = new String[]{MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
         }
 
-        cursor = activity.getContentResolver().query(uri, projection, null, null, null);    // 컨텐츠 불러올 수 있게하는 코드 구글 컨텐츠 제공자 참고 _ 대규
-                //  MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "DESC");//MediaStore.Images.ImageColumns.DATE_TAKEN + "DESC"); 정렬 예시
+        cursor = activity.getContentResolver().query(uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC" );    // 컨텐츠 불러올 수 있게하는 코드 구글 컨텐츠 제공자 참고 _ 대규
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
         while (cursor.moveToNext()) {

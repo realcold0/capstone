@@ -4,22 +4,22 @@ import android.widget.EditText;
 
 public class MemberInfo {
     private String name;
-    private String phoneNubmer;
+    private String phoneNumber;
     private String birthDay;
     private String address;
     private String photoUrl;
 
-    public MemberInfo(String name, String phoneNubmer, String birthDay, String address, String photoUrl){
+    public MemberInfo(String name, String phoneNumber, String birthDay, String address, String photoUrl){
         this.name = name;
-        this.phoneNubmer = phoneNubmer;
+        this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.address = address;
         this.photoUrl = photoUrl;
     }
 
-    public MemberInfo(String name, String phoneNubmer, String birthDay, String address){
+    public MemberInfo(String name, String phoneNumber, String birthDay, String address){
         this.name = name;
-        this.phoneNubmer = phoneNubmer;
+        this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.address = address;
     }
@@ -31,11 +31,11 @@ public class MemberInfo {
         this.name = name;
     }
 
-    public String getPhoneNubmer(){
-        return this.phoneNubmer;
+    public String getPhoneNumber(){
+        return this.phoneNumber;
     }
-    public void setPhoneNubmer(String phoneNubmer){
-        this.phoneNubmer = phoneNubmer;
+    public void setPhoneNumber(String phoneNumber){
+        this.phoneNumber = phoneNumber;
     }
 
     public String getBirthDay(){
