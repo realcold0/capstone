@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.313" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.313" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.313" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/drawable/ic_launcher_background.xml" value="0.313" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_camera.xml" value="0.3359375" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_gallery.xml" value="0.33489583333333334" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_login.xml" value="0.25" />
@@ -11,6 +15,8 @@
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_member_init.xml" value="0.2717391304347826" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_mypage.xml" value="0.29347826086956524" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_password_reset.xml" value="0.3359375" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_result_movie.xml" value="0.2" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_search_movie.xml" value="0.3359375" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_sign_up.xml" value="0.29030797101449274" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/activity_write_post.xml" value="0.33489583333333334" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/fragment_camera2_basic.xml" value="0.3359375" />
@@ -18,6 +24,9 @@
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/item_post.xml" value="0.33" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/layout/view_loader.xml" value="0.33489583333333334" />
         <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/menu/post.xml" value="0.33489583333333334" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3175" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/mipmap-anydpi-v26/moverse_Icon.xml" value="0.3175" />
+        <entry key="..\:/Users/howeo/AndroidStudioProjects/2022practice/SNS_Project/app/src/main/res/mipmap-anydpi-v26/moverse_con.xml" value="0.25" />
       </map>
     </option>
   </component>
