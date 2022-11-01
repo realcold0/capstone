@@ -3,6 +3,25 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/activity_login.xml" value="0.264" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/activity_member_init.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/activity_mypage.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/activity_password_reset.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/activity_sign_up.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/activity_write_post.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/fragment_01.xml" value="0.264" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/fragment_02.xml" value="0.2269021739130435" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/fragment_03.xml" value="0.2269021739130435" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/fragment_04.xml" value="0.2269021739130435" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/fragment_05.xml" value="0.2269021739130435" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/fragment_1.xml" value="0.1" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/fragment_camera2_basic.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/item_gallery.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/item_post.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/layout/view_loader.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/menu/bottom_navigation_bar.xml" value="0.264" />
+        <entry key="..\:/Users/BJS-good/Desktop/Moverse/app/src/main/res/menu/post.xml" value="0.1" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/capstone/app/src/main/res/layout/activity_camera.xml" value="0.30833333333333335" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/capstone/app/src/main/res/layout/activity_gallery.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/capstone/app/src/main/res/layout/activity_login.xml" value="0.36614583333333334" />
