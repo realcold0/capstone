@@ -42,6 +42,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.0.8' // 파이어베이스 인증 추가
     implementation platform('com.google.firebase:firebase-bom:30.3.2')
     implementation 'com.google.android.gms:play-services-auth:20.3.0'// 파이어베이스 인증2
+    implementation 'androidx.navigation:navigation-fragment:2.3.2'
+    implementation 'androidx.navigation:navigation-ui:2.3.2'
 
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
