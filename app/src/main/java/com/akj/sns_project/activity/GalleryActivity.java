@@ -24,7 +24,7 @@ import com.akj.sns_project.adapter.GalleryAdapter;
 import java.util.ArrayList;
 
 public class GalleryActivity extends BasicActivity {        // 사진 올리기 or 프로필 사진 선택시 갤러리 열어주는 액티비티 _ 대규
-
+    // Gallery 불러와주는 액티비티 수정 필요 X
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

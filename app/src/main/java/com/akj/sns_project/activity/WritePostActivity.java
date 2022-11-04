@@ -86,6 +86,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
                 ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
+                // 글 내용 작성하면 글 내용 작성칸이 세로로 길어짐
                 LinearLayout linearLayout = new LinearLayout(WritePostActivity.this);
                 linearLayout.setLayoutParams(layoutParams);
                 linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -101,9 +102,11 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
                     }
                 }
 
+                // 게시글에 사진 추가하는 방법
                 ImageView imageView = new ImageView(WritePostActivity.this);
                 imageView.setLayoutParams(layoutParams);
                 imageView.setOnClickListener(new View.OnClickListener() {
+
                     @Override
                     public void onClick(View view) {
                         buttonsBackgroundLayout.setVisibility(View.VISIBLE);
@@ -111,8 +114,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
                     }
                 });
                 Glide.with(this).load(profilePath).override(1000).into(imageView);
-                linearLayout.addView(imageView);
+                linearLayout.addView(imageView); // 사진을 하나 추가하고 나면 imageView를 더 추가해줌
 
+                // 글을 쓰고나면 텍스트 박스가 여러줄 작성이 가능하게 됨
                 EditText editText = new EditText(WritePostActivity.this);
                 editText.setLayoutParams(layoutParams);
                 editText.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_CLASS_TEXT);
@@ -178,12 +182,16 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
         }
     };
 
+    // 게시글 업로드 기능
     private void storageUpload() {
         final String title = ((EditText) findViewById(R.id.titleEditText)).getText().toString();
 
         if (title.length() > 0) {
-            loaderLayout.setVisibility(View.VISIBLE);
+            loaderLayout.setVisibility(View.VISIBLE); // 로딩창 보여줌
+
             final ArrayList<String> contentsList = new ArrayList<>();
+
+            // 파이어베이스에서 유저 정보를 가져옴
             user = FirebaseAuth.getInstance().getCurrentUser();
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
@@ -198,6 +206,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
             final DocumentReference documentReference = dr;
 
 
+            // 여기 잘 모르겠음...
             for(int i = 0; i < parent.getChildCount(); i++){
                 LinearLayout linearLayout = (LinearLayout)parent.getChildAt(i);
                 for(int ii = 0; ii < linearLayout.getChildCount(); ii++){
@@ -230,7 +239,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                                             contentsList.set(index, uri.toString());
                                             successCount++;
                                             if(pathList.size() == successCount){
-                                                //완료
+
                                                 PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date());
                                                 storeUpload(documentReference, postInfo);
                                                 for(int a = 0; a < contentsList.size(); a++){
@@ -257,7 +266,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
         }
     }
 
-
+// 파이어베이스에서 제공하는 게시글 업로드 함수 코드
 private void storeUpload(DocumentReference documentReference, PostInfo postInfo){
     documentReference.set(postInfo)
         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -276,6 +285,7 @@ private void storeUpload(DocumentReference documentReference, PostInfo postInfo)
             }
         });
 }
+
 
 private void myStartActivity(Class c, String media, int requestCode){
     Intent intent = new Intent(this,c);

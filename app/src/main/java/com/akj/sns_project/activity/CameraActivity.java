@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class CameraActivity extends AppCompatActivity { // 카메라 기능 실행하는 액티비티 _ 대규
-
+    // 코드 가져온거라 그대로 사용 수정X
     private Camera2BasicFragment camera2BasicFragment;
 
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener

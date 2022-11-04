@@ -13,7 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 
-public class MainActivity extends BasicActivity {
+public class MainActivity extends BasicActivity {   //fragment 코드들
     // 프레그먼트 선언 - 준범
     Fragment01 fragment01;
     Fragment02 fragment02;

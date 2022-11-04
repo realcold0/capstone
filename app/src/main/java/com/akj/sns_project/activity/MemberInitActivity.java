@@ -39,7 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class MemberInitActivity extends BasicActivity {
+public class MemberInitActivity extends BasicActivity { // 멤버 회원정보 저장해주는 액티비티
     private static final String TAG = "MemberInitActivity";
     private ImageView profileImageVIew;
     private RelativeLayout loaderLayout;
@@ -47,7 +47,7 @@ public class MemberInitActivity extends BasicActivity {
     private FirebaseUser user;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {    // clickListner들 관리
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member_init);
 
@@ -66,13 +66,13 @@ public class MemberInitActivity extends BasicActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {// 사진을 프로필 사진 imageview에 넣어주는 기능 _ 대규
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 0: {
                 if (resultCode == Activity.RESULT_OK) {
                     profilePath = data.getStringExtra("profilePath");
-                    Glide.with(this).load(profilePath).centerCrop().override(500).into(profileImageVIew);   // 사진을 프로필 사진 imageview에 넣어줌 _ 대규
+                    Glide.with(this).load(profilePath).centerCrop().override(500).into(profileImageVIew);
                 }
                 break;
             }
@@ -106,24 +106,26 @@ public class MemberInitActivity extends BasicActivity {
     };
 
 
-    private void storageUploader() {
+    private void storageUploader() {    // 파이어베이스에 정보 업로드하는 함수
+        // 입력받는 회원 정보들
         final String name = ((EditText) findViewById(R.id.nameEditText)).getText().toString();
         final String phoneNumber = ((EditText) findViewById(R.id.phoneNumberEditText)).getText().toString();
         final String birthDay = ((EditText) findViewById(R.id.birthDayEditText)).getText().toString();
         final String address = ((EditText) findViewById(R.id.addressEditText)).getText().toString();
 
         if (name.length() > 0 && phoneNumber.length() > 9 && birthDay.length() > 5 && address.length() > 0) {   // 입력조건들 충족 시 파이어베이스 입력 _ 대규
-            loaderLayout.setVisibility(View.VISIBLE);
-            FirebaseStorage storage = FirebaseStorage.getInstance();
+            loaderLayout.setVisibility(View.VISIBLE);   // 회원정보 업로드가 완료될때까지 로딩창 보여줌
+            FirebaseStorage storage = FirebaseStorage.getInstance();    // 파이어베이스 저장소 정보 받아옴
             StorageReference storageRef = storage.getReference();
-            user = FirebaseAuth.getInstance().getCurrentUser();
+            user = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스 인증을 통해서 유저정보 받아옴
             final StorageReference mountainImagesRef = storageRef.child("users/" + user.getUid() + "/profileImage.jpg");
 
             if(profilePath == null){    // 프로필 사진없이 입력시
                 MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address);
                 storeUploader(memberInfo);
-            }else{      // 프로필 사진 있을 경우 파이어베이스 올리는 방식 _ 대규
+            }else{
                 try {
+                    // 프로필 사진 있을 경우 파이어베이스 올리는 방식 _ 대규
                     InputStream stream = new FileInputStream(new File(profilePath));
                     UploadTask uploadTask = mountainImagesRef.putStream(stream);
                     uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -134,12 +136,12 @@ public class MemberInitActivity extends BasicActivity {
                             }
                             return mountainImagesRef.getDownloadUrl();
                         }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {    // 파이어베이스에 정보 추가
+                       @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
-
+                                // memberinfo에 해당하는 정보들을 입력받고 등록한다
                                 MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address, downloadUri.toString());
                                 storeUploader(memberInfo);
                             } else {
@@ -156,6 +158,7 @@ public class MemberInitActivity extends BasicActivity {
         }
     }
 
+    //파이어베이스 파이어스토어에 users 폴더에 로그인된 UID정보에 유저정보 업로드하는 함수
     private void storeUploader(MemberInfo memberInfo){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").document(user.getUid()).set(memberInfo)
@@ -163,7 +166,7 @@ public class MemberInitActivity extends BasicActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         startToast("회원정보 등록을 성공하였습니다.");
-                        loaderLayout.setVisibility(View.GONE);
+                        loaderLayout.setVisibility(View.GONE);  // 회원정보 등록에 성공하면 로딩창을 끔
                         finish();
                     }
                 })
@@ -171,7 +174,7 @@ public class MemberInitActivity extends BasicActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         startToast("회원정보 등록에 실패하였습니다.");
-                        loaderLayout.setVisibility(View.GONE);
+                        loaderLayout.setVisibility(View.GONE);  // 회원정보 등록에 실패해도 로딩창을 끔
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
@@ -191,6 +194,5 @@ public class MemberInitActivity extends BasicActivity {
     private void startToast(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
-
 
 }

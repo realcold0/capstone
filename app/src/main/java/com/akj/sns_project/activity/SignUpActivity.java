@@ -29,6 +29,7 @@ public class SignUpActivity extends BasicActivity { // 회원가입 액티비티
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
+        // clickListener들
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
         findViewById(R.id.gotoLoginButton).setOnClickListener(onClickListener);
     }
@@ -55,17 +56,19 @@ public class SignUpActivity extends BasicActivity { // 회원가입 액티비티
         }
     };
 
-    private void signUp(){
+    private void signUp(){  // 회원가입 함수
+        // 텍스트박스안의 글자들
         String email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
         String password = ((EditText)findViewById(R.id.passwordEditText)).getText().toString();
         String passwordCheck = ((EditText)findViewById(R.id.passwordCheckEditText)).getText().toString();
 
+        // 텍스트박스안의 글자수들 조건에 따라서 실행
         if(email.length() > 0 && password.length() > 0 && passwordCheck.length() > 0){  // 아이디 비밀번호 입력받고 조건 확인 후 진행
-            if(password.equals(passwordCheck)){
+            if(password.equals(passwordCheck)){ // 패스워드 텍스트박스와 패스워드 확인 텍스트 박스 값이 같을 경우
                 final RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);
                 loaderLayout.setVisibility(View.VISIBLE);
 
-                mAuth.createUserWithEmailAndPassword(email, password)
+                mAuth.createUserWithEmailAndPassword(email, password)   // 파이어베이스에서 제공하는 로그인 코드
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {

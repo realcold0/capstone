@@ -34,20 +34,21 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
     private FirebaseAuth auth;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {    // 로그인 액티비티가 실행되었을 때
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance(); //파이어베이스 인증 받아오는 것을 mAuth로 표현
 
+        // 로그인xml에 클릭 listner를 달아주는 코드들
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
         findViewById(R.id.gotoPasswordResetButton).setOnClickListener(onClickListener);
         findViewById(R.id.googleLoginButton).setOnClickListener(onClickListener);
         findViewById(R.id.gotoSignUpButton).setOnClickListener(onClickListener);
 
 
-        /*구글 로그인*/
+        //구글 로그인 여기서부터
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -72,7 +73,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
 
     }
 
-
+    // 클릭 이벤트 정리
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -91,6 +92,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
         }
     };
 
+    // 로그인 함수
     private void login() {
         String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();      //텍스트 박스에 입력된 값을 email로 _ 대규
         String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();    //텍스트 박스에 입력된 값을 Password로 _ 대규
@@ -112,7 +114,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
                             } else {
                                 if (task.getException() != null) {
                                     loaderLayout.setVisibility(View.GONE);  // 실행 완료되고 나서 로딩창 닫아줌 _ 대규
-                                    startToast(task.getException().toString()); // 실패했을때 메세지 나중에 수정하기 _ 대규
+                                    startToast("아이디 또는 비밀번호를 확인해주세요"); // 실패했을때 메세지
                                     // 실패했을때 UI
                                 }
                             }
