@@ -41,7 +41,7 @@ import java.util.Date;
 
 
 public class Fragment01 extends Fragment {
-
+//프래그먼트 로드
     private static final String TAG = "BoardActicity";
     private FirebaseUser firebaseUser;              // 파이어베이스 유저 정보 가져오기 위해 생성한 이름
     private FirebaseFirestore firebaseFirestore;    // 파이어베이스스토어에서 정보 가져오기 위해 사용한 이름
