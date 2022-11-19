@@ -295,10 +295,10 @@ public class Fragment01 extends Fragment {
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.v("output popular", response);
-                Gson gson = new Gson();
+                Log.v("output popular", response); //요청 출력해보기
+                Gson gson = new Gson();  //gson라이브러리 선언
 
-                MovieList movieList = gson.fromJson(response, MovieList.class);
+                MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
                 Movie movie = movieList.results.get(0);
                 Log.v("movie name", movie.title.toString());
             }
@@ -320,7 +320,7 @@ public class Fragment01 extends Fragment {
 
         //requestQueue.add(request);
 
-        AppController.getInstance(getActivity()).addToRequestQueue(request);
+        AppController.getInstance(getActivity()).addToRequestQueue(request);  //gson리퀘스트 큐에 넣기
 
 
     }
