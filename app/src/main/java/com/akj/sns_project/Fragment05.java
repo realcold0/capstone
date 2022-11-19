@@ -15,6 +15,5 @@ public class Fragment05 extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_05, container, false);
         // 주석 테스트
-        // 다시 시도
     }
 }
