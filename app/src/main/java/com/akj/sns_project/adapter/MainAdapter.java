@@ -1,6 +1,7 @@
 package com.akj.sns_project.adapter;
 
 import android.app.Activity;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -63,6 +64,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     @NonNull
     @Override//RecyclerView와 cardView를 만들어주는 작업. 보이는 부분만 load함.
     public MainAdapter.MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         //layout을 view객체로 만들기 위해 layoutInflater를 이용한다.
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
         final MainViewHolder mainViewHolder = new MainViewHolder(cardView);
@@ -79,13 +81,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                 showPopup(view, mainViewHolder.getAdapterPosition());    // 설정창 나오게 하는거
             }
         });
-
         return mainViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final MainViewHolder holder, int position) {
         //item_post에 실제 db들의 값들을 넣어주는 작업
+        long start = System.currentTimeMillis();
 
         //CardView에 title값 넣어주기
         CardView cardView = holder.cardView;
@@ -125,6 +127,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             }
         }
 
+        long end = System.currentTimeMillis();
+        Log.w("MainAdapter", "DB 내용 item_post에 넣는 속도 " + ( end - start )/1000.0);
     }
 
     @Override //자동 override됨. 데이터들의 수를 세줌.

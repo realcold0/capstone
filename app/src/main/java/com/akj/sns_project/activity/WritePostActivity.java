@@ -80,6 +80,8 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
         case 0:
+            long start = System.currentTimeMillis();
+
             if (resultCode == Activity.RESULT_OK) {
                 String profilePath = data.getStringExtra("profilePath");
                 pathList.add(profilePath);
@@ -123,6 +125,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
                 editText.setHint("내용");
                 editText.setOnFocusChangeListener(onFocusChangeListener);
                 linearLayout.addView(editText);
+
+                long end = System.currentTimeMillis();
+                Log.w("WritePostActivity", "게시글 파일 불러오는 속도 " + ( end - start )/1000.0);
             }
             break;
         case 1:
@@ -184,6 +189,8 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
 
     // 게시글 업로드 기능
     private void storageUpload() {
+        long start = System.currentTimeMillis();
+
         final String title = ((EditText) findViewById(R.id.titleEditText)).getText().toString();
 
         if (title.length() > 0) {
@@ -206,7 +213,6 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
             final DocumentReference documentReference = dr;
 
 
-            // 여기 잘 모르겠음...
             for(int i = 0; i < parent.getChildCount(); i++){
                 LinearLayout linearLayout = (LinearLayout)parent.getChildAt(i);
                 for(int ii = 0; ii < linearLayout.getChildCount(); ii++){
@@ -264,6 +270,9 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
         } else {
             startToast("제목을 입력해주세요.");
         }
+
+        long end = System.currentTimeMillis();
+        Log.w("WritePostActivity", "게시글 업로드 속도 " + ( end - start )/1000.0);
     }
 
 // 파이어베이스에서 제공하는 게시글 업로드 함수 코드

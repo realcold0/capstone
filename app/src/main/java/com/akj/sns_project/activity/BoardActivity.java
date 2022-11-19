@@ -1,6 +1,7 @@
 package com.akj.sns_project.activity;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.Toast;
 
 import com.akj.sns_project.PostInfo;
@@ -87,11 +89,22 @@ public class BoardActivity extends BasicActivity {
         recyclerView.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
         recyclerView.setLayoutManager(new LinearLayoutManager(BoardActivity.this)); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(mainAdapter);
+
+
+        initRecyclerViewAndAdapter();
+    }
+
+    private void initRecyclerViewAndAdapter() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
+        recyclerView.setLayoutManager(gridLayoutManager);
     }
 
     @Override
     protected void onResume() {  // 게시글 올리자마자 업데이트 될 수 있도록
         super.onResume();
+        // 여기에 시간 측정 함수 넣으면 될듯 한데 게시글 다 날리고 최초로 올리는 환경이라고 가정하고 실험 진행
+        // 실험 조건을 여러개로 시도해 보아야 하는건가.....
+
         postsUpdate();
 
     }
