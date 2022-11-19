@@ -1,5 +1,6 @@
 package com.akj.sns_project;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -21,6 +22,13 @@ import com.akj.sns_project.activity.MemberInitActivity;
 import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.adapter.MainAdapter;
 import com.akj.sns_project.listener.OnPostListener;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,9 +43,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class Fragment01 extends Fragment {
@@ -53,6 +72,8 @@ public class Fragment01 extends Fragment {
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
 
+    static RequestQueue requestQueue;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,6 +81,20 @@ public class Fragment01 extends Fragment {
         view = inflater.inflate(R.layout.activity_board, container, false);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스에서 유저정보를 받아오는데 _ 대규
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                makeRequest("https://api.themoviedb.org/3/trending/all/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
+            }
+        }).start();
+
+
+        if(requestQueue == null)
+        {
+
+            requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        }
 
         if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
@@ -205,4 +240,84 @@ public class Fragment01 extends Fragment {
     private void startToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
+    public void request(String urlStr)
+    {
+        StringBuilder output  = new StringBuilder();
+        try{
+            URL url = new URL(urlStr);
+
+            HttpURLConnection connection = (HttpsURLConnection)url.openConnection();
+
+            if(connection !=null)
+            {
+                connection.setConnectTimeout(10000);
+                connection.setRequestMethod("GET");
+                connection.setDoInput(true);
+
+                int resCode = connection.getResponseCode();
+                BufferedReader reader = new BufferedReader((new InputStreamReader(connection.getInputStream())));
+                String line = null;
+                while(true)
+                {
+                    line = reader.readLine();
+                    if(line ==null)
+                    {
+                        break;
+                    }
+
+                    output.append(line +"\n");
+                }
+                reader.close();
+                connection.disconnect();
+            }
+
+            Log.w("output popular",output.toString());
+        }
+        catch (Exception ex)
+        {
+            System.out.println("예외발생함" + ex.toString());
+
+        }
+
+
+    }
+
+    public void makeRequest(String url)
+    {
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.v("output popular", response); //요청 출력해보기
+                Gson gson = new Gson();  //gson라이브러리 선언
+
+                MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
+                Movie movie = movieList.results.get(0);
+                Log.v("movie name", movie.title.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("error ", error.getMessage());
+            }
+        }
+        ){
+            protected  Map<String, String> getParams() throws AuthFailureError{
+                Map<String, String> params = new HashMap<String, String>();
+
+                return params;
+            }
+        };
+        request.setShouldCache(false);
+        Log.v("SendRequest","요청 보냄");
+
+        //requestQueue.add(request);
+
+        AppController.getInstance(getActivity()).addToRequestQueue(request);  //gson리퀘스트 큐에 넣기
+
+
+    }
+
+
+
+
 }

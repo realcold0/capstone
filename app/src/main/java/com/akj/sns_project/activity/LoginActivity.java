@@ -109,7 +109,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
                                 // Sign in success, update UI with the signed-in user's information
                                 FirebaseUser user = mAuth.getCurrentUser();     // 로그인한 유저 정보 업데이트
                                 startToast("로그인에 성공하였습니다");
-                                myStartActivity(BoardActivity.class);    // 로그인 성공 후 메인 액티비티로
+                                myStartActivity(MainActivity.class);    // 로그인 성공 후 메인 액티비티로 - 승환
                                 finish();                       // 로그인 후 메인화면에서 뒤로가기 버튼 누를 시 그대로 앱이 종료되게함
                             } else {
                                 if (task.getException() != null) {
