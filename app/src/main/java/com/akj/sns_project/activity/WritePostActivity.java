@@ -1,6 +1,7 @@
 package com.akj.sns_project.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ private ImageView selectedImageView;
 private EditText selectedEditText;
 private RelativeLayout loaderLayout;
 private int pathCount, successCount;
+public static Context context_main;
 
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ protected void onCreate(Bundle savedInstanceState) {
             }
         }
     });
+    context_main = this;
 }
 
 @Override
@@ -188,7 +191,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
     };
 
     // 게시글 업로드 기능
-    private void storageUpload() {
+    public void storageUpload() {
         long start = System.currentTimeMillis();
 
         final String title = ((EditText) findViewById(R.id.titleEditText)).getText().toString();
@@ -246,7 +249,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                                             successCount++;
                                             if(pathList.size() == successCount){
 
-                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date());
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date(),0,0);   // 11.20 여기 수정함
                                                 storeUpload(documentReference, postInfo);
                                                 for(int a = 0; a < contentsList.size(); a++){
                                                     Log.e("로그: ","콘덴츠: "+contentsList.get(a));
@@ -264,7 +267,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                 }
             }
             if(pathList.size() == 0){   // 사진없이 글만 올리는 경우
-                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date());
+                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date(),0,0);   // 11.20 여기 수정함
                 storeUpload(documentReference, postInfo);
             }
         } else {

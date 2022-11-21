@@ -1,6 +1,7 @@
 package com.akj.sns_project.adapter;
 
 import android.app.Activity;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -20,9 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
+import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +37,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     private Activity activity;
     private FirebaseFirestore firebaseFirestore;
     private OnPostListener onPostListener;
+    private ImageView imageView;
 
     //RecyclerView와 cardView를 이용하여 게시글들을 보며줄 것으로 선언
     static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -81,7 +85,38 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                 showPopup(view, mainViewHolder.getAdapterPosition());    // 설정창 나오게 하는거
             }
         });
+
+        cardView.findViewById(R.id.likeManage).setOnClickListener(new View.OnClickListener() {    // 여기 수정함 11.21
+            @Override
+            public void onClick(View view) {
+                countup(mainViewHolder, mainViewHolder.getAdapterPosition());
+            }
+        });
+
+        cardView.findViewById(R.id.unlikeManage).setOnClickListener(new View.OnClickListener() {    // 여기 수정함 11.21
+            @Override
+            public void onClick(View view) {
+                countdown(mainViewHolder, mainViewHolder.getAdapterPosition());
+            }
+        });
+
+
         return mainViewHolder;
+    }
+
+    public void countup(@NonNull final MainViewHolder holder, int position){    // 여기 수정함 11.21  이제 셋팅한 카운트 숫자를 파이어베이스로 넣어야함
+        CardView cardView = holder.cardView;
+        TextView likeCount = cardView.findViewById(R.id.likeCount);
+        likeCount.setText(String.valueOf(mDataset.get(position).getlike()+1));
+
+        //여기 수정함 11.21 22시
+
+    }
+
+    public void countdown(@NonNull final MainViewHolder holder, int position){    // 여기 수정함 11.21
+        CardView cardView = holder.cardView;
+        TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
+        unlikeCount.setText(String.valueOf(mDataset.get(position).getlike()+1));
     }
 
     @Override
@@ -102,6 +137,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         ArrayList<String> contentsList = mDataset.get(position).getContents();
+
+        // 11.20 수정부분 좋아요 갯수 넣어주기
+        TextView likeCount = cardView.findViewById(R.id.likeCount);
+        likeCount.setText(String.valueOf(mDataset.get(position).getlike()));
+
+        // 11.20 수정부분 싫어요 갯수 넣어주기
+        TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
+        unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike()));
 
         // 게시글 넣을때 게시글 안에 사진이나 동영상 있는지
         if(contentsLayout.getTag() == null || !contentsLayout.getTag().equals(contentsList)){

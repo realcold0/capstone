@@ -2,6 +2,7 @@ package com.akj.sns_project;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 public class PostInfo {
     private String title;
@@ -9,6 +10,8 @@ public class PostInfo {
     private String publisher;
     private Date createdAt;
     private String id;
+    private int like;
+    private int unlike;
 
     public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, String id){
         this.title = title;
@@ -18,12 +21,15 @@ public class PostInfo {
         this.id = id;
     }
 
-    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt){
+    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike){
         this.title = title;
         this.contents = contents;
         this.publisher = publisher;
         this.createdAt = createdAt;
+        this.like = like;
+        this.unlike = unlike;
     }
+
 
     public String getTitle(){
         return this.title;
@@ -56,7 +62,15 @@ public class PostInfo {
     public String getId(){
         return this.id;
     }
-    public void setId(String id){
-        this.id = id;
+    public void setId(String id) {this.id = id;}
+
+    public int getlike(){
+        return this.like;
     }
+    public void setlike(int like){ this.like = like; }
+
+    public int getUnlike(){
+        return this.unlike;
+    }
+    public void setunlike(int unlike){ this.unlike = like; }
 }
