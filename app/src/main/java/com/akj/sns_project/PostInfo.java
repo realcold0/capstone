@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class PostInfo {
-    private String title;
+    private String id, title, publisher;
     private ArrayList<String> contents;
-    private String publisher;
     private Date createdAt;
-    private String id;
 
     public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, String id){
         this.title = title;
