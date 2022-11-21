@@ -24,7 +24,7 @@
         >
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +44,7 @@
         </activity>
         <activity android:name=".activity.BoardActivity"></activity>
         <activity android:name=".activity.MypageActivity"></activity>
-        <activity android:name=".activity.LoginActivity"></activity>
+        <activity android:name=".activity.MainActivity"></activity>
         <activity android:name=".activity.SignUpActivity"></activity>
         <activity android:name=".activity.PasswordResetActivity"></activity>
         <activity android:name=".activity.MemberInitActivity"></activity>
