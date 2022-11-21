@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -89,14 +90,13 @@ public class Fragment01 extends Fragment {
             }
         }).start();
 
-
         if(requestQueue == null)
         {
 
             requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         }
 
-        if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
+        if (firebaseUser == null) {// 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
         } else {
             //여기서부터
@@ -130,9 +130,6 @@ public class Fragment01 extends Fragment {
         mainAdapter = new MainAdapter(getActivity(), postList);
         mainAdapter.setOnPostListener(onPostListener); //onPostListener를 넘겨주면 MainAdapter에서도 쓸수있음.
 
-
-
-
         logoutButton = view.findViewById(R.id.logoutButton);
         floatingActionButton = view.findViewById(R.id.floatingActionButton);
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -144,14 +141,20 @@ public class Fragment01 extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(mainAdapter);
 
+        initRecyclerViewAndAdapter();
+
         return view;
+    }
+
+    private void initRecyclerViewAndAdapter() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        recyclerView.setLayoutManager(gridLayoutManager);
     }
 
     @Override
     public void onResume() {  // 게시글 올리자마자 업데이트 될 수 있도록
         super.onResume();
         postsUpdate();
-
     }
 
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
@@ -219,7 +222,6 @@ public class Fragment01 extends Fragment {
                                             document.getId())); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
                                 }
                                 mainAdapter.notifyDataSetChanged();
-
                             } else {
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                             }
@@ -276,10 +278,7 @@ public class Fragment01 extends Fragment {
         catch (Exception ex)
         {
             System.out.println("예외발생함" + ex.toString());
-
         }
-
-
     }
 
     public void makeRequest(String url)
@@ -303,21 +302,12 @@ public class Fragment01 extends Fragment {
         ){
             protected  Map<String, String> getParams() throws AuthFailureError{
                 Map<String, String> params = new HashMap<String, String>();
-
                 return params;
             }
         };
         request.setShouldCache(false);
         Log.v("SendRequest","요청 보냄");
-
         //requestQueue.add(request);
-
         AppController.getInstance(getActivity()).addToRequestQueue(request);  //gson리퀘스트 큐에 넣기
-
-
     }
-
-
-
-
 }

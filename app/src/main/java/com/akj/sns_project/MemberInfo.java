@@ -3,11 +3,7 @@ package com.akj.sns_project;
 import android.widget.EditText;
 
 public class MemberInfo {
-    private String name;
-    private String phoneNumber;
-    private String birthDay;
-    private String address;
-    private String photoUrl;
+    private String name, phoneNumber, birthDay, address, photoUrl;
 
 
     public MemberInfo(String name, String phoneNumber, String birthDay, String address, String photoUrl){

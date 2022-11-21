@@ -1,6 +1,7 @@
 package com.akj.sns_project.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ private ImageView selectedImageView;
 private EditText selectedEditText;
 private RelativeLayout loaderLayout;
 private int pathCount, successCount;
+public static Context context_main;
 
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,7 @@ protected void onCreate(Bundle savedInstanceState) {
             }
         }
     });
+    context_main = this;
 }
 
 @Override
@@ -80,6 +83,8 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
         case 0:
+            long start = System.currentTimeMillis();
+
             if (resultCode == Activity.RESULT_OK) {
                 String profilePath = data.getStringExtra("profilePath");
                 pathList.add(profilePath);
@@ -123,6 +128,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
                 editText.setHint("내용");
                 editText.setOnFocusChangeListener(onFocusChangeListener);
                 linearLayout.addView(editText);
+
+                long end = System.currentTimeMillis();
+                Log.w("WritePostActivity", "게시글 파일 불러오는 속도 " + ( end - start )/1000.0);
             }
             break;
         case 1:
@@ -183,7 +191,9 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
     };
 
     // 게시글 업로드 기능
-    private void storageUpload() {
+    public void storageUpload() {
+        long start = System.currentTimeMillis();
+
         final String title = ((EditText) findViewById(R.id.titleEditText)).getText().toString();
 
         if (title.length() > 0) {
@@ -206,7 +216,6 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
             final DocumentReference documentReference = dr;
 
 
-            // 여기 잘 모르겠음...
             for(int i = 0; i < parent.getChildCount(); i++){
                 LinearLayout linearLayout = (LinearLayout)parent.getChildAt(i);
                 for(int ii = 0; ii < linearLayout.getChildCount(); ii++){
@@ -240,7 +249,7 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                                             successCount++;
                                             if(pathList.size() == successCount){
 
-                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date());
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date(),0,0);   // 11.20 여기 수정함
                                                 storeUpload(documentReference, postInfo);
                                                 for(int a = 0; a < contentsList.size(); a++){
                                                     Log.e("로그: ","콘덴츠: "+contentsList.get(a));
@@ -258,12 +267,15 @@ View.OnClickListener onClickListener = new View.OnClickListener() {
                 }
             }
             if(pathList.size() == 0){   // 사진없이 글만 올리는 경우
-                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date());
+                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), new Date(),0,0);   // 11.20 여기 수정함
                 storeUpload(documentReference, postInfo);
             }
         } else {
             startToast("제목을 입력해주세요.");
         }
+
+        long end = System.currentTimeMillis();
+        Log.w("WritePostActivity", "게시글 업로드 속도 " + ( end - start )/1000.0);
     }
 
 // 파이어베이스에서 제공하는 게시글 업로드 함수 코드
