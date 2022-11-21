@@ -30,7 +30,6 @@ public class PostInfo {
         this.unlike = unlike;
     }
 
-
     public String getTitle(){
         return this.title;
     }

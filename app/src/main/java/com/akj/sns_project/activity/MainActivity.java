@@ -13,7 +13,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 
-public class MainActivity extends BasicActivity {   //fragment 코드들
+public class MainActivity extends BasicActivity {//fragment 코드들
+    // 프레그먼트간 슬라이딩 터치이벤트 발생 시 화면 전환은 일단 보류해두겠음 -준범
     // 프레그먼트 선언 - 준범
     Fragment01 fragment01;
     Fragment02 fragment02;
@@ -44,6 +45,8 @@ public class MainActivity extends BasicActivity {   //fragment 코드들
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                
+                
                 switch (menuItem.getItemId()) {
                     //item을 클릭시 id값을 가져와 FrameLayout에 fragment.xml띄우기
                     case R.id.item_fragment1:
@@ -67,6 +70,7 @@ public class MainActivity extends BasicActivity {   //fragment 코드들
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment05).commit();
                         break;
                 }
+                
                 return true;
             }
         });
@@ -74,6 +78,7 @@ public class MainActivity extends BasicActivity {   //fragment 코드들
 
     }
 
+    
 }
 
 
