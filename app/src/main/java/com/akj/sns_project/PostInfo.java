@@ -18,7 +18,7 @@ public class PostInfo {
         this.contents = contents;
         this.publisher = publisher;
         this.createdAt = createdAt;
-        this.id = id;
+        this.id = publisher; // id에 작성자 넣기
     }
 
     public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike){
@@ -26,6 +26,7 @@ public class PostInfo {
         this.contents = contents;
         this.publisher = publisher;
         this.createdAt = createdAt;
+        this.id = publisher; // id에 작성자 넣기
         this.like = like;
         this.unlike = unlike;
     }
