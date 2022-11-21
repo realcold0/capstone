@@ -96,7 +96,7 @@ public class Fragment01 extends Fragment {
             requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         }
 
-        if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
+        if (firebaseUser == null) {// 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
         } else {
             //여기서부터
