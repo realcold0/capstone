@@ -300,7 +300,9 @@ public class Fragment01 extends Fragment {
             public void onResponse(String response) {
                 Log.v("output popular", response); //요청 출력해보기
                 Gson gson = new Gson();  //gson라이브러리 선언
-                ListView PosterList = view.findViewById(R.id.ListView);
+
+                //ListView PosterList = view.findViewById(R.id.ListView);  리스트뷰 추가후 수정예정
+
                 MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
                 Movie movie = movieList.results.get(0);
 
@@ -308,7 +310,7 @@ public class Fragment01 extends Fragment {
                 posters.add(new Poster(movie.title.toString(),"https://image.tmdb.org/t/p/w500" + movie.poster_path.toString()));
 
                 final PosterAdapter posterAdapter = new PosterAdapter(getActivity(),posters);
-                PosterList.setAdapter(posterAdapter);
+                //PosterList.setAdapter(posterAdapter); 리스트뷰 추가후 수정예정
 
                 Log.v("Poster", posters.get(0).toString());
             }
