@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.akj.sns_project.activity.BoardActivity;
@@ -22,6 +23,7 @@ import com.akj.sns_project.activity.LoginActivity;
 import com.akj.sns_project.activity.MemberInitActivity;
 import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.adapter.MainAdapter;
+import com.akj.sns_project.adapter.PosterAdapter;
 import com.akj.sns_project.listener.OnPostListener;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -30,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -74,6 +77,8 @@ public class Fragment01 extends Fragment {
     private RecyclerView recyclerView;
 
     static RequestQueue requestQueue;
+    private ArrayList<Poster> posters;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +87,8 @@ public class Fragment01 extends Fragment {
         view = inflater.inflate(R.layout.activity_board, container, false);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스에서 유저정보를 받아오는데 _ 대규
+
+
 
         new Thread(new Runnable() {
             @Override
@@ -95,6 +102,11 @@ public class Fragment01 extends Fragment {
 
             requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         }
+
+
+
+
+
 
         if (firebaseUser == null) {// 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
@@ -288,10 +300,17 @@ public class Fragment01 extends Fragment {
             public void onResponse(String response) {
                 Log.v("output popular", response); //요청 출력해보기
                 Gson gson = new Gson();  //gson라이브러리 선언
-
+                ListView PosterList = view.findViewById(R.id.ListView);
                 MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
                 Movie movie = movieList.results.get(0);
-                Log.v("movie name", movie.title.toString());
+
+                posters = new ArrayList<Poster>();
+                posters.add(new Poster(movie.title.toString(),"https://image.tmdb.org/t/p/w500" + movie.poster_path.toString()));
+
+                final PosterAdapter posterAdapter = new PosterAdapter(getActivity(),posters);
+                PosterList.setAdapter(posterAdapter);
+
+                Log.v("Poster", posters.get(0).toString());
             }
         }, new Response.ErrorListener() {
             @Override
