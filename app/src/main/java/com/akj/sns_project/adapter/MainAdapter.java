@@ -1,6 +1,7 @@
 package com.akj.sns_project.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
+import com.akj.sns_project.activity.PostActivity;
 import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
@@ -67,14 +69,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     @NonNull
     @Override//RecyclerView와 cardView를 만들어주는 작업. 보이는 부분만 load함.
     public MainAdapter.MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         //layout을 view객체로 만들기 위해 layoutInflater를 이용한다.
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
         final MainViewHolder mainViewHolder = new MainViewHolder(cardView);
         cardView.setOnClickListener(new View.OnClickListener() { //하나의 카드뷰를 클릭 시 intent로 해당하는 값을 BoardActivity로 넘겨줌
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(activity, PostActivity.class);
+                intent.putExtra("postInfo", mDataset.get(mainViewHolder.getAdapterPosition()));
+                activity.startActivity(intent);
             }
         });
 
@@ -121,8 +124,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     @Override
     public void onBindViewHolder(@NonNull final MainViewHolder holder, int position) {
         //item_post에 실제 db들의 값들을 넣어주는 작업
-        long start = System.currentTimeMillis();
-
         //CardView에 title값 넣어주기
         CardView cardView = holder.cardView;
         TextView titleTextView = cardView.findViewById(R.id.titleTextView);
@@ -176,9 +177,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                 }
             }
         }
-
-        long end = System.currentTimeMillis();
-        Log.w("MainAdapter", "DB 내용 item_post에 넣는 속도 " + (end - start) / 1000.0);
     }
 
     @Override //자동 override됨. 데이터들의 수를 세줌.

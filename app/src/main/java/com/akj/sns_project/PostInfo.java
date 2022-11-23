@@ -3,6 +3,7 @@ package com.akj.sns_project;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PostInfo implements Serializable {
@@ -31,6 +32,11 @@ public class PostInfo implements Serializable {
         this.like = like;
         this.unlike = unlike;
     }
+/*
+    public Map<String, Object> getPostInfo(){
+        Map<String, Object> docData = new HashMap<>();
+        docData.put("title");
+    }*/
 
     public String getTitle(){
         return this.title;

@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 
 import com.akj.sns_project.R;
 import com.akj.sns_project.PostInfo;
+import com.akj.sns_project.view.ContentsItemView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -99,46 +100,46 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 0:
-                long start = System.currentTimeMillis();
-
                 if (resultCode == Activity.RESULT_OK) {
                     String profilePath = data.getStringExtra("profilePath");
                     pathList.add(profilePath);
-
+                    /*  코드 간단화함 아래 주석 이해 후 지울 것
                     ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
                     // 글 내용 작성하면 글 내용 작성칸이 세로로 길어짐
                     LinearLayout linearLayout = new LinearLayout(WritePostActivity.this);
                     linearLayout.setLayoutParams(layoutParams);
                     linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    */
+                    ContentsItemView contentsItemView = new ContentsItemView(this);
 
                     if (selectedEditText == null) {
-                        parent.addView(linearLayout);
+                        parent.addView(contentsItemView);
                     } else {
                         for (int i = 0; i < parent.getChildCount(); i++) {
                             if (parent.getChildAt(i) == selectedEditText.getParent()) {
-                                parent.addView(linearLayout, i + 1);
+                                parent.addView(contentsItemView, i + 1);
                                 break;
                             }
                         }
                     }
-
-                    // 게시글에 사진 추가하는 방법
-                    ImageView imageView = new ImageView(WritePostActivity.this);
-                    imageView.setLayoutParams(layoutParams);
-                    imageView.setAdjustViewBounds(true);
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY); // 게시글에 사진 불러올때 게시글 작성란에 사진 꽉채우게 만들어줌
-                    imageView.setOnClickListener(new View.OnClickListener() {
-
+                    contentsItemView.setImage(profilePath);
+                    contentsItemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             buttonsBackgroundLayout.setVisibility(View.VISIBLE);
                             selectedImageView = (ImageView) view;
                         }
                     });
+                    contentsItemView.setOnFocusChangeListener(onFocusChangeListener);   // 코드 축소화 아래 주석을 간단화함 아래 주석 코드이해 후 지울 것
+                    /*
+                    // 게시글에 사진 추가하는 방법
+                    ImageView imageView = new ImageView(WritePostActivity.this);
+                    imageView.setLayoutParams(layoutParams);
+                    imageView.setAdjustViewBounds(true);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY); // 게시글에 사진 불러올때 게시글 작성란에 사진 꽉채우게 만들어줌
+                    imageView.setOnClickListener(new View.OnClickListener() {
                     Glide.with(this).load(profilePath).override(1000).into(imageView);
                     linearLayout.addView(imageView); // 사진을 하나 추가하고 나면 imageView를 더 추가해줌
-
                     // 글을 쓰고나면 텍스트 박스가 여러줄 작성이 가능하게 됨
                     EditText editText = new EditText(WritePostActivity.this);
                     editText.setLayoutParams(layoutParams);
@@ -146,20 +147,19 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                     editText.setHint("내용");
                     editText.setOnFocusChangeListener(onFocusChangeListener);
                     linearLayout.addView(editText);
-
-                    long end = System.currentTimeMillis();
-                    Log.w("WritePostActivity", "게시글 파일 불러오는 속도 " + (end - start) / 1000.0);
-                }
-                break;
-            case 1:
-                if (resultCode == Activity.RESULT_OK) {
-                    String profilePath = data.getStringExtra("profilePath");
-                    pathList.set(parent.indexOfChild((View) selectedImageView.getParent()) - 1, profilePath);
-                    Glide.with(this).load(profilePath).override(1000).into(selectedImageView);
-                }
-                break;
+                    */
         }
+        break;
+        case 1:
+        if (resultCode == Activity.RESULT_OK) {
+            String profilePath = data.getStringExtra("profilePath");
+            pathList.set(parent.indexOfChild((View) selectedImageView.getParent()) - 1, profilePath);
+            Glide.with(this).load(profilePath).override(1000).into(selectedImageView);
+        }
+        break;
     }
+
+}
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -193,18 +193,21 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                     break;
 
                 case R.id.delete:
-                    View selectedView = (View) selectedImageView.getParent();
+                    final View selectedView = (View) selectedImageView.getParent();
 
                     String[] list = pathList.get(parent.indexOfChild(selectedView) - 1).split("\\?");
                     String[] list2 = list[0].split("%2F");
                     String name = list2[list2.length - 1];
-                    Log.e("로그: ","이름: "+name);
+                    Log.e("로그: ", "이름: " + name);
 
-                    StorageReference desertRef = storageRef.child("posts/"+postInfo.getId()+"/"+name);
+                    StorageReference desertRef = storageRef.child("posts/" + postInfo.getId() + "/" + name);
                     desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                           startToast("파일을 삭제하였습니다.");
+                            startToast("파일을 삭제하였습니다.");
+                            pathList.remove(parent.indexOfChild(selectedView) - 1);
+                            parent.removeView(selectedView);
+                            buttonsBackgroundLayout.setVisibility(View.GONE);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -212,10 +215,6 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                             startToast("파일을 삭제하는데 실패하였습니다.");
                         }
                     });
-
-                    pathList.remove(parent.indexOfChild(selectedView) - 1);
-                    parent.removeView(selectedView);
-                    buttonsBackgroundLayout.setVisibility(View.GONE);
                     break;
             }
         }
@@ -281,7 +280,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                             successCount--;
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
-                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date,0,0);
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0);
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -323,6 +322,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 });
     }
 
+
     private void postInit() {
         if (postInfo != null) {
             titleEditText.setText(postInfo.getTitle());
@@ -331,39 +331,25 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 String contents = contentsList.get(i);
                 if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-30f3c.appspot.com/o/post")) {
                     pathList.add(contents);
+                    ContentsItemView contentsItemView = new ContentsItemView(this);
+                    parent.addView(contentsItemView);
 
-                    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    LinearLayout linearLayout = new LinearLayout(WritePostActivity.this);
-                    linearLayout.setLayoutParams(layoutParams);
-                    linearLayout.setOrientation(LinearLayout.VERTICAL);
-                    parent.addView(linearLayout);
-
-                    ImageView imageView = new ImageView(WritePostActivity.this);
-                    imageView.setLayoutParams(layoutParams);
-                    imageView.setAdjustViewBounds(true);
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    imageView.setOnClickListener(new View.OnClickListener() {
+                    contentsItemView.setImage(contents);
+                    contentsItemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             buttonsBackgroundLayout.setVisibility(View.VISIBLE);
                             selectedImageView = (ImageView) v;
                         }
                     });
-                    Glide.with(this).load(contents).override(1000).into(imageView);
-                    linearLayout.addView(imageView);
 
-                    EditText editText = new EditText(WritePostActivity.this);
-                    editText.setLayoutParams(layoutParams);
-                    editText.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_CLASS_TEXT);
-                    editText.setHint("내용");
+                    contentsItemView.setOnFocusChangeListener(onFocusChangeListener);
                     if (i < contentsList.size() - 1) {
                         String nextContents = contentsList.get(i + 1);
-                        if (!Patterns.WEB_URL.matcher(nextContents).matches() || !nextContents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-30f3c.appspot.com/o/post")) {
-                            editText.setText(nextContents);
+                        if (!Patterns.WEB_URL.matcher(nextContents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-30f3c.appspot.com/o/post")) {
+                            contentsItemView.setText(nextContents);
                         }
                     }
-                    editText.setOnFocusChangeListener(onFocusChangeListener);
-                    linearLayout.addView(editText);
                 } else if (i == 0) {
                     contentsEditText.setText(contents);
                 }
