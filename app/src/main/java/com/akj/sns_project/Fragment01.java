@@ -2,6 +2,7 @@ package com.akj.sns_project;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,11 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akj.sns_project.activity.BoardActivity;
@@ -47,6 +51,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -64,17 +70,18 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 public class Fragment01 extends Fragment {
-//프래그먼트 로드
+    //프래그먼트 로드
     private static final String TAG = "BoardActicity";
     private FirebaseUser firebaseUser;              // 파이어베이스 유저 정보 가져오기 위해 생성한 이름
     private FirebaseFirestore firebaseFirestore;    // 파이어베이스스토어에서 정보 가져오기 위해 사용한 이름
     private MainAdapter mainAdapter;                // mainadapter 사용하기 위한 이름
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
-
+    private StorageReference storageRef;
     private View view;
     private Button logoutButton;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
+    private int successCount;
 
     static RequestQueue requestQueue;
     private ArrayList<Poster> posters;
@@ -89,7 +96,6 @@ public class Fragment01 extends Fragment {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스에서 유저정보를 받아오는데 _ 대규
 
 
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -97,15 +103,14 @@ public class Fragment01 extends Fragment {
             }
         }).start();
 
-        if(requestQueue == null)
-        {
+        // 파이어베이스 초기화 함수들
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+
+        if (requestQueue == null) {
 
             requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         }
-
-
-
-
 
 
         if (firebaseUser == null) {// 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
@@ -159,7 +164,7 @@ public class Fragment01 extends Fragment {
     }
 
     private void initRecyclerViewAndAdapter() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(gridLayoutManager);
     }
 
@@ -171,28 +176,41 @@ public class Fragment01 extends Fragment {
 
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
         @Override
-        public void onDelete(String id) {       // 게시글 삭제 기능_대규 여기서부터
-            firebaseFirestore.collection("posts").document(id)
-                    .delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        // 여기까지 파이어베이스스토어에서 제공하는 글 삭제 기능
+        public void onDelete(int position) {       // 게시글 삭제 기능_대규 여기서부터
+            final String id = postList.get(position).getId();
+            ArrayList<String> contentsList = postList.get(position).getContents();
+
+            for (int i = 0; i < contentsList.size(); i++) {
+                String contents = contentsList.get(i);
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                    successCount++;
+                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                    String[] list2 = list[0].split("%2F");
+                    String name = list2[list2.length - 1];
+                    // Create a reference to the file to delete
+                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    // Delete the file
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(Void aVoid) { // 성공적으로 글 삭제시 토스트 메세지로 글 삭제에 성공했다고 알려줌
-                            startToast("게시글을 삭제하였습니다.");
-                            postsUpdate();
+                        public void onSuccess(Void aVoid) {
+                            successCount--;
+                            storeUploader(id);
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() { // 글 삭제 실패시
+                    }).addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            startToast("게시글을 삭제하지 못하였습니다.");
+                        public void onFailure(@NonNull Exception exception) {
+                            startToast("삭제 실패");
                         }
                     });
+                }
+            }
+            storeUploader(id);
         }
 
         @Override
-        public void onModify(String id) {
-            myStartActivity(WritePostActivity.class,id);
+        public void onModify(int position) {
+            myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
     };
 
@@ -215,9 +233,10 @@ public class Fragment01 extends Fragment {
     };
 
     //실제 게시물을 보여주고 업데이트 해주는 코드
-    private void postsUpdate(){
+    private void postsUpdate() {
         if (firebaseUser != null) {
             CollectionReference collectionReference = firebaseFirestore.collection("posts");    // 파이어베이스 posts폴더를 사용
+            //collectionReference.document().update()
             collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -241,29 +260,51 @@ public class Fragment01 extends Fragment {
                     });
         }
     }
+
+    private void storeUploader(String id){
+        if(successCount == 0) {
+            firebaseFirestore.collection("posts").document(id)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            startToast("게시글을 삭제하였습니다.");
+                            postsUpdate();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            startToast("게시글을 삭제하지 못하였습니다.");
+                        }
+                    });
+        }
+    }
+
+
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(getActivity(), c);
         startActivity(intent);
     }
 
-    private void myStartActivity(Class c, String id) {  // 게시글 수정할때 사용하는 액티비티 이동함수
+    private void myStartActivity(Class c, PostInfo postInfo) {  // 게시글 수정할때 사용하는 액티비티 이동함수
         Intent intent = new Intent(getActivity(), c);
-        intent.putExtra("id",id);
+        intent.putExtra("postInfo", postInfo);
         startActivity(intent);
     }
+
     private void startToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
-    public void request(String urlStr)
-    {
-        StringBuilder output  = new StringBuilder();
-        try{
+
+    public void request(String urlStr) {
+        StringBuilder output = new StringBuilder();
+        try {
             URL url = new URL(urlStr);
 
-            HttpURLConnection connection = (HttpsURLConnection)url.openConnection();
+            HttpURLConnection connection = (HttpsURLConnection) url.openConnection();
 
-            if(connection !=null)
-            {
+            if (connection != null) {
                 connection.setConnectTimeout(10000);
                 connection.setRequestMethod("GET");
                 connection.setDoInput(true);
@@ -271,30 +312,25 @@ public class Fragment01 extends Fragment {
                 int resCode = connection.getResponseCode();
                 BufferedReader reader = new BufferedReader((new InputStreamReader(connection.getInputStream())));
                 String line = null;
-                while(true)
-                {
+                while (true) {
                     line = reader.readLine();
-                    if(line ==null)
-                    {
+                    if (line == null) {
                         break;
                     }
 
-                    output.append(line +"\n");
+                    output.append(line + "\n");
                 }
                 reader.close();
                 connection.disconnect();
             }
 
-            Log.w("output popular",output.toString());
-        }
-        catch (Exception ex)
-        {
+            Log.w("output popular", output.toString());
+        } catch (Exception ex) {
             System.out.println("예외발생함" + ex.toString());
         }
     }
 
-    public void makeRequest(String url)
-    {
+    public void makeRequest(String url) {
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -307,9 +343,9 @@ public class Fragment01 extends Fragment {
                 Movie movie = movieList.results.get(0);
 
                 posters = new ArrayList<Poster>();
-                posters.add(new Poster(movie.title.toString(),"https://image.tmdb.org/t/p/w500" + movie.poster_path.toString()));
+                posters.add(new Poster(movie.title.toString(), "https://image.tmdb.org/t/p/w500" + movie.poster_path.toString()));
 
-                final PosterAdapter posterAdapter = new PosterAdapter(getActivity(),posters);
+                final PosterAdapter posterAdapter = new PosterAdapter(getActivity(), posters);
                 //PosterList.setAdapter(posterAdapter); 리스트뷰 추가후 수정예정
 
                 Log.v("Poster", posters.get(0).toString());
@@ -320,14 +356,14 @@ public class Fragment01 extends Fragment {
                 Log.e("error ", error.getMessage());
             }
         }
-        ){
-            protected  Map<String, String> getParams() throws AuthFailureError{
+        ) {
+            protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 return params;
             }
         };
         request.setShouldCache(false);
-        Log.v("SendRequest","요청 보냄");
+        Log.v("SendRequest", "요청 보냄");
         //requestQueue.add(request);
         AppController.getInstance(getActivity()).addToRequestQueue(request);  //gson리퀘스트 큐에 넣기
     }

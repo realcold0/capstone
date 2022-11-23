@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +43,8 @@ public class BoardActivity extends BasicActivity {
     private RecyclerView recyclerView;              // recyclerView
     private MainAdapter mainAdapter;                // mainadapter 사용하기 위한 이름
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
+    private StorageReference storageRef;
+    private int successCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,10 @@ public class BoardActivity extends BasicActivity {
         setContentView(R.layout.activity_board);        // 이 액티비티는 activity_board.xml과 연결되어 있음
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스에서 유저정보를 받아오는데 _ 대규
+
+        // 파이어베이스 초기화 함수들
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
 
         if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
@@ -95,7 +104,7 @@ public class BoardActivity extends BasicActivity {
     }
 
     private void initRecyclerViewAndAdapter() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
     }
 
@@ -111,28 +120,41 @@ public class BoardActivity extends BasicActivity {
 
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
         @Override
-        public void onDelete(String id) {       // 게시글 삭제 기능_대규 여기서부터
-            firebaseFirestore.collection("posts").document(id)
-                    .delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        // 여기까지 파이어베이스스토어에서 제공하는 글 삭제 기능
+        public void onDelete(int position) {       // 게시글 삭제 기능_대규 여기서부터   // String id를 int position으로 변환
+            final String id = postList.get(position).getId();
+            ArrayList<String> contentsList = postList.get(position).getContents();
+
+            for (int i = 0; i < contentsList.size(); i++) {
+                String contents = contentsList.get(i);
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                    successCount++;
+                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                    String[] list2 = list[0].split("%2F");
+                    String name = list2[list2.length - 1];
+                    // Create a reference to the file to delete
+                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    // Delete the file
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
-                        public void onSuccess(Void aVoid) { // 성공적으로 글 삭제시 토스트 메세지로 글 삭제에 성공했다고 알려줌
-                            startToast("게시글을 삭제하였습니다.");
-                            postsUpdate();
+                        public void onSuccess(Void aVoid) {
+                            successCount--;
+                            storeUploader(id);
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() { // 글 삭제 실패시
+                    }).addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            startToast("게시글을 삭제하지 못하였습니다.");
+                        public void onFailure(@NonNull Exception exception) {
+                            startToast("삭제 실패");
                         }
                     });
+                }
+            }
+            storeUploader(id);
         }
 
         @Override
-        public void onModify(String id) {
-            myStartActivity(WritePostActivity.class,id);
+        public void onModify(int position) {
+            myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
     };
 
@@ -155,7 +177,7 @@ public class BoardActivity extends BasicActivity {
     };
 
     //실제 게시물을 보여주고 업데이트 해주는 코드
-    private void postsUpdate(){
+    private void postsUpdate() {
         if (firebaseUser != null) {
             CollectionReference collectionReference = firebaseFirestore.collection("posts");    // 파이어베이스 posts폴더를 사용
             collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
@@ -183,14 +205,35 @@ public class BoardActivity extends BasicActivity {
         }
     }
 
+    private void storeUploader(String id){
+        if(successCount == 0) {
+            firebaseFirestore.collection("posts").document(id)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            startToast("게시글을 삭제하였습니다.");
+                            postsUpdate();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            startToast("게시글을 삭제하지 못하였습니다.");
+                        }
+                    });
+        }
+    }
+
+
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(this, c);
         startActivity(intent);
     }
 
-    private void myStartActivity(Class c, String id) {  // 게시글 수정할때 사용하는 액티비티 이동함수
+    private void myStartActivity(Class c, PostInfo postInfo) {  // 게시글 수정할때 사용하는 액티비티 이동함수
         Intent intent = new Intent(this, c);
-        intent.putExtra("id",id);
+        intent.putExtra("postInfo", postInfo);
         startActivity(intent);
     }
 

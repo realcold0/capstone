@@ -1,10 +1,11 @@
 package com.akj.sns_project;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
-public class PostInfo {
+public class PostInfo implements Serializable {
     private String title;
     private ArrayList<String> contents;
     private String publisher;
@@ -18,7 +19,7 @@ public class PostInfo {
         this.contents = contents;
         this.publisher = publisher;
         this.createdAt = createdAt;
-        this.id = publisher; // id에 작성자 넣기
+        this.id = id; // id에 작성자 넣기
     }
 
     public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike){
@@ -26,7 +27,7 @@ public class PostInfo {
         this.contents = contents;
         this.publisher = publisher;
         this.createdAt = createdAt;
-        this.id = publisher; // id에 작성자 넣기
+        //this.id = publisher; // id에 작성자 넣기
         this.like = like;
         this.unlike = unlike;
     }

@@ -35,24 +35,34 @@
                 android:id="@+id/menu"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:cardCornerRadius="20dp">
+                android:layout_margin="5dp"
+                app:cardCornerRadius="15dp">
 
                 <ImageView
                     android:id="@+id/imageView2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_margin="3dp"
                     app:srcCompat="@drawable/ic_baseline_more_vert_24" />
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
         <!--tools:text="2000000"  이렇게 하면 코딩화면에는 적용되지만 어플에는 적용 X-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="#000000">
 
+        </RelativeLayout>
         <LinearLayout
             android:id="@+id/contentsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="5dp">
 
         </LinearLayout>
 
