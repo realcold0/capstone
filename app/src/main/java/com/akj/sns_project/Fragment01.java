@@ -106,9 +106,6 @@ public class Fragment01 extends Fragment {
         }).start();
 
 
-
-        if(requestQueue == null)
-        {
         // 파이어베이스 초기화 함수들
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -120,7 +117,7 @@ public class Fragment01 extends Fragment {
 
         posterRecyclerView = view.findViewById(R.id.PosterList);
         posterRecyclerView.setHasFixedSize(true);
-        posterRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL, false));
+        posterRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
 
         posters = new ArrayList<Poster>();
         posterAdapter = new PosterAdapter();
@@ -203,7 +200,7 @@ public class Fragment01 extends Fragment {
                     String[] list2 = list[0].split("%2F");
                     String name = list2[list2.length - 1];
                     // Create a reference to the file to delete
-                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    StorageReference desertRef = storageRef.child("posts/" + id + "/" + name);
                     // Delete the file
                     desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -275,8 +272,8 @@ public class Fragment01 extends Fragment {
         }
     }
 
-    private void storeUploader(String id){
-        if(successCount == 0) {
+    private void storeUploader(String id) {
+        if (successCount == 0) {
             firebaseFirestore.collection("posts").document(id)
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -344,8 +341,7 @@ public class Fragment01 extends Fragment {
         }
     }
 
-    public void makeRequest(String url)
-        {
+    public void makeRequest(String url) {
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -368,7 +364,7 @@ public class Fragment01 extends Fragment {
                 //posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
                 //posters.add(new Poster(movie4.title.toString(), movie4.poster_path.toString()));
 
-                posterAdapter = new PosterAdapter(getActivity(),posters);
+                posterAdapter = new PosterAdapter(getActivity(), posters);
                 posterRecyclerView.setAdapter(posterAdapter);
                 Log.v("Poster", posters.get(0).toString());
 
@@ -379,15 +375,16 @@ public class Fragment01 extends Fragment {
                 Log.e("error ", error.getMessage());
             }
         }
-        ){
-            protected  Map<String, String> getParams() throws AuthFailureError{
+        ) {
+            protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 return params;
             }
         };
         request.setShouldCache(false);
-        Log.v("SendRequest","요청 보냄");
+        Log.v("SendRequest", "요청 보냄");
         //requestQueue.add(request);
         AppController.getInstance(getActivity()).addToRequestQueue(request);  //gson리퀘스트 큐에 넣기
     }
 }
+
