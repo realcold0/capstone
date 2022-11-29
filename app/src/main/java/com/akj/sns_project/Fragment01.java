@@ -81,6 +81,8 @@ public class Fragment01 extends Fragment {
     private Button logoutButton;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
+    private RecyclerView posterRecyclerView;
+    private PosterAdapter posterAdapter;
     private int successCount;
 
     static RequestQueue requestQueue;
@@ -103,6 +105,10 @@ public class Fragment01 extends Fragment {
             }
         }).start();
 
+
+
+        if(requestQueue == null)
+        {
         // 파이어베이스 초기화 함수들
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -111,6 +117,14 @@ public class Fragment01 extends Fragment {
 
             requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         }
+
+        posterRecyclerView = view.findViewById(R.id.PosterList);
+        posterRecyclerView.setHasFixedSize(true);
+        posterRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),RecyclerView.HORIZONTAL, false));
+
+        posters = new ArrayList<Poster>();
+        posterAdapter = new PosterAdapter();
+        posterRecyclerView.setAdapter(posterAdapter);
 
 
         if (firebaseUser == null) {// 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
@@ -330,7 +344,8 @@ public class Fragment01 extends Fragment {
         }
     }
 
-    public void makeRequest(String url) {
+    public void makeRequest(String url)
+        {
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -340,15 +355,23 @@ public class Fragment01 extends Fragment {
                 //ListView PosterList = view.findViewById(R.id.ListView);  리스트뷰 추가후 수정예정
 
                 MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
+
+
                 Movie movie = movieList.results.get(0);
+                Movie movie2 = movieList.results.get(1);
+                //Movie movie3 = movieList.results.get(2);
+                //Movie movie4 = movieList.results.get(3);
 
                 posters = new ArrayList<Poster>();
-                posters.add(new Poster(movie.title.toString(), "https://image.tmdb.org/t/p/w500" + movie.poster_path.toString()));
+                posters.add(new Poster(movie.title.toString(), movie.poster_path.toString()));
+                posters.add(new Poster(movie2.title.toString(), movie2.poster_path.toString()));
+                //posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
+                //posters.add(new Poster(movie4.title.toString(), movie4.poster_path.toString()));
 
-                final PosterAdapter posterAdapter = new PosterAdapter(getActivity(), posters);
-                //PosterList.setAdapter(posterAdapter); 리스트뷰 추가후 수정예정
-
+                posterAdapter = new PosterAdapter(getActivity(),posters);
+                posterRecyclerView.setAdapter(posterAdapter);
                 Log.v("Poster", posters.get(0).toString());
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -356,14 +379,14 @@ public class Fragment01 extends Fragment {
                 Log.e("error ", error.getMessage());
             }
         }
-        ) {
-            protected Map<String, String> getParams() throws AuthFailureError {
+        ){
+            protected  Map<String, String> getParams() throws AuthFailureError{
                 Map<String, String> params = new HashMap<String, String>();
                 return params;
             }
         };
         request.setShouldCache(false);
-        Log.v("SendRequest", "요청 보냄");
+        Log.v("SendRequest","요청 보냄");
         //requestQueue.add(request);
         AppController.getInstance(getActivity()).addToRequestQueue(request);  //gson리퀘스트 큐에 넣기
     }
