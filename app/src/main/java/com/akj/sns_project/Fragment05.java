@@ -1,23 +1,19 @@
 package com.akj.sns_project;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import  androidx.appcompat.app.AppCompatActivity;
+
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import com.akj.sns_project.activity.LoginActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +25,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Fragment05 extends Fragment implements View.OnClickListener {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance(); // 인스턴스 초기화
+    private View view;
+    private Fragment_Post fragment_post;
+    private Fragment05 fragment05;
 
     @Override
     public void onStart() { // 시작할 때
@@ -42,6 +41,8 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        fragment_post = new Fragment_Post();
+
         // xml 파일 연결
         View root = inflater.inflate(R.layout.fragment_05, container, false);
 
@@ -52,7 +53,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         // xml 파일에 있는 텍스트, 버튼 찾기
         TextView nickname = root.findViewById(R.id.nickname); // 닉네임
         ImageView userimage = root.findViewById(R.id.userImage);
-        // Button btn123 = root.findViewById(R.id.button4);
+        Button PostBtn = root.findViewById(R.id.button4);
 
         // DB에서 user 컬렉션 선택 후 로그인된 아이디에 맞는 정보 가져오기
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -76,20 +77,26 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
             }
         });
 
-        // btn123.setOnClickListener(this);
+        PostBtn.setOnClickListener(this);
         return root;
     }
 
-// 버튼 클릭시 실행되는 함수
+
+    // 버튼 클릭시 실행되는 함수
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.button4){
-            Log.d("Button4","work");
+            Intent intent = new Intent(this.getContext(), Fragment_Post.class);
+            startActivity(intent);
+            //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
         }
+        /*
         else if(view.getId() == R.id.button3){
             Log.d("Button3","work");
         }
+         */
     }
+
  }
 
 
