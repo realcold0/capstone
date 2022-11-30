@@ -52,6 +52,7 @@
         <activity android:name=".activity.GalleryActivity"></activity>
         <activity android:name=".activity.CameraActivity"></activity>
         <activity android:name=".activity.PostActivity"></activity>
+        <activity android:name=".Fragment_Post"></activity>
     </application>
 
 </manifest>
