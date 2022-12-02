@@ -3,8 +3,6 @@ package com.akj.sns_project.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -15,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -24,34 +21,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
 import com.akj.sns_project.activity.PostActivity;
-import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
-
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
+public class BlackAdapter extends RecyclerView.Adapter<BlackAdapter.BlackViewHolder> {
     private ArrayList<PostInfo> mDataset;
     private Activity activity;
     private OnPostListener onPostListener;
     private ImageView imageView;
 
     //RecyclerView와 cardView를 이용하여 게시글들을 보며줄 것으로 선언
-    static class MainViewHolder extends RecyclerView.ViewHolder {
+    static class BlackViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
 
-        MainViewHolder(CardView v) {
+        BlackViewHolder(CardView v) {
             super(v);
             cardView = v;
         }
     }
 
-    public MainAdapter(Activity activity, ArrayList<PostInfo> myDataset) { // 배열로 들어온 데이터들을 불러오는 작업
+    public BlackAdapter(Activity activity, ArrayList<PostInfo> myDataset) { // 배열로 들어온 데이터들을 불러오는 작업
         mDataset = myDataset;
         this.activity = activity;
     }
@@ -68,15 +61,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
     @NonNull
     @Override//RecyclerView와 cardView를 만들어주는 작업. 보이는 부분만 load함.
-    public MainAdapter.MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BlackAdapter.BlackViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //layout을 view객체로 만들기 위해 layoutInflater를 이용한다.
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
-        final MainViewHolder mainViewHolder = new MainViewHolder(cardView);
+        final BlackViewHolder blackViewHolder = new BlackViewHolder(cardView);
         cardView.setOnClickListener(new View.OnClickListener() { //하나의 카드뷰를 클릭 시 intent로 해당하는 값을 BoardActivity로 넘겨줌
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, PostActivity.class);
-                intent.putExtra("postInfo", mDataset.get(mainViewHolder.getAdapterPosition()));
+                intent.putExtra("postInfo", mDataset.get(blackViewHolder.getAdapterPosition()));
                 activity.startActivity(intent);
             }
         });
@@ -84,28 +77,29 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         cardView.findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {    // cardview의 menu버튼
             @Override
             public void onClick(View view) {
-                showPopup(view, mainViewHolder.getAdapterPosition());    // 설정창 나오게 하는거
+                showPopup(view, blackViewHolder.getAdapterPosition());    // 설정창 나오게 하는거
             }
         });
 
         cardView.findViewById(R.id.likeManage).setOnClickListener(new View.OnClickListener() {    // 여기 수정함 11.21
             @Override
             public void onClick(View view) {
-                countup(mainViewHolder, mainViewHolder.getAdapterPosition());
+                countup(blackViewHolder, blackViewHolder.getAdapterPosition());
             }
         });
 
         cardView.findViewById(R.id.unlikeManage).setOnClickListener(new View.OnClickListener() {    // 여기 수정함 11.21
             @Override
             public void onClick(View view) {
-                countdown(mainViewHolder, mainViewHolder.getAdapterPosition());
+                countdown(blackViewHolder, blackViewHolder.getAdapterPosition());
             }
         });
 
-        return mainViewHolder;
+
+        return blackViewHolder;
     }
 
-    public void countup(@NonNull final MainViewHolder holder, int position) {    // 여기 수정함 11.21  이제 셋팅한 카운트 숫자를 파이어베이스로 넣어야함
+    public void countup(@NonNull final BlackViewHolder holder, int position) {    // 여기 수정함 11.21  이제 셋팅한 카운트 숫자를 파이어베이스로 넣어야함
         CardView cardView = holder.cardView;
         TextView likeCount = cardView.findViewById(R.id.likeCount);
         likeCount.setText(String.valueOf(mDataset.get(position).getlike() + 1));
@@ -114,14 +108,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
     }
 
-    public void countdown(@NonNull final MainViewHolder holder, int position) {    // 여기 수정함 11.21
+    public void countdown(@NonNull final BlackViewHolder holder, int position) {    // 여기 수정함 11.21
         CardView cardView = holder.cardView;
         TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
         unlikeCount.setText(String.valueOf(mDataset.get(position).getlike() + 1));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MainViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final BlackViewHolder holder, int position) {
         //item_post에 실제 db들의 값들을 넣어주는 작업
         //CardView에 title값 넣어주기
         CardView cardView = holder.cardView;
