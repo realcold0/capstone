@@ -2,16 +2,16 @@ package com.akj.sns_project;
 
 public class Poster {
     private String MovieName;
-    private String Poster;
-    public Poster(String MovieName,String Poster){
+    private String imageUrl;
+    public Poster(String MovieName,String imageUrl){
         this.MovieName = MovieName;
-        this.Poster = Poster;
+        this.imageUrl =  "https://image.tmdb.org/t/p/w500"+ imageUrl;
     }
     public String getMovieName(){
         return MovieName;
     }
-    public String getPoster()
+    public String getImageUrl()
     {
-        return Poster;
+        return imageUrl;
     }
 }
