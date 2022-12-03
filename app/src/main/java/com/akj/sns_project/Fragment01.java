@@ -354,14 +354,14 @@ public class Fragment01 extends Fragment {
 
 
                 Movie movie = movieList.results.get(0);
-                Movie movie2 = movieList.results.get(1);
-                //Movie movie3 = movieList.results.get(2);
+                //Movie movie2 = movieList.results.get(1);
+                Movie movie3 = movieList.results.get(2);
                 //Movie movie4 = movieList.results.get(3);
 
                 posters = new ArrayList<Poster>();
-                posters.add(new Poster(movie.title.toString(), movie.poster_path.toString()));
-                posters.add(new Poster(movie2.title.toString(), movie2.poster_path.toString()));
-                //posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
+                posters.add(new Poster(movie.title.toString(), movie.poster_path));
+                //posters.add(new Poster(movie2.title.toString(), movie2.poster_path));
+                posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
                 //posters.add(new Poster(movie4.title.toString(), movie4.poster_path.toString()));
 
                 posterAdapter = new PosterAdapter(getActivity(), posters);
