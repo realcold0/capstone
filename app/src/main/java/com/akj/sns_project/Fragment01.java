@@ -360,7 +360,7 @@ public class Fragment01 extends Fragment {
 
                 posters = new ArrayList<Poster>();
                 posters.add(new Poster(movie.title.toString(), movie.poster_path.toString()));
-                posters.add(new Poster(movie2.title.toString(), movie2.poster_path.toString()));
+                //posters.add(new Poster(movie2.title.toString(), movie2.poster_path.toString()));
                 //posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
                 //posters.add(new Poster(movie4.title.toString(), movie4.poster_path.toString()));
 
