@@ -40,6 +40,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     private Activity activity;
     private OnPostListener onPostListener;
     private ImageView imageView;
+    private int addlikeCount = 0;
+    private int addunlikeCount = 0;
+    private String likeAction = "";
+    private String unlikeAction = "";
 
     //RecyclerView와 cardView를 이용하여 게시글들을 보며줄 것으로 선언
     static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -108,16 +112,63 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     public void countup(@NonNull final MainViewHolder holder, int position) {    // 여기 수정함 11.21  이제 셋팅한 카운트 숫자를 파이어베이스로 넣어야함
         CardView cardView = holder.cardView;
         TextView likeCount = cardView.findViewById(R.id.likeCount);
-        likeCount.setText(String.valueOf(mDataset.get(position).getlike() + 1));
+        TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
 
-        //여기 수정함 11.21 22시
+        if(likeAction == "" && unlikeAction == ""){
+            addlikeCount += 1;
+            likeAction = "liked";
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
 
+        }else if(likeAction == "" && unlikeAction == "unliked"){
+            addlikeCount += 1;
+            addunlikeCount -= 1;
+            likeAction = "liked";
+            unlikeAction = "";
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+
+        }else if (likeAction == "liked" && unlikeAction == ""){
+            addlikeCount -= 1;
+            likeAction = "";
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+        }
+        int likenum = mDataset.get(position).getlike();
+        mDataset.get(position).setlike(likenum);
+        int unlikenum = mDataset.get(position).getUnlike();
+        mDataset.get(position).setunlike(unlikenum);
     }
 
     public void countdown(@NonNull final MainViewHolder holder, int position) {    // 여기 수정함 11.21
         CardView cardView = holder.cardView;
+        TextView likeCount = cardView.findViewById(R.id.likeCount);
         TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
-        unlikeCount.setText(String.valueOf(mDataset.get(position).getlike() + 1));
+
+        if(unlikeAction == "" && likeAction ==""){
+            addunlikeCount += 1;
+            unlikeAction = "unliked";
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+
+        }else if(unlikeAction == "" && likeAction == "liked"){
+            addunlikeCount += 1;
+            addlikeCount -= 1;
+            unlikeAction = "unliked";
+            likeAction = "";
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+
+        }else if(unlikeAction == "unliked" && likeAction == ""){
+            addunlikeCount -= 1;
+            unlikeAction = "";
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+        }
+        int likenum = mDataset.get(position).getlike();
+        mDataset.get(position).setlike(likenum);
+        int unlikenum = mDataset.get(position).getUnlike();
+        mDataset.get(position).setunlike(unlikenum);
     }
 
     @Override
