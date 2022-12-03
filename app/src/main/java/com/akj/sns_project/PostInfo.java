@@ -15,14 +15,6 @@ public class PostInfo implements Serializable {
     private int like;
     private int unlike;
 
-    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, String id){
-        this.title = title;
-        this.contents = contents;
-        this.publisher = publisher;
-        this.createdAt = createdAt;
-        this.id = id; // id에 작성자 넣기
-    }
-
     public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike){
         this.title = title;
         this.contents = contents;
@@ -79,5 +71,5 @@ public class PostInfo implements Serializable {
     public int getUnlike(){
         return this.unlike;
     }
-    public void setunlike(int unlike){ this.unlike = like; }
+    public void setunlike(int unlike){ this.unlike = unlike; }
 }
