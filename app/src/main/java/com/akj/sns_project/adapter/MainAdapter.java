@@ -164,7 +164,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             unlikeAction = "";
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
-
         }
         int likenum = mDataset.get(position).getlike();
         mDataset.get(position).setlike(likenum);
