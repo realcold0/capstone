@@ -3,6 +3,9 @@ package com.akj.sns_project.activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +17,8 @@ import com.akj.sns_project.Movie;
 import com.akj.sns_project.MovieList;
 import com.akj.sns_project.Poster;
 import com.akj.sns_project.R;
+import com.akj.sns_project.adapter.PosterAdapter;
+import com.akj.sns_project.adapter.SearchMovieAdapter;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,6 +32,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link SearchMovie#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class SearchMovie extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,8 +48,14 @@ public class SearchMovie extends Fragment {
     private String mParam2;
     static RequestQueue requestQueue;
     private ArrayList<Poster> posters;
-    public SearchMovie() {
+
+    private RecyclerView posterRecyclerView;
+    private SearchMovieAdapter searchMovieAdapter;
+    String url;
+
+    public SearchMovie(String url) {
         // Required empty public constructor
+        this.url = url;
     }
 
     /**
@@ -51,7 +67,7 @@ public class SearchMovie extends Fragment {
      * @return A new instance of fragment SearchMovie.
      */
     public static SearchMovie newInstance(String param1, String param2) {
-        SearchMovie fragment = new SearchMovie();
+        SearchMovie fragment = new SearchMovie("https://api.themoviedb.org/3/discover/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2");
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -67,7 +83,10 @@ public class SearchMovie extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
+    private void initRecyclerViewAndAdapter() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+        posterRecyclerView.setLayoutManager(gridLayoutManager);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,7 +98,7 @@ public class SearchMovie extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                makeRequest("https://api.themoviedb.org/3/trending/all/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
+                makeRequest(url);
             }
         }).start();
 
@@ -87,6 +106,16 @@ public class SearchMovie extends Fragment {
 
             requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         }
+
+        posterRecyclerView = view.findViewById(R.id.searchList);
+        posterRecyclerView.setHasFixedSize(true);
+
+        posterRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        posters = new ArrayList<Poster>();
+        searchMovieAdapter = new SearchMovieAdapter();
+        posterRecyclerView.setAdapter(searchMovieAdapter);
+        initRecyclerViewAndAdapter();
 
         return  view;
 
@@ -104,7 +133,20 @@ public class SearchMovie extends Fragment {
                 MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
 
 
-                Movie movie = movieList.results.get(0);
+                Movie movie = new Movie();
+                posters = new ArrayList<Poster>();
+
+                for(int i = 0; i< movieList.results.size(); i++)
+                {
+                    movie = movieList.results.get(i);
+                    posters.add(new Poster(movie.title.toString(), movie.poster_path));
+                }
+
+
+
+                searchMovieAdapter = new SearchMovieAdapter(getActivity(), posters);
+                posterRecyclerView.setAdapter(searchMovieAdapter);
+                Log.v("genre Posters", posters.get(0).toString());
 
             }
         }, new Response.ErrorListener() {

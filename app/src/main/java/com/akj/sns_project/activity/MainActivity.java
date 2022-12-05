@@ -80,7 +80,7 @@ public class MainActivity extends BasicActivity {//fragment 코드들
     }
 
     public void GenreSearch(String url){
-        searchMovie = new SearchMovie();
+        searchMovie = new SearchMovie(url);
         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, searchMovie).commit();
 
     }
