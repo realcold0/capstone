@@ -2,16 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 권한 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CAMERA.autofocus" />
 
     <application
-
         android:allowBackup="true"
-        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/moverse_con3_foreground"
@@ -19,8 +16,8 @@
         android:roundIcon="@mipmap/moverse_con3_foreground"
         android:supportsRtl="true"
         android:theme="@style/Theme.SNS_Project"
-        tools:targetApi="31"
-        >
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
 
         <activity
             android:name=".activity.MainActivity"
@@ -41,17 +38,17 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.BoardActivity"></activity>
-        <activity android:name=".activity.MypageActivity"></activity>
-        <activity android:name=".activity.LoginActivity"></activity>
-        <activity android:name=".activity.SignUpActivity"></activity>
-        <activity android:name=".activity.PasswordResetActivity"></activity>
-        <activity android:name=".activity.MemberInitActivity"></activity>
-        <activity android:name=".activity.BasicActivity"></activity>
-        <activity android:name=".activity.WritePostActivity"></activity>
-        <activity android:name=".activity.GalleryActivity"></activity>
-        <activity android:name=".activity.CameraActivity"></activity>
-        <activity android:name=".activity.PostActivity"></activity>
+        <activity android:name=".activity.BoardActivity" />
+        <activity android:name=".activity.MypageActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.SignUpActivity" />
+        <activity android:name=".activity.PasswordResetActivity" />
+        <activity android:name=".activity.MemberInitActivity" />
+        <activity android:name=".activity.BasicActivity" />
+        <activity android:name=".activity.WritePostActivity" />
+        <activity android:name=".activity.GalleryActivity" />
+        <activity android:name=".activity.CameraActivity" />
+        <activity android:name=".activity.PostActivity" />
         <activity android:name=".Fragment_Post"></activity>
         <activity android:name=".activity.BlackBoardActivity"></activity>
         <activity android:name=".activity.WriteBlackPostActivity"></activity>

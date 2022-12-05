@@ -255,13 +255,15 @@ public class Fragment01 extends Fragment {
                             if (task.isSuccessful()) {
                                 postList.clear();   // 초기화 하고 가져오는 방식으로 업데이트
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    Log.d(TAG, document.getId() + " => " + document.getData().get("like"));
                                     postList.add(new PostInfo(  // 여기서부터
                                             document.getData().get("title").toString(),
                                             (ArrayList<String>) document.getData().get("contents"),
                                             document.getData().get("publisher").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
-                                            document.getId())); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
+                                            Integer.parseInt(document.getData().get("like").toString()),
+                                            Integer.parseInt(document.getData().get("unlike").toString())
+                                    )); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
                                 }
                                 mainAdapter.notifyDataSetChanged();
                             } else {
@@ -354,14 +356,14 @@ public class Fragment01 extends Fragment {
 
 
                 Movie movie = movieList.results.get(0);
-                Movie movie2 = movieList.results.get(1);
-                //Movie movie3 = movieList.results.get(2);
+                //Movie movie2 = movieList.results.get(1);
+                Movie movie3 = movieList.results.get(2);
                 //Movie movie4 = movieList.results.get(3);
 
                 posters = new ArrayList<Poster>();
-                posters.add(new Poster(movie.title.toString(), movie.poster_path.toString()));
-                posters.add(new Poster(movie2.title.toString(), movie2.poster_path.toString()));
-                //posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
+                posters.add(new Poster(movie.title.toString(), movie.poster_path));
+                //posters.add(new Poster(movie2.title.toString(), movie2.poster_path));
+                posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
                 //posters.add(new Poster(movie4.title.toString(), movie4.poster_path.toString()));
 
                 posterAdapter = new PosterAdapter(getActivity(), posters);

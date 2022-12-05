@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.Toast;
 
 import com.akj.sns_project.PostInfo;
@@ -193,7 +192,9 @@ public class BoardActivity extends BasicActivity {
                                             (ArrayList<String>) document.getData().get("contents"),
                                             document.getData().get("publisher").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
-                                            document.getId())); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
+                                            Integer.parseInt(document.getData().get("like").toString()),
+                                            Integer.parseInt(document.getData().get("unlike").toString())
+                                    )); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
                                 }
                                 mainAdapter.notifyDataSetChanged();
 
