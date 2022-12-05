@@ -56,7 +56,6 @@ public class BlackBoardFragment extends Fragment {
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
     private StorageReference storageRef;
     private View view;
-    //private Button logoutButton;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
     private int successCount;
@@ -199,15 +198,16 @@ public class BlackBoardFragment extends Fragment {
                             if (task.isSuccessful()) {
                                 postList.clear();   // 초기화 하고 가져오는 방식으로 업데이트
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    Log.d(TAG, document.getId() + " => " + document.getData().get("like"));
                                     postList.add(new PostInfo(  // 여기서부터
                                             document.getData().get("title").toString(),
                                             (ArrayList<String>) document.getData().get("contents"),
                                             document.getData().get("publisher").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
+                                            document.getId(),
                                             Integer.parseInt(document.getData().get("like").toString()),
                                             Integer.parseInt(document.getData().get("unlike").toString())
-                                    )); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
+                                    ));
                                 }
                                 blackAdapter.notifyDataSetChanged();
                             } else {
