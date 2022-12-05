@@ -14,7 +14,6 @@ import com.akj.sns_project.Movie;
 import com.akj.sns_project.MovieList;
 import com.akj.sns_project.Poster;
 import com.akj.sns_project.R;
-import com.akj.sns_project.adapter.PosterAdapter;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,11 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchMovie#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SearchMovie extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

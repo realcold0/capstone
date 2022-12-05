@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.R;
-import com.akj.sns_project.activity.BasicActivity;
 import com.akj.sns_project.adapter.GalleryAdapter;
 
 import java.util.ArrayList;
