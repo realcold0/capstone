@@ -9,15 +9,20 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
-import com.akj.sns_project.activity.LoginActivity;
 import com.akj.sns_project.activity.MainActivity;
-import com.akj.sns_project.activity.WritePostActivity;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class Fragment02 extends Fragment {
     private Button btnAction;
+    private Button btnComedy;
+    private Button btnRomance;
+    private Button btnHorror;
+    private Button btnAni;
+    private Button btnCrime;
+    private Button btnAdventure;
+    private Button btnAllGenre;
+
     private View view;
     private String genre;
     static RequestQueue requestQueue;
@@ -48,6 +53,27 @@ public class Fragment02 extends Fragment {
         btnAction = view.findViewById(R.id.btnAction);
         btnAction.setOnClickListener(onClickListener);
 
+        btnAni = view.findViewById(R.id.btnAni);
+        btnAni.setOnClickListener(onClickListener);
+
+        btnCrime = view.findViewById(R.id.btnCrime);
+        btnCrime.setOnClickListener(onClickListener);
+
+        btnHorror = view.findViewById(R.id.btnHorror);
+        btnHorror.setOnClickListener(onClickListener);
+
+        btnRomance = view.findViewById(R.id.btnRomance);
+        btnRomance.setOnClickListener(onClickListener);
+
+        btnAdventure = view.findViewById(R.id.btnAdventure);
+        btnAdventure.setOnClickListener(onClickListener);
+
+        btnComedy = view.findViewById(R.id.btnComedy);
+        btnComedy.setOnClickListener(onClickListener);
+
+        btnAllGenre = view.findViewById(R.id.btn_all_genre);
+        btnAllGenre.setOnClickListener(onClickListener);
+
         Fragment01 fragment01;
 
 
@@ -68,6 +94,30 @@ public class Fragment02 extends Fragment {
                 case R.id.btnAction:
                     genre = "&with_genres=" + 28;
                     mainActivity.GenreSearch(url+genre+language);
+                    break;
+                case R.id.btnAdventure:
+                    genre = "&with_genres=" + 12;
+                    mainActivity.GenreSearch(url+genre+language);
+                    break;
+                case R.id.btnAni:
+                    genre = "&with_genres=" + 16;
+                    mainActivity.GenreSearch(url+genre+language);
+                    break;
+                case R.id.btnComedy:
+                    genre = "&with_genres=" + 35;
+                    mainActivity.GenreSearch(url+genre+language);
+                    break;
+                case R.id.btnCrime:
+                    genre = "&with_genres=" + 80;
+                    mainActivity.GenreSearch(url+genre+language);
+                    break;
+                case R.id.btnRomance:
+                    genre = "&with_genres=" + 10749;
+                    mainActivity.GenreSearch(url+genre+language);
+                    break;
+                case R.id.btn_all_genre:
+
+                    mainActivity.GenreSearch("https://api.themoviedb.org/3/trending/movie/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
                     break;
 
             }
