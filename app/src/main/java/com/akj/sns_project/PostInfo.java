@@ -15,15 +15,26 @@ public class PostInfo implements Serializable {
     private int like;
     private int unlike;
 
+    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, String id, int like, int unlike){
+        this.title = title;
+        this.contents = contents;
+        this.publisher = publisher;
+        this.createdAt = createdAt;
+        this.id = id;
+        this.like = like;
+        this.unlike = unlike;
+    }
+
     public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike){
         this.title = title;
         this.contents = contents;
         this.publisher = publisher;
         this.createdAt = createdAt;
-        //this.id = publisher; // id에 작성자 넣기
+        this.id = publisher;
         this.like = like;
         this.unlike = unlike;
     }
+
 /*
     public Map<String, Object> getPostInfo(){
         Map<String, Object> docData = new HashMap<>();
