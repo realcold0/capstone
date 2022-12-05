@@ -22,7 +22,7 @@ public class Fragment02 extends Fragment {
     private String genre;
     static RequestQueue requestQueue;
     MainActivity mainActivity;
-    String language = "ko-KR";
+    String language = "&language=ko-KR";
     String url = "https://api.themoviedb.org/3/discover/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2";
     // 메인 액티비티 위에 올린다.
     @Override
