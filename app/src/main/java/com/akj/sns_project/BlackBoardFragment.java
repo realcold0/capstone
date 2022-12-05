@@ -12,31 +12,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.akj.sns_project.activity.BoardActivity;
 import com.akj.sns_project.activity.LoginActivity;
 import com.akj.sns_project.activity.MemberInitActivity;
 import com.akj.sns_project.activity.WriteBlackPostActivity;
 import com.akj.sns_project.activity.WritePostActivity;
-import com.akj.sns_project.adapter.MainAdapter;
+import com.akj.sns_project.adapter.BlackAdapter;
 import com.akj.sns_project.listener.OnPostListener;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
+
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,17 +45,6 @@ import java.util.Date;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.gson.Gson;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.Buffer;
-import java.util.HashMap;
-import java.util.Map;
-import javax.net.ssl.HttpsURLConnection;
-import androidx.fragment.app.Fragment;
 
 
 public class BlackBoardFragment extends Fragment {
@@ -70,11 +52,10 @@ public class BlackBoardFragment extends Fragment {
     private static final String TAG = "BlackBoardActicity";
     private FirebaseUser firebaseUser;              // 파이어베이스 유저 정보 가져오기 위해 생성한 이름
     private FirebaseFirestore firebaseFirestore;    // 파이어베이스스토어에서 정보 가져오기 위해 사용한 이름
-    private MainAdapter mainAdapter;                // mainadapter 사용하기 위한 이름
+    private BlackAdapter blackAdapter;                // blackadapter 사용하기 위한 이름
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
     private StorageReference storageRef;
     private View view;
-    //private Button logoutButton;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
     private int successCount;
@@ -127,20 +108,18 @@ public class BlackBoardFragment extends Fragment {
         postList = new ArrayList<>();   // 게시글을 저장하기 위해 선언한 배열
 
         //게시물 업데이트(새로고침)을 위한 메서드. 데이터가 업데이트 되면 adapter를 다시 바꿔줘야함.
-        //MainAdaper에서 넘겨줌.
-        mainAdapter = new MainAdapter(getActivity(), postList);
-        mainAdapter.setOnPostListener(onPostListener); //onPostListener를 넘겨주면 MainAdapter에서도 쓸수있음.
+        //blackAdaper에서 넘겨줌.
+        blackAdapter = new BlackAdapter(getActivity(), postList);
+        blackAdapter.setOnPostListener(onPostListener); //onPostListener를 넘겨주면 blackAdapter에서도 쓸수있음.
 
-        //logoutButton = view.findViewById(R.id.logoutButton);
         floatingActionButton = view.findViewById(R.id.floatingActionButton);
         recyclerView = view.findViewById(R.id.recyclerView);
 
-        //logoutButton.setOnClickListener(onClickListener);
         floatingActionButton.setOnClickListener(onClickListener);
 
         recyclerView.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); // recyclerview를 수직으로 보여주는 linearlayoutmanager
-        recyclerView.setAdapter(mainAdapter);
+        recyclerView.setAdapter(blackAdapter);
 
         initRecyclerViewAndAdapter();
 
@@ -201,14 +180,6 @@ public class BlackBoardFragment extends Fragment {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-
-                // 로그아웃 케이스는 일단 제거 - 준범
-//                case R.id.logoutButton:
-//                    FirebaseAuth.getInstance().signOut();   // 파이어베이스에 로그아웃 신호 보내줌 _ 대규
-//                    myStartActivity(LoginActivity.class);   // 로그인 액티비티로 이동 _ 대규
-//                    startToast("로그아웃");
-//                    break;
-
                 case R.id.floatingActionButton:
                     myStartActivity(WriteBlackPostActivity.class);   // 글쓰기 버튼 클릭 시 이동 _ 대규
                     break;
@@ -227,17 +198,18 @@ public class BlackBoardFragment extends Fragment {
                             if (task.isSuccessful()) {
                                 postList.clear();   // 초기화 하고 가져오는 방식으로 업데이트
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    Log.d(TAG, document.getId() + " => " + document.getData().get("like"));
                                     postList.add(new PostInfo(  // 여기서부터
                                             document.getData().get("title").toString(),
                                             (ArrayList<String>) document.getData().get("contents"),
                                             document.getData().get("publisher").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
+                                            document.getId(),
                                             Integer.parseInt(document.getData().get("like").toString()),
                                             Integer.parseInt(document.getData().get("unlike").toString())
-                                    )); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
+                                    ));
                                 }
-                                mainAdapter.notifyDataSetChanged();
+                                blackAdapter.notifyDataSetChanged();
                             } else {
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                             }
