@@ -1,9 +1,10 @@
 package com.akj.sns_project.adapter;
 
+import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -15,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -24,12 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
 import com.akj.sns_project.activity.PostActivity;
-import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
-
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -81,6 +77,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             public void onClick(View v) {
                 Intent intent = new Intent(activity, PostActivity.class);
                 intent.putExtra("postInfo", mDataset.get(mainViewHolder.getAdapterPosition()));
+                Log.w(TAG, "메인어댑터 로그 => " + mDataset.get(mainViewHolder.getAdapterPosition()));
                 activity.startActivity(intent);
             }
         });

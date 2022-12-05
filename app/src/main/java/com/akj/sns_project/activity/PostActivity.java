@@ -1,23 +1,51 @@
 package com.akj.sns_project.activity;
 
+import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
+
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
+import com.akj.sns_project.ReplyInfo;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.ArrayList;;
+import java.util.Date;
 import java.util.Locale;
 
 public class PostActivity extends BasicActivity {
-
+    private FirebaseUser user;
+    private ReplyInfo replyInfo;
+    private int successCount;
+    private LinearLayout parent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,5 +96,81 @@ public class PostActivity extends BasicActivity {
                 }
             }
         }
+
+
+        // 여기서 부터 댓글
+        findViewById(R.id.reply).setOnClickListener(onClickListener);
+        parent = findViewById(R.id.replyLayout);
+    }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.reply:
+                    storageUpload();
+                    break;
+
+            }
+        }
+    };
+
+    private void storageUpload() {
+        final String contents = ((EditText) findViewById(R.id.contentsEditText)).getText().toString();
+
+        if (contents.length() > 0) {
+            final ArrayList<String> contentsList = new ArrayList<>();
+
+            // 파이어베이스에서 유저 정보를 가져옴
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+            final DocumentReference documentReference = replyInfo == null ?
+                    firebaseFirestore.collection("replys").document() :
+                    firebaseFirestore.collection("replys").document(replyInfo.getId());
+            final Date date = replyInfo == null ? new Date() : replyInfo.getCreatedAt(); // postInfo가 NULL이면 new Date값을 NULL이 아니면 postinfo의 createdAt값을 넣어줌
+            // 게시글 수정을 위한 코드드
+
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                LinearLayout linearLayout = (LinearLayout) parent.getChildAt(i);
+                for (int ii = 0; ii < linearLayout.getChildCount(); ii++) {
+                    View view = linearLayout.getChildAt(ii);
+                    if (view instanceof EditText) {
+                        String text = ((EditText) view).getText().toString();
+                        if (text.length() > 0) {
+                            contentsList.add(text);
+                        }
+                    }
+                }
+            }
+            if (successCount == 0) {   // 사진없이 글만 올리는 경우
+                storeUpload(documentReference, new ReplyInfo(contentsList, date));
+            }
+        } else {
+            startToast("제목을 입력해주세요.");
+        }
+    }
+
+    // 파이어베이스에서 제공하는 게시글 업로드 함수 코드
+    private void storeUpload(DocumentReference documentReference, ReplyInfo replyInfo) {
+        documentReference.set(replyInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+    private void startToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }
