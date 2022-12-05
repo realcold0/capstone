@@ -21,7 +21,7 @@ public class MainActivity extends BasicActivity {//fragment 코드들
     Fragment03 fragment03;
     Fragment04 fragment04;
     Fragment05 fragment05;
-
+    SearchMovie searchMovie;
     BottomNavigationView bottomNavigationView; // 아래 네비게이션 바 - 준범
 
     @Override
@@ -36,6 +36,7 @@ public class MainActivity extends BasicActivity {//fragment 코드들
         fragment03 = new Fragment03();
         fragment04 = new Fragment04();
         fragment05 = new Fragment05();
+
 
         getSupportFragmentManager().beginTransaction().add(R.id.main_frame, new Fragment01()).commit(); //FrameLayout에 fragment.xml 띄우기
 
@@ -78,6 +79,11 @@ public class MainActivity extends BasicActivity {//fragment 코드들
 
     }
 
+    public void GenreSearch(String url){
+        searchMovie = new SearchMovie(url);
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, searchMovie).commit();
+
+    }
     
 }
 

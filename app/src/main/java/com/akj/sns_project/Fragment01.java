@@ -101,7 +101,7 @@ public class Fragment01 extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                makeRequest("https://api.themoviedb.org/3/trending/all/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
+                makeRequest("https://api.themoviedb.org/3/trending/movie/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
             }
         }).start();
 
@@ -356,14 +356,18 @@ public class Fragment01 extends Fragment {
                 MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
 
 
-                Movie movie = movieList.results.get(0);
-                Movie movie2 = movieList.results.get(1);
-                //Movie movie3 = movieList.results.get(2);
-                //Movie movie4 = movieList.results.get(3);
-
+                Movie movie = new Movie();
                 posters = new ArrayList<Poster>();
-                posters.add(new Poster(movie.title.toString(), movie.poster_path.toString()));
-                //posters.add(new Poster(movie2.title.toString(), movie2.poster_path.toString()));
+
+                for(int i = 0; i< movieList.results.size(); i++)
+                {
+                    movie = movieList.results.get(i);
+                    posters.add(new Poster(movie.title.toString(), movie.poster_path));
+                }
+
+
+                //posters.add(new Poster(movie.title.toString(), movie.poster_path));
+                //posters.add(new Poster(movie2.title.toString(), movie2.poster_path));
                 //posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
                 //posters.add(new Poster(movie4.title.toString(), movie4.poster_path.toString()));
 
