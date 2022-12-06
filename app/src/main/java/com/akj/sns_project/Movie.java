@@ -6,7 +6,12 @@ public class Movie {
     int id;
     String adult;
     String backdrop_path;
-    String title, original_language, original_title, overview, poster_path, media_type;
+    public String title;
+    String original_language;
+    String original_title;
+    String overview;
+    public String poster_path;
+    String media_type;
     String release_date;
     float  popularity;
     boolean video;

@@ -40,7 +40,7 @@ public class BlackBoardActivity extends BasicActivity {
     private FirebaseUser firebaseUser;              // 파이어베이스 유저 정보 가져오기 위해 생성한 이름
     private FirebaseFirestore firebaseFirestore;    // 파이어베이스스토어에서 정보 가져오기 위해 사용한 이름
     private RecyclerView recyclerView;              // recyclerView
-    private BlackAdapter blackAdapter;                // blackadapter 사용하기 위한 이름
+    private BlackAdapter blackAdapter;              // blackadapter 사용하기 위한 이름
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
     private StorageReference storageRef;
     private int successCount;
@@ -215,6 +215,8 @@ public class BlackBoardActivity extends BasicActivity {
                             startToast("게시글을 삭제하지 못하였습니다.");
                         }
                     });
+//            firebaseFirestore.collection("blackposts").document(id)
+//                    .get().
         }
     }
 
