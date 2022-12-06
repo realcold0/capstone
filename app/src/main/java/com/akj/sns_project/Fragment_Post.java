@@ -99,14 +99,7 @@ public class Fragment_Post extends BasicActivity {
         recyclerView.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
         recyclerView.setLayoutManager(new LinearLayoutManager(Fragment_Post.this)); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(mainAdapter);
-
-
-        initRecyclerViewAndAdapter();
-    }
-
-    private void initRecyclerViewAndAdapter() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(gridLayoutManager);
+        
     }
 
     @Override

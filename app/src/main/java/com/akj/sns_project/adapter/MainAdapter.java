@@ -27,6 +27,11 @@ import com.akj.sns_project.activity.PostActivity;
 import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -77,7 +82,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             public void onClick(View v) {
                 Intent intent = new Intent(activity, PostActivity.class);
                 intent.putExtra("postInfo", mDataset.get(mainViewHolder.getAdapterPosition()));
-                Log.w(TAG, "메인어댑터 로그 => " + mDataset.get(mainViewHolder.getAdapterPosition()));
                 activity.startActivity(intent);
             }
         });
@@ -111,30 +115,36 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         TextView likeCount = cardView.findViewById(R.id.likeCount);
         TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
 
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final DocumentReference documentReference = mDataset.get(position) == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(mDataset.get(position).getId());
+
         if(likeAction == "" && unlikeAction == ""){
-            addlikeCount += 1;
+            addlikeCount = 1;
+            addunlikeCount = 0;
             likeAction = "liked";
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
 
         }else if(likeAction == "" && unlikeAction == "unliked"){
-            addlikeCount += 1;
-            addunlikeCount -= 1;
+            addlikeCount = 1;
+            addunlikeCount = -1;
             likeAction = "liked";
             unlikeAction = "";
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
 
         }else if (likeAction == "liked" && unlikeAction == ""){
-            addlikeCount -= 1;
+            addlikeCount = -1;
+            addunlikeCount = 0;
             likeAction = "";
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
         }
-        int likenum = mDataset.get(position).getlike();
+        int likenum = mDataset.get(position).getlike() + addlikeCount;
         mDataset.get(position).setlike(likenum);
-        int unlikenum = mDataset.get(position).getUnlike();
+        int unlikenum = mDataset.get(position).getUnlike() + addunlikeCount;
         mDataset.get(position).setunlike(unlikenum);
+        documentReference.set(mDataset.get(position));
     }
 
     public void countdown(@NonNull final MainViewHolder holder, int position) {    // 여기 수정함 11.21
@@ -142,30 +152,36 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         TextView likeCount = cardView.findViewById(R.id.likeCount);
         TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
 
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final DocumentReference documentReference = mDataset.get(position) == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(mDataset.get(position).getId());
+
         if(unlikeAction == "" && likeAction ==""){
-            addunlikeCount += 1;
+            addunlikeCount = 1;
+            addlikeCount = 0;
             unlikeAction = "unliked";
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
 
         }else if(unlikeAction == "" && likeAction == "liked"){
-            addunlikeCount += 1;
-            addlikeCount -= 1;
+            addunlikeCount = 1;
+            addlikeCount = -1;
             unlikeAction = "unliked";
             likeAction = "";
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
 
         }else if(unlikeAction == "unliked" && likeAction == ""){
-            addunlikeCount -= 1;
+            addunlikeCount = -1;
+            addlikeCount = 0;
             unlikeAction = "";
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
         }
-        int likenum = mDataset.get(position).getlike();
+        int likenum = mDataset.get(position).getlike() + addlikeCount;
         mDataset.get(position).setlike(likenum);
-        int unlikenum = mDataset.get(position).getUnlike();
+        int unlikenum = mDataset.get(position).getUnlike() + addunlikeCount;
         mDataset.get(position).setunlike(unlikenum);
+        documentReference.set(mDataset.get(position));
     }
 
     @Override
