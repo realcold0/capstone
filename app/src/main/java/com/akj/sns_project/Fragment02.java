@@ -22,6 +22,8 @@ public class Fragment02 extends Fragment {
     private Button btnCrime;
     private Button btnAdventure;
     private Button btnAllGenre;
+    private Button btnSF;
+    private Button btnMusic;
 
     private View view;
     private String genre;
@@ -74,6 +76,12 @@ public class Fragment02 extends Fragment {
         btnAllGenre = view.findViewById(R.id.btn_all_genre);
         btnAllGenre.setOnClickListener(onClickListener);
 
+        btnMusic = view.findViewById(R.id.btnMusic);
+        btnMusic.setOnClickListener(onClickListener);
+
+        btnSF = view.findViewById(R.id.btnSF);
+        btnSF.setOnClickListener(onClickListener);
+
         Fragment01 fragment01;
 
 
@@ -115,6 +123,15 @@ public class Fragment02 extends Fragment {
                     genre = "&with_genres=" + 10749;
                     mainActivity.GenreSearch(url+genre+language);
                     break;
+                case R.id.btnSF:
+                    genre = "&with_genres=" + 878;
+                    mainActivity.GenreSearch(url+genre+language);
+                    break;
+                case R.id.btnMusic:
+                    genre = "&with_genres=" + 10402;
+                    mainActivity.GenreSearch(url+genre+language);
+                    break;
+
                 case R.id.btn_all_genre:
 
                     mainActivity.GenreSearch("https://api.themoviedb.org/3/trending/movie/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
