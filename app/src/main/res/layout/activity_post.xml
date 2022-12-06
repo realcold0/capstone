@@ -17,7 +17,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="298dp" />
+            android:layout_height="500dp" />
 
         <LinearLayout
             android:id="@+id/replyLayout"
@@ -29,10 +29,9 @@
                 android:id="@+id/replyText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:minHeight="48dp"
                 android:hint="댓글을 입력하세요"
-                />
+                android:inputType="text"
+                android:minHeight="48dp" />
 
 
         </LinearLayout>

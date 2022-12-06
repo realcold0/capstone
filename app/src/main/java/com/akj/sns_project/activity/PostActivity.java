@@ -124,14 +124,16 @@ public class PostActivity extends BasicActivity {
                                         new Date(document.getDate("createdAt").getTime()),
                                         document.getData().get("saveLocation").toString()));
                             }
-                            if(savelocationforReply.equals(replyInfo.getsaveLocation())) {
-                                recyclerView = findViewById(R.id.recyclerView);
-                                recyclerView.setHasFixedSize(true);
-                                recyclerView.setLayoutManager(new LinearLayoutManager(PostActivity.this));
 
-                                RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
-                                recyclerView.setAdapter(mAdapter);
-                            }
+
+                            recyclerView = findViewById(R.id.recyclerView);
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(PostActivity.this));
+
+                            //if(savelocationforReply.equals(replyInfo.getsaveLocation())) {
+                            RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
+                            recyclerView.setAdapter(mAdapter);
+                            //}
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
