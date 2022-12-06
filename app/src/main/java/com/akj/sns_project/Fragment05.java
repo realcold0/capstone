@@ -71,6 +71,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                     if (document.exists()) { // 정보가 존재할 시
                         nickname.setText(document.get("name").toString()); // 닉네임 업데이트
                         //아이디가 관리자일 경우 버튼생성
+                        //무슨 버튼해야 하는거지? 왜 커밋안되지? 휴
                         if (nickname.getText().toString().equals("admin")){
 
                             Button btn2=root.findViewById(R.id.button2);
