@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.akj.sns_project.activity.MypageActivity;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.internal.FallbackServiceBroker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +31,8 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
     private Fragment_Post fragment_post;
     private Fragment05 fragment05;
 
+
+
     @Override
     public void onStart() { // 시작할 때
         super.onStart();
@@ -42,6 +46,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         fragment_post = new Fragment_Post();
+
 
         // xml 파일 연결
         View root = inflater.inflate(R.layout.fragment_05, container, false);
@@ -60,10 +65,18 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() { // 불러오기 성공시
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                 if (task.isSuccessful()) { // 불러오기 성공시
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) { // 정보가 존재할 시
                         nickname.setText(document.get("name").toString()); // 닉네임 업데이트
+                        //아이디가 관리자일 경우 버튼생성
+                        //무슨 버튼해야 하는거지? 왜 커밋안되지? 휴
+                        if (nickname.getText().toString().equals("admin")){
+
+                            Button btn2=root.findViewById(R.id.button2);
+                            btn2.setVisibility(View.VISIBLE);
+                        }
                         if (document.get("photoUrl") != null) { // photoUrl 필드가 있는지 확인(필드확인: null 타입)
                             String photoUrl = document.get("photoUrl").toString(); // photoUrl 가져오기
                             if (photoUrl != "null") { // photoUrl의 값이 존재할 경우
@@ -79,7 +92,11 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
 
         PostBtn.setOnClickListener(this);
         return root;
+
     }
+
+
+
 
 
     // 버튼 클릭시 실행되는 함수
@@ -96,6 +113,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         }
          */
     }
+
 
  }
 
