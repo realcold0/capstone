@@ -258,7 +258,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                             successCount--;
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
-                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0);
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0, documentReference.getId());
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -273,7 +273,8 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 }
             }
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
-                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0));
+                Log.w("TAG", "저장위치: " + documentReference.getId() );
+                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,documentReference.getId()));
             }
         } else {
             startToast("제목을 입력해주세요.");
@@ -286,7 +287,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "로그" + documentReference.getId() + " => " + postInfo.getTitle());    // documentReference.getID가 글 제목
+                        Log.d(TAG, "로그 저장위치 : " + documentReference.getId() + " => ");    // documentReference.getID가 글 제목
                         Log.d(TAG, "DocumentSnapshot successfully written!");
                         loaderLayout.setVisibility(View.GONE);
                         finish();

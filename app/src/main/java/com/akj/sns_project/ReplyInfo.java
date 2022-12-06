@@ -7,12 +7,21 @@ public class ReplyInfo {
     private String contents;
     private String id;
     private Date createdAt;
+    private String saveLocation;
 
 
-    public ReplyInfo(String contents, Date createdAt){
+    public ReplyInfo(String contents, Date createdAt, String saveLocation){
 
         this.contents = contents;
         this.createdAt = createdAt;
+        this.saveLocation = saveLocation;
+    }
+
+    public String getsaveLocation(){
+        return this.saveLocation;
+    }
+    public void setsaveLocation(String saveLocation){
+        this.contents = saveLocation;
     }
 
     public String getContents(){

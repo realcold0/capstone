@@ -48,6 +48,7 @@ public class PostActivity extends BasicActivity {
     private ReplyAdapter replyAdapter;
     private ReplyInfo replyInfo;
     private int successCount;
+    private String savelocationforReply;
     private LinearLayout parent;
     private RecyclerView recyclerView;              // recyclerView
 
@@ -107,6 +108,8 @@ public class PostActivity extends BasicActivity {
 
 
         // 여기서 부터 댓글
+        savelocationforReply = postInfo.getsaveLocation();
+
         db.collection("replys")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -118,14 +121,17 @@ public class PostActivity extends BasicActivity {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 replyList.add(new ReplyInfo(
                                         document.getData().get("contents").toString(),
-                                        new Date(document.getDate("createdAt").getTime())));
+                                        new Date(document.getDate("createdAt").getTime()),
+                                        document.getData().get("saveLocation").toString()));
                             }
-                            recyclerView = findViewById(R.id.recyclerView);
-                            recyclerView.setHasFixedSize(true);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(PostActivity.this));
+                            if(savelocationforReply.equals(replyInfo.getsaveLocation())) {
+                                recyclerView = findViewById(R.id.recyclerView);
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(PostActivity.this));
 
-                            RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
-                            recyclerView.setAdapter(mAdapter);
+                                RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
+                                recyclerView.setAdapter(mAdapter);
+                            }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -161,7 +167,7 @@ public class PostActivity extends BasicActivity {
             final Date date = replyInfo == null ? new Date() : replyInfo.getCreatedAt(); // postInfo가 NULL이면 new Date값을 NULL이 아니면 postinfo의 createdAt값을 넣어줌
             // 게시글 수정을 위한 코드드
 
-            storeUpload(documentReference, new ReplyInfo(contents, date));
+            storeUpload(documentReference, new ReplyInfo(contents, date, savelocationforReply));
         } else {
             startToast("제목을 입력해주세요.");
         }
