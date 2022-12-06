@@ -250,7 +250,8 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
                                             new Date(document.getDate("createdAt").getTime()),
                                             document.getId(),
                                             Integer.parseInt(document.getData().get("like").toString()),
-                                            Integer.parseInt(document.getData().get("unlike").toString())
+                                            Integer.parseInt(document.getData().get("unlike").toString()),
+                                            document.getData().get("saveLocation").toString()
                                     ));
                                 }
                                 mainAdapter.notifyDataSetChanged();

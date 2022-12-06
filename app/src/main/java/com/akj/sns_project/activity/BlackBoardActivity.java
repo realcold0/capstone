@@ -185,7 +185,8 @@ public class BlackBoardActivity extends BasicActivity {
                                             document.getData().get("publisher").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
                                             Integer.parseInt(document.getData().get("like").toString()),
-                                            Integer.parseInt(document.getData().get("unlike").toString())
+                                            Integer.parseInt(document.getData().get("unlike").toString()),
+                                            document.getData().get("saveLocation").toString()
                                     )); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
                                 }
                                 blackAdapter.notifyDataSetChanged();

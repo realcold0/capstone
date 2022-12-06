@@ -14,8 +14,9 @@ public class PostInfo implements Serializable {
     private String id;
     private int like;
     private int unlike;
+    private String saveLocation;
 
-    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, String id, int like, int unlike){
+    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, String id, int like, int unlike, String saveLocation){
         this.title = title;
         this.contents = contents;
         this.publisher = publisher;
@@ -23,9 +24,10 @@ public class PostInfo implements Serializable {
         this.id = id;
         this.like = like;
         this.unlike = unlike;
+        this.saveLocation = saveLocation;
     }
 
-    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike){
+    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike, String saveLocation){
         this.title = title;
         this.contents = contents;
         this.publisher = publisher;
@@ -33,6 +35,7 @@ public class PostInfo implements Serializable {
         this.id = publisher;
         this.like = like;
         this.unlike = unlike;
+        this.saveLocation = saveLocation;
     }
 
 /*
@@ -83,4 +86,11 @@ public class PostInfo implements Serializable {
         return this.unlike;
     }
     public void setunlike(int unlike){ this.unlike = unlike; }
+
+    public String getsaveLocation(){
+        return this.saveLocation;
+    }
+    public void setsaveLocation(String saveLocation){
+        this.saveLocation = saveLocation;
+    }
 }

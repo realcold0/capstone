@@ -94,20 +94,13 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {// 글쓰기에서 사진 누르고 갤러리에서 사진 누르면 이동하는 선택창
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 0:
                 if (resultCode == Activity.RESULT_OK) {
                     String profilePath = data.getStringExtra("profilePath");
                     pathList.add(profilePath);
-                    /*  코드 간단화함 아래 주석 이해 후 지울 것
-                    ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    // 글 내용 작성하면 글 내용 작성칸이 세로로 길어짐
-                    LinearLayout linearLayout = new LinearLayout(WritePostActivity.this);
-                    linearLayout.setLayoutParams(layoutParams);
-                    linearLayout.setOrientation(LinearLayout.VERTICAL);
-                    */
                     ContentsItemView contentsItemView = new ContentsItemView(this);
 
                     if (selectedEditText == null) {
@@ -129,23 +122,6 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                         }
                     });
                     contentsItemView.setOnFocusChangeListener(onFocusChangeListener);   // 코드 축소화 아래 주석을 간단화함 아래 주석 코드이해 후 지울 것
-                    /*
-                    // 게시글에 사진 추가하는 방법
-                    ImageView imageView = new ImageView(WritePostActivity.this);
-                    imageView.setLayoutParams(layoutParams);
-                    imageView.setAdjustViewBounds(true);
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY); // 게시글에 사진 불러올때 게시글 작성란에 사진 꽉채우게 만들어줌
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                    Glide.with(this).load(profilePath).override(1000).into(imageView);
-                    linearLayout.addView(imageView); // 사진을 하나 추가하고 나면 imageView를 더 추가해줌
-                    // 글을 쓰고나면 텍스트 박스가 여러줄 작성이 가능하게 됨
-                    EditText editText = new EditText(WritePostActivity.this);
-                    editText.setLayoutParams(layoutParams);
-                    editText.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_CLASS_TEXT);
-                    editText.setHint("내용");
-                    editText.setOnFocusChangeListener(onFocusChangeListener);
-                    linearLayout.addView(editText);
-                    */
         }
         break;
         case 1:
@@ -199,6 +175,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                     Log.e("로그: ", "이름: " + name);
 
                     StorageReference desertRef = storageRef.child("posts/" + postInfo.getId() + "/" + name);
+                    Log.d(TAG, "로그 : " + postInfo.getId() + " => " + postInfo.getTitle() + "=>" + name);
                     desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -241,7 +218,9 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             StorageReference storageRef = storage.getReference();
             FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
-            final DocumentReference documentReference = postInfo == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(postInfo.getId());
+            final DocumentReference documentReference = postInfo == null ?
+                    firebaseFirestore.collection("posts").document() :
+                    firebaseFirestore.collection("posts").document(postInfo.getId());
             final Date date = postInfo == null ? new Date() : postInfo.getCreatedAt(); // postInfo가 NULL이면 new Date값을 NULL이 아니면 postinfo의 createdAt값을 넣어줌
             // 게시글 수정을 위한 코드드
 
@@ -259,7 +238,8 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                         successCount++;
                         contentsList.add(path);
                         String[] pathArray = path.split("\\.");
-                        final StorageReference mountainImagesRef = storageRef.child("posts/" + documentReference.getId() + "/" + pathCount + "." + pathArray[pathArray.length - 1]);
+                        final StorageReference mountainImagesRef =
+                                storageRef.child("posts/" + documentReference.getId() + "/" + pathCount + "." + pathArray[pathArray.length - 1]);
                         try {
                             InputStream stream = new FileInputStream(new File(pathList.get(pathCount)));
                             StorageMetadata metadata = new StorageMetadata.Builder().setCustomMetadata("index", "" + (contentsList.size() - 1)).build();
@@ -278,7 +258,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                             successCount--;
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
-                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0);
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0, documentReference.getId());
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -293,7 +273,8 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 }
             }
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
-                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0));
+                Log.w("TAG", "저장위치: " + documentReference.getId() );
+                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,documentReference.getId()));
             }
         } else {
             startToast("제목을 입력해주세요.");
@@ -306,6 +287,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "로그 저장위치 : " + documentReference.getId() + " => ");    // documentReference.getID가 글 제목
                         Log.d(TAG, "DocumentSnapshot successfully written!");
                         loaderLayout.setVisibility(View.GONE);
                         finish();
