@@ -66,7 +66,6 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
     private int successCount;
-    static RequestQueue requestQueue;
     private FirebaseUser user;
     private String userUid;
     private String publisher;
@@ -80,11 +79,6 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
         // 파이어베이스 초기화 함수들
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
-
-        if (requestQueue == null) {
-
-            requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        }
 
         if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
