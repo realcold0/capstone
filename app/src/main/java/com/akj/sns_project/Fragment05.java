@@ -14,7 +14,10 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.akj.sns_project.activity.BoardActivity;
+import com.akj.sns_project.activity.LoginActivity;
 import com.akj.sns_project.activity.MypageActivity;
+import com.akj.sns_project.activity.WritePostActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.internal.FallbackServiceBroker;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,6 +62,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         TextView nickname = root.findViewById(R.id.nickname); // 닉네임
         ImageView userimage = root.findViewById(R.id.userImage);
         Button PostBtn = root.findViewById(R.id.button4);
+        Button adminBtn = root.findViewById(R.id.button2);
 
         // DB에서 user 컬렉션 선택 후 로그인된 아이디에 맞는 정보 가져오기
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -72,7 +76,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                         nickname.setText(document.get("name").toString()); // 닉네임 업데이트
                         //아이디가 관리자일 경우 버튼생성
                         //무슨 버튼해야 하는거지? 왜 커밋안되지? 휴
-                        if (nickname.getText().toString().equals("admin")){
+                        if (nickname.getText().toString().equals("관리자")){
 
                             Button btn2=root.findViewById(R.id.button2);
                             btn2.setVisibility(View.VISIBLE);
@@ -91,12 +95,10 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         });
 
         PostBtn.setOnClickListener(this);
+        adminBtn.setOnClickListener(this);
         return root;
 
     }
-
-
-
 
 
     // 버튼 클릭시 실행되는 함수
@@ -107,13 +109,17 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
             startActivity(intent);
             //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
         }
+        else if(view.getId() == R.id.button2){
+            Intent intent = new Intent(this.getContext(), BoardActivity.class);
+            startActivity(intent);
+            //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
+        }
         /*
         else if(view.getId() == R.id.button3){
             Log.d("Button3","work");
         }
          */
     }
-
 
  }
 

@@ -120,6 +120,7 @@ public class BoardActivity extends BasicActivity {
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
         @Override
         public void onDelete(int position) {       // 게시글 삭제 기능_대규 여기서부터   // String id를 int position으로 변환
+
             final String id = postList.get(position).getId();
             ArrayList<String> contentsList = postList.get(position).getContents();
 
