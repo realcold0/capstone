@@ -156,7 +156,6 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
         }
     }
 
-
     private ArrayList<PostInfo> search(String query){
         ArrayList<PostInfo> postlist = new ArrayList<>();
         for(int i = 0; i < postList.size(); i++) {

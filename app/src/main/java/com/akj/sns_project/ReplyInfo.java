@@ -11,11 +11,11 @@ public class ReplyInfo {
 
 
     public ReplyInfo(String contents, Date createdAt, String saveLocation){
-
         this.contents = contents;
         this.createdAt = createdAt;
         this.saveLocation = saveLocation;
     }
+
 
     public String getsaveLocation(){
         return this.saveLocation;

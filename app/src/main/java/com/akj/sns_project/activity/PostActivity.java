@@ -44,6 +44,7 @@ import java.util.Locale;
 public class PostActivity extends BasicActivity {
     private FirebaseUser user;
     private ArrayList<ReplyInfo> replyList;
+    private ArrayList<ReplyInfo> replyList2;
     private FirebaseFirestore firebaseFirestore;
     private ReplyAdapter replyAdapter;
     private ReplyInfo replyInfo;
@@ -119,10 +120,12 @@ public class PostActivity extends BasicActivity {
                             replyList = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
-                                replyList.add(new ReplyInfo(
-                                        document.getData().get("contents").toString(),
-                                        new Date(document.getDate("createdAt").getTime()),
-                                        document.getData().get("saveLocation").toString()));
+                                if (savelocationforReply.equals(document.getData().get("saveLocation").toString())) {
+                                    replyList.add(new ReplyInfo(
+                                            document.getData().get("contents").toString(),
+                                            new Date(document.getDate("createdAt").getTime()),
+                                            document.getData().get("saveLocation").toString()));
+                                }
                             }
 
 
@@ -130,10 +133,9 @@ public class PostActivity extends BasicActivity {
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setLayoutManager(new LinearLayoutManager(PostActivity.this));
 
-                            //if(savelocationforReply.equals(replyInfo.getsaveLocation())) {
                             RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
                             recyclerView.setAdapter(mAdapter);
-                            //}
+
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
