@@ -7,6 +7,7 @@ import static com.akj.sns_project.Util.ADMIN_JY;
 import static com.akj.sns_project.Util.ADMIN_SH;
 import static com.akj.sns_project.Util.ADMIN_YJ;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,9 +25,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.akj.sns_project.activity.LoginActivity;
+import com.akj.sns_project.activity.MainActivity;
 import com.akj.sns_project.activity.MemberInitActivity;
 import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.adapter.MainAdapter;
@@ -90,10 +93,23 @@ public class Fragment01 extends Fragment {
     private FirebaseUser user;
     private String userUid;
     private String publisher;
+    private SearchView movieSearch;
 
     static RequestQueue requestQueue;
     private ArrayList<Poster> posters;
+    MainActivity mainActivity;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivity = (MainActivity) getActivity();
+    }
 
+    // 메인 액티비티에서 내려온다.
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mainActivity = null;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -175,6 +191,20 @@ public class Fragment01 extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(mainAdapter);
 
+        movieSearch = view.findViewById(R.id.searchMovie);
+        movieSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mainActivity.GenreSearch(SearchMovieQuery(query));
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         initRecyclerViewAndAdapter();
 
         // 유저정보
@@ -182,6 +212,14 @@ public class Fragment01 extends Fragment {
         userUid = user.getUid().toString();
 
         return view;
+    }
+
+    private String SearchMovieQuery(String query) //입력하고 엔터 눌렀을때 영화 이름 검색 쿼리 만들어서 화면 전환
+    {
+        String search = "https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=" + query.replace(" ","+") + "&lnaguage=ko-KR";
+
+        //https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=써니&lnaguage=ko-KR
+        return search;
     }
 
     private void initRecyclerViewAndAdapter() {
