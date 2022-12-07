@@ -1,5 +1,11 @@
 package com.akj.sns_project;
 
+import static com.akj.sns_project.Util.ADMIN_DK;
+import static com.akj.sns_project.Util.ADMIN_JB;
+import static com.akj.sns_project.Util.ADMIN_JY;
+import static com.akj.sns_project.Util.ADMIN_SH;
+import static com.akj.sns_project.Util.ADMIN_YJ;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -59,6 +65,9 @@ public class BlackBoardFragment extends Fragment {
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
     private int successCount;
+    private FirebaseUser user;
+    private String userUid;
+    private String publisher;
 
     static RequestQueue requestQueue;
 
@@ -121,6 +130,9 @@ public class BlackBoardFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(blackAdapter);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
+
         initRecyclerViewAndAdapter();
 
         return view;
@@ -141,33 +153,38 @@ public class BlackBoardFragment extends Fragment {
         public void onDelete(int position) {       // 게시글 삭제 기능_대규 여기서부터
             final String id = postList.get(position).getId();
             ArrayList<String> contentsList = postList.get(position).getContents();
-
-            for (int i = 0; i < contentsList.size(); i++) {
-                String contents = contentsList.get(i);
-                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/blackposts")) {   // 글 내용에 사진이나 동영상이 있을 경우
-                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
-                    successCount++;
-                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
-                    String[] list2 = list[0].split("%2F");
-                    String name = list2[list2.length - 1];
-                    // Create a reference to the file to delete
-                    StorageReference desertRef = storageRef.child("blackposts/"+id+"/"+name);
-                    // Delete the file
-                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            successCount--;
-                            storeUploader(id);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            startToast("삭제 실패");
-                        }
-                    });
+            publisher = postList.get(position).getPublisher();
+            if(userUid.equals(publisher)||userUid.equals(ADMIN_DK)||userUid.equals(ADMIN_JB)||userUid.equals(ADMIN_JY)||userUid.equals(ADMIN_SH)||userUid.equals(ADMIN_YJ)) {
+                for (int i = 0; i < contentsList.size(); i++) {
+                    String contents = contentsList.get(i);
+                    if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/blackposts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                        // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                        successCount++;
+                        String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                        String[] list2 = list[0].split("%2F");
+                        String name = list2[list2.length - 1];
+                        // Create a reference to the file to delete
+                        StorageReference desertRef = storageRef.child("blackposts/" + id + "/" + name);
+                        // Delete the file
+                        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                successCount--;
+                                storeUploader(id);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                startToast("삭제 실패");
+                            }
+                        });
+                    }
                 }
+                storeUploader(id);
             }
-            storeUploader(id);
+            else{
+                startToast("다른사람의 게시글을 삭제할 수 없습니다");
+            }
         }
 
         @Override

@@ -1,5 +1,11 @@
 package com.akj.sns_project.activity;
 
+import static com.akj.sns_project.Util.ADMIN_DK;
+import static com.akj.sns_project.Util.ADMIN_JB;
+import static com.akj.sns_project.Util.ADMIN_JY;
+import static com.akj.sns_project.Util.ADMIN_SH;
+import static com.akj.sns_project.Util.ADMIN_YJ;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +50,9 @@ public class BoardActivity extends BasicActivity {
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
     private StorageReference storageRef;
     private int successCount;
+    private FirebaseUser user;
+    private String userUid;
+    private String publisher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +107,8 @@ public class BoardActivity extends BasicActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(BoardActivity.this)); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(mainAdapter);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
 
         initRecyclerViewAndAdapter();
     }
@@ -110,11 +121,8 @@ public class BoardActivity extends BasicActivity {
     @Override
     protected void onResume() {  // 게시글 올리자마자 업데이트 될 수 있도록
         super.onResume();
-        // 여기에 시간 측정 함수 넣으면 될듯 한데 게시글 다 날리고 최초로 올리는 환경이라고 가정하고 실험 진행
-        // 실험 조건을 여러개로 시도해 보아야 하는건가.....
 
         postsUpdate();
-
     }
 
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
@@ -123,33 +131,37 @@ public class BoardActivity extends BasicActivity {
 
             final String id = postList.get(position).getId();
             ArrayList<String> contentsList = postList.get(position).getContents();
-
-            for (int i = 0; i < contentsList.size(); i++) {
-                String contents = contentsList.get(i);
-                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
-                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
-                    successCount++;
-                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
-                    String[] list2 = list[0].split("%2F");
-                    String name = list2[list2.length - 1];
-                    // Create a reference to the file to delete
-                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
-                    // Delete the file
-                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            successCount--;
-                            storeUploader(id);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            startToast("삭제 실패");
-                        }
-                    });
+            publisher = postList.get(position).getPublisher();
+            if(userUid.equals(publisher)||userUid.equals(ADMIN_DK)||userUid.equals(ADMIN_JB)||userUid.equals(ADMIN_JY)||userUid.equals(ADMIN_SH)||userUid.equals(ADMIN_YJ)) {
+                for (int i = 0; i < contentsList.size(); i++) {
+                    String contents = contentsList.get(i);
+                    if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                        // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                        successCount++;
+                        String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                        String[] list2 = list[0].split("%2F");
+                        String name = list2[list2.length - 1];
+                        // Create a reference to the file to delete
+                        StorageReference desertRef = storageRef.child("posts/" + id + "/" + name);
+                        // Delete the file
+                        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                successCount--;
+                                storeUploader(id);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                startToast("삭제 실패");
+                            }
+                        });
+                    }
                 }
+                storeUploader(id);
+            }else{
+                startToast("다른사람의 게시글을 삭제할 수 없습니다");
             }
-            storeUploader(id);
         }
 
         @Override

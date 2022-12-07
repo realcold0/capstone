@@ -15,11 +15,8 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.akj.sns_project.activity.BoardActivity;
-import com.akj.sns_project.activity.LoginActivity;
-import com.akj.sns_project.activity.MypageActivity;
-import com.akj.sns_project.activity.WritePostActivity;
+
 import com.bumptech.glide.Glide;
-import com.google.android.gms.common.internal.FallbackServiceBroker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +30,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
     private View view;
     private Fragment_Post fragment_post;
     private Fragment05 fragment05;
+    private String AdminDK = "KnK0SPLNuGTnEQWoEbcCkkLGrFx2";
 
 
 
@@ -61,6 +59,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         // xml 파일에 있는 텍스트, 버튼 찾기
         TextView nickname = root.findViewById(R.id.nickname); // 닉네임
         ImageView userimage = root.findViewById(R.id.userImage);
+
         Button PostBtn = root.findViewById(R.id.button4);
         Button adminBtn = root.findViewById(R.id.button2);
 
