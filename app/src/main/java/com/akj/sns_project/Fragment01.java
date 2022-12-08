@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,6 +95,7 @@ public class Fragment01 extends Fragment {
     private String userUid;
     private String publisher;
     private SearchView movieSearch;
+    private NavController navController;
 
     static RequestQueue requestQueue;
     private ArrayList<Poster> posters;
@@ -143,6 +145,7 @@ public class Fragment01 extends Fragment {
 
         posters = new ArrayList<Poster>();
         posterAdapter = new PosterAdapter();
+
         posterRecyclerView.setAdapter(posterAdapter);
 
 
