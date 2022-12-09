@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.Fragment04;
+import com.akj.sns_project.Movie;
+import com.akj.sns_project.MovieInfo;
 import com.akj.sns_project.Poster;
 import com.akj.sns_project.R;
 import com.bumptech.glide.Glide;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterViewHolder> {
     private Context context;
-    private ArrayList<Poster> posterList = new ArrayList<>();
+    private ArrayList<Movie> movieList = new ArrayList<Movie>();
 
     public interface OnItemCllickListener{
         void onItemClick(View view, int pos);
@@ -36,9 +38,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
     {
 
     }
-    public PosterAdapter(Context context, ArrayList<Poster> posterList){
+    public PosterAdapter(Context context, ArrayList<Movie> movieList){
         this.context = context;
-        this.posterList = posterList;
+        this.movieList = movieList;
     }
 
 
@@ -52,16 +54,16 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
     }
     @Override
     public void onBindViewHolder(@NonNull final PosterViewHolder holder, int position) {
-        Poster currentPoster = posterList.get(position);
-        String imageUrl = currentPoster.getImageUrl();
+        Movie currentPoster = movieList.get(position);
+        String imageUrl = currentPoster.GetPosterPath();
         Glide.with(context).load(imageUrl).into(holder.imageView);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity)v.getContext();
-                Fragment04 fragment04 =  new Fragment04();
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment04).addToBackStack(null).commit();
+                MovieInfo movieInfo =  new MovieInfo(currentPoster);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, movieInfo).addToBackStack(null).commit();
             }
         });
 
@@ -69,7 +71,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
 
     @Override
     public int getItemCount() {
-        return posterList.size();
+        return movieList.size();
     }
 
     public class PosterViewHolder extends RecyclerView.ViewHolder{
