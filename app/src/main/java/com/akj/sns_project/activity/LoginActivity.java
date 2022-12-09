@@ -1,6 +1,7 @@
 package com.akj.sns_project.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -33,6 +34,9 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
     private static final int REQ_SIGN_GOOGLE = 100; // 구글 로그인 결과 코드
     private FirebaseAuth auth;
 
+    //private EditText emailTextView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {    // 로그인 액티비티가 실행되었을 때
         super.onCreate(savedInstanceState);
@@ -46,6 +50,9 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
         findViewById(R.id.gotoPasswordResetButton).setOnClickListener(onClickListener);
         findViewById(R.id.googleLoginButton).setOnClickListener(onClickListener);
         findViewById(R.id.gotoSignUpButton).setOnClickListener(onClickListener);
+
+        //emailTextView = findViewById(R.id.emailEditText);
+        //emailTextView.setHintTextColor(Color.parseColor("#FFFFFF"));
 
 
         //구글 로그인 여기서부터

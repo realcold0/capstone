@@ -18,7 +18,7 @@
             android:layout_height="100dp"
             android:gravity="center"
             android:text="회원정보"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -80,6 +80,9 @@
                 android:id="@+id/checkButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/button_shape"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="@color/black"
                 android:text="확인" />
 
         </LinearLayout>
