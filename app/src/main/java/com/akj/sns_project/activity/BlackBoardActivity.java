@@ -153,6 +153,8 @@ public class BlackBoardActivity extends BasicActivity {
         public void onModify(int position) {
             myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
+        @Override
+        public void onGoBlack(int position) {        }
     };
 
     //게시글 추가 버튼을 클릭할 때 처리하는 기능

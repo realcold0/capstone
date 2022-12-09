@@ -90,6 +90,7 @@ public class Fragment01 extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView posterRecyclerView;
     private PosterAdapter posterAdapter;
+    private PostInfo postInfo;
     private int successCount;
     private FirebaseUser user;
     private String userUid;
@@ -120,7 +121,7 @@ public class Fragment01 extends Fragment {
         view = inflater.inflate(R.layout.activity_board, container, false);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스에서 유저정보를 받아오는데 _ 대규
-
+        postInfo = (PostInfo) getActivity().getIntent().getSerializableExtra("postInfo");
 
         new Thread(new Runnable() {
             @Override
@@ -280,6 +281,61 @@ public class Fragment01 extends Fragment {
         public void onModify(int position) {
             myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
+        @Override
+        public void onGoBlack(int position) {
+            String controllNum = postList.get(position).getId();
+            final DocumentReference docRef = postInfo == null ?
+                    firebaseFirestore.collection("posts").document() :
+                    firebaseFirestore.collection("posts").document(postInfo.getId());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    PostInfo post = documentSnapshot.toObject(PostInfo.class);
+                    firebaseFirestore.collection("blackposts").document(docRef.getId())
+                            .set(post).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "Success : 검은색 게시판 이동");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error : 검은색 게시판 이동", e);
+                                }
+                            });
+                }
+            });
+            final String id = postList.get(position).getId();
+            ArrayList<String> contentsList = postList.get(position).getContents();
+
+            for (int i = 0; i < contentsList.size(); i++) {
+                String contents = contentsList.get(i);
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                    successCount++;
+                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                    String[] list2 = list[0].split("%2F");
+                    String name = list2[list2.length - 1];
+                    // Create a reference to the file to delete
+                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    // Delete the file
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            successCount--;
+                            storeUploader(id);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            startToast("화이트에서 제거 실패");
+                        }
+                    });
+                }
+            }
+            storeUploader_Black(id);
+        }
     };
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -353,6 +409,25 @@ public class Fragment01 extends Fragment {
         }
     }
 
+    private void storeUploader_Black(String id){
+        if(successCount == 0) {
+            firebaseFirestore.collection("posts").document(id)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            startToast("검은색 이동 : 게시글을 삭제하였습니다.");
+                            postsUpdate();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            startToast("검은색 이동 : 게시글을 삭제하지 못하였습니다.");
+                        }
+                    });
+        }
+    }
 
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(getActivity(), c);

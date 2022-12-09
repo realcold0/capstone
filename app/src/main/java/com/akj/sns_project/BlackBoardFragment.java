@@ -237,6 +237,8 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
         public void onModify(int position) {
             myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
+        @Override
+        public void onGoBlack(int position) {        }
     };
 
     View.OnClickListener onClickListener = new View.OnClickListener() {

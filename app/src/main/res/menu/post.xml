@@ -6,4 +6,7 @@
     <item
         android:id="@+id/delete"
         android:title="삭제" />
+    <item
+        android:id="@+id/goBlack"
+        android:title="검은색으로" />
 </menu>
