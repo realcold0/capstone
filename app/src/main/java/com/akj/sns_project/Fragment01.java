@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,6 +95,7 @@ public class Fragment01 extends Fragment {
     private String userUid;
     private String publisher;
     private SearchView movieSearch;
+    private NavController navController;
 
     static RequestQueue requestQueue;
     private ArrayList<Poster> posters;
@@ -143,6 +145,7 @@ public class Fragment01 extends Fragment {
 
         posters = new ArrayList<Poster>();
         posterAdapter = new PosterAdapter();
+
         posterRecyclerView.setAdapter(posterAdapter);
 
 
@@ -411,20 +414,28 @@ public class Fragment01 extends Fragment {
                 MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
 
 
-                Movie movie = movieList.results.get(0);
-                //Movie movie2 = movieList.results.get(1);
-                Movie movie3 = movieList.results.get(2);
-                //Movie movie4 = movieList.results.get(3);
+                ArrayList<Movie> movies = new ArrayList<Movie>();
 
                 posters = new ArrayList<Poster>();
-                posters.add(new Poster(movie.title.toString(), movie.poster_path));
+
+                for(int i =0;i < movieList.results.size(); i++)
+                {
+                    Movie movie = movieList.results.get(i);
+                    movies.add(movie);
+
+                }
+
+                //Movie movie3 = movieList.results.get(2);
+
+
+                //posters.add(new Poster(movie.title.toString(), movie.poster_path));
                 //posters.add(new Poster(movie2.title.toString(), movie2.poster_path));
-                posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
+                //posters.add(new Poster(movie3.title.toString(), movie3.poster_path.toString()));
                 //posters.add(new Poster(movie4.title.toString(), movie4.poster_path.toString()));
 
-                posterAdapter = new PosterAdapter(getActivity(), posters);
+                posterAdapter = new PosterAdapter(getActivity(), movies);
                 posterRecyclerView.setAdapter(posterAdapter);
-                Log.v("Poster", posters.get(0).toString());
+
 
             }
         }, new Response.ErrorListener() {

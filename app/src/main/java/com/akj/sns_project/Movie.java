@@ -16,4 +16,15 @@ public class Movie {
     float  popularity;
     boolean video;
     float vote_average, vote_count;
+
+
+    public String GetTitle()
+    {
+        return title;
+    }
+
+    public String GetPosterPath()
+    {
+        return  "https://image.tmdb.org/t/p/w500" + poster_path;
+    }
 }
