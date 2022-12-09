@@ -262,6 +262,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                     case R.id.delete: //delete버튼을 눌렀을 때
                         onPostListener.onDelete(position); //인터페이스의 onDelete를 이용
                         return true;
+                    case R.id.goBlack:
+                        onPostListener.onGoBlack(position); //인터페이스의 onGoBlack를 이용
+                        return true;
                     default:
                         return false;
                 }

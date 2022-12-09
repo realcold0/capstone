@@ -48,8 +48,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -65,6 +68,7 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
     private View view;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
+    private PostInfo postInfo;
     private int successCount;
     private FirebaseUser user;
     private String userUid;
@@ -79,6 +83,7 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
         // 파이어베이스 초기화 함수들
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+        postInfo = (PostInfo) getActivity().getIntent().getSerializableExtra("postInfo");
 
         if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
@@ -225,6 +230,54 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
         public void onModify(int position) {
             myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
+        @Override
+        public void onGoBlack(int position){
+            // 검은색 게시판에 업로드
+            // 1. 흰색 게시판에서 게시글 가져와서 넣기
+            DocumentReference post = firebaseFirestore.collection("blackposts").document();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", postList.get(position).getTitle());
+            data.put("contents", postList.get(position).getContents());
+            data.put("publisher", postList.get(position).getPublisher());
+            data.put("createdAt", postList.get(position).getCreatedAt());
+            data.put("id", postList.get(position).getId());
+            data.put("like", postList.get(position).getlike());
+            data.put("unlike", postList.get(position).getUnlike());
+            data.put("saveLocation", postList.get(position).getsaveLocation());
+            post.set(data);
+
+            // 2. 흰색 게시판의 게시글 삭제
+            final String id = postList.get(position).getId();
+            ArrayList<String> contentsList = postList.get(position).getContents();
+
+            for (int i = 0; i < contentsList.size(); i++) {
+                String contents = contentsList.get(i);
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                    successCount++;
+                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                    String[] list2 = list[0].split("%2F");
+                    String name = list2[list2.length - 1];
+                    // Create a reference to the file to delete
+                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    // Delete the file
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            successCount--;
+                            storeUploader(id);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            startToast("3. 화이트에서 제거 실패");
+                        }
+                    });
+                }
+            }
+            storeUploader(id);
+        }
     };
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -243,6 +296,36 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
     private void postsUpdate() {
         if (firebaseUser != null) {
             CollectionReference collectionReference = firebaseFirestore.collection("posts");    // 파이어베이스 posts폴더를 사용
+            collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                postList.clear();   // 초기화 하고 가져오는 방식으로 업데이트
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData().get("like"));
+                                    postList.add(new PostInfo(  // 여기서부터
+                                            document.getData().get("title").toString(),
+                                            (ArrayList<String>) document.getData().get("contents"),
+                                            document.getData().get("publisher").toString(),
+                                            new Date(document.getDate("createdAt").getTime()),
+                                            document.getId(),
+                                            Integer.parseInt(document.getData().get("like").toString()),
+                                            Integer.parseInt(document.getData().get("unlike").toString()),
+                                            document.getData().get("saveLocation").toString()
+                                    ));
+                                }
+                                mainAdapter.notifyDataSetChanged();
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+    private void postsUpdate_Black() {
+        if (firebaseUser != null) {
+            CollectionReference collectionReference = firebaseFirestore.collection("blackposts");    // 파이어베이스 posts폴더를 사용
             collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -290,7 +373,7 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
                     });
         }
     }
-    
+
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(getActivity(), c);
         startActivity(intent);

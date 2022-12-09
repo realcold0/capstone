@@ -40,6 +40,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BoardActivity extends BasicActivity {
     private static final String TAG = "BoardActicity";
@@ -49,6 +51,7 @@ public class BoardActivity extends BasicActivity {
     private MainAdapter mainAdapter;                // mainadapter 사용하기 위한 이름
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
     private StorageReference storageRef;
+    private PostInfo postInfo;
     private int successCount;
     private FirebaseUser user;
     private String userUid;
@@ -64,6 +67,7 @@ public class BoardActivity extends BasicActivity {
         // 파이어베이스 초기화 함수들
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+        postInfo = (PostInfo) getIntent().getSerializableExtra("postInfo");
 
         if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
@@ -123,6 +127,7 @@ public class BoardActivity extends BasicActivity {
         super.onResume();
 
         postsUpdate();
+        //postsUpdate_Black();
     }
 
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
@@ -168,6 +173,54 @@ public class BoardActivity extends BasicActivity {
         public void onModify(int position) {
             myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
+        @Override
+        public void onGoBlack(int position){
+            // 검은색 게시판에 업로드
+            // 1. 흰색 게시판에서 게시글 가져와서 넣기
+            DocumentReference post = firebaseFirestore.collection("blackposts").document();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", postList.get(position).getTitle());
+            data.put("contents", postList.get(position).getContents());
+            data.put("publisher", postList.get(position).getPublisher());
+            data.put("createdAt", postList.get(position).getCreatedAt());
+            data.put("id", postList.get(position).getId());
+            data.put("like", postList.get(position).getlike());
+            data.put("unlike", postList.get(position).getUnlike());
+            data.put("saveLocation", postList.get(position).getsaveLocation());
+            post.set(data);
+
+            // 3. 흰색 게시판의 게시글 삭제
+            final String id = postList.get(position).getId();
+            ArrayList<String> contentsList = postList.get(position).getContents();
+
+            for (int i = 0; i < contentsList.size(); i++) {
+                String contents = contentsList.get(i);
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                    successCount++;
+                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                    String[] list2 = list[0].split("%2F");
+                    String name = list2[list2.length - 1];
+                    // Create a reference to the file to delete
+                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    // Delete the file
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            successCount--;
+                            storeUploader(id);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            startToast("3. 화이트에서 제거 실패");
+                        }
+                    });
+                }
+            }
+            storeUploader(id);
+        }
     };
 
     //게시글 추가 버튼을 클릭할 때 처리하는 기능
@@ -219,6 +272,7 @@ public class BoardActivity extends BasicActivity {
                     });
         }
     }
+
 
     private void storeUploader(String id){
         if(successCount == 0) {

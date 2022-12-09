@@ -12,20 +12,31 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.R;
 import com.akj.sns_project.PostInfo;
+import com.akj.sns_project.adapter.HashtagAdapter;
+import com.akj.sns_project.adapter.MainAdapter;
 import com.akj.sns_project.view.ContentsItemView;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -53,6 +64,10 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     private EditText titleEditText;
     private PostInfo postInfo;
     private StorageReference storageRef;
+    private ArrayList<String> items;
+    //파이어스토어에 접근하기 위한 객체를 생성한다.
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private HashtagAdapter hashtagAdapter;
 
 
     @Override
@@ -91,6 +106,69 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
         postInfo = (PostInfo) getIntent().getSerializableExtra("postInfo");    // postinfo 가져오는거
         postInit();
+
+        // 여기부터 해시태그
+        SearchView searchView = findViewById(R.id.search_view);
+        RecyclerView hashview = findViewById(R.id.hashview);
+
+        /* initiate adapter */
+        hashtagAdapter = new HashtagAdapter();
+
+        /* initiate recyclerview */
+        hashview.setAdapter(hashtagAdapter);
+        hashview.setLayoutManager(new LinearLayoutManager(this));
+
+        items = new ArrayList<>();
+        // items 해시태그 가져오기
+        CollectionReference productRef = db.collection("hashtag");
+        //get()을 통해서 해당 컬렉션의 정보를 가져온다.
+        productRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                items.clear();
+                //작업이 성공적으로 마쳤을때
+                if (task.isSuccessful()) {
+                    //컬렉션 아래에 있는 모든 정보를 가져온다.
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        //document.getData() or document.getId() 등등 여러 방법으로
+                        items.add(document.getId().toString());
+                        //데이터를 가져올 수 있다.
+                    }
+                    // 해시태그 정보 가져와서 표시
+                    hashtagAdapter.setFriendList(items);
+                } else {
+
+                }
+            }
+        });
+
+        // 해시태그 검색
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("Test", " 이거 되는거 맞냐? "+items);
+                hashtagAdapter.setFriendList(search(newText));
+                return false;
+            }
+        });
+    }
+
+    // 해시태그 검색해주는 함수
+    private ArrayList<String> search(String query){
+        ArrayList<String> sb = new ArrayList<String>();
+        for(int i = 0; i < items.size(); i++) {
+            String item = items.get(i);
+            if(item.toLowerCase().contains(query.toLowerCase())){
+                sb.add(item);
+            }
+        }
+        return sb;
     }
 
     @Override

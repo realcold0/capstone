@@ -6,10 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.akj.sns_project.activity.BasicActivity;
@@ -32,10 +35,18 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Fragment_Post extends BasicActivity {
     private static final String TAG = "BoardActicity";
@@ -45,6 +56,8 @@ public class Fragment_Post extends BasicActivity {
     private MainAdapter mainAdapter;                // mainadapter 사용하기 위한 이름
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
     private StorageReference storageRef;
+    private ArrayList<String> pathList = new ArrayList<>();
+    private PostInfo postInfo;
     private int successCount;
 
     @Override
@@ -58,6 +71,7 @@ public class Fragment_Post extends BasicActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
+        postInfo = (PostInfo) getIntent().getSerializableExtra("postInfo");
         if (firebaseUser == null) {     // 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
             myStartActivity(LoginActivity.class);
         } else {
@@ -148,6 +162,57 @@ public class Fragment_Post extends BasicActivity {
         public void onModify(int position) {
             myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
+        @Override
+        public void onGoBlack(int position){
+            // 검은색 게시판에 업로드
+            // 1. 흰색 게시판에서 게시글 가져와서 넣기
+//            final DocumentReference documentReference = postInfo == null ?
+//                    firebaseFirestore.collection("posts").document() :
+//                    firebaseFirestore.collection("posts").document(postInfo.getId());
+            DocumentReference post = firebaseFirestore.collection("blackposts").document();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", postList.get(position).getTitle());
+            data.put("contents", postList.get(position).getContents());
+            data.put("publisher", postList.get(position).getPublisher());
+            data.put("createdAt", postList.get(position).getCreatedAt());
+            data.put("id", postList.get(position).getId());
+            data.put("like", postList.get(position).getlike());
+            data.put("unlike", postList.get(position).getUnlike());
+            data.put("saveLocation", postList.get(position).getsaveLocation());
+            post.set(data);
+
+            // 3. 흰색 게시판의 게시글 삭제
+            final String id = postList.get(position).getId();
+            ArrayList<String> contentsList = postList.get(position).getContents();
+
+            for (int i = 0; i < contentsList.size(); i++) {
+                String contents = contentsList.get(i);
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                    successCount++;
+                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                    String[] list2 = list[0].split("%2F");
+                    String name = list2[list2.length - 1];
+                    // Create a reference to the file to delete
+                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    // Delete the file
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            successCount--;
+                            storeUploader(id);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            startToast("삭제 실패");
+                        }
+                    });
+                }
+            }
+            storeUploader(id);
+        }
     };
 
     //게시글 추가 버튼을 클릭할 때 처리하는 기능
@@ -203,6 +268,37 @@ public class Fragment_Post extends BasicActivity {
         }
     }
 
+    private void postsUpdate_Black() {
+        if (firebaseUser != null) {
+            CollectionReference collectionReference = firebaseFirestore.collection("blackposts");    // 파이어베이스 posts폴더를 사용
+            collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                postList.clear();   // 초기화 하고 가져오는 방식으로 업데이트
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData().get("like"));
+                                    postList.add(new PostInfo(  // 여기서부터
+                                            document.getData().get("title").toString(),
+                                            (ArrayList<String>) document.getData().get("contents"),
+                                            document.getData().get("publisher").toString(),
+                                            new Date(document.getDate("createdAt").getTime()),
+                                            document.getId(),
+                                            Integer.parseInt(document.getData().get("like").toString()),
+                                            Integer.parseInt(document.getData().get("unlike").toString()),
+                                            document.getData().get("saveLocation").toString()
+                                    ));
+                                }
+                                mainAdapter.notifyDataSetChanged();
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+
     private void storeUploader(String id){
         if(successCount == 0) {
             firebaseFirestore.collection("posts").document(id)
@@ -218,6 +314,25 @@ public class Fragment_Post extends BasicActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             startToast("게시글을 삭제하지 못하였습니다.");
+                        }
+                    });
+        }
+    }
+    private void storeUploader_Black(String id){
+        if(successCount == 0) {
+            firebaseFirestore.collection("blackposts").document(id)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            startToast("검은색 이동 : 게시글을 삭제하였습니다.");
+                            postsUpdate_Black();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            startToast("검은색 이동 : 게시글을 삭제하지 못하였습니다.");
                         }
                     });
         }
