@@ -1,5 +1,6 @@
 package com.akj.sns_project;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class Movie {
