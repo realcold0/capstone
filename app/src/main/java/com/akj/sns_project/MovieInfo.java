@@ -3,6 +3,7 @@ package com.akj.sns_project;
 import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
 
 import android.graphics.Color;
+import android.media.Rating;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +30,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -64,18 +70,26 @@ public class MovieInfo extends Fragment {
     private TextView textViewReleaseDate;
     private TextView textViewOverView;
 
+
+    private RatingBar ratingBar;
     private ImageView imageviewPoster;
     private RecyclerView recyclerViewMovieComment;
     private ReplyAdapter replyAdapter;
+    private Button buttonMovieComment;
+    private EditText editTextMovieComment;
 
     private String savelocationforReply;
     private ArrayList<ReplyInfo> replyList;
+    private ReplyInfo replyInfo;
+
+    private FirebaseUser user;
 
     public MovieInfo(Movie movie) { //영화 정보들 대입
         this.movieID = movie.id;
         this.movie = movie;
         this.title = movie.title;
         this.rate = movie.vote_average;
+        this.releaseDate = movie.release_date;
         this.overView = movie.overview;
         this.posterURL = movie.GetPosterPath();
     }
@@ -108,14 +122,20 @@ public class MovieInfo extends Fragment {
         textViewTitle = view.findViewById(R.id.textViewMovieTitle);
         textViewReleaseDate = view.findViewById(R.id.textViewMovieReleaseDate);
         imageviewPoster = view.findViewById(R.id.imageViewPoster);
+        ratingBar = view.findViewById(R.id.ratingBarMovie);
         recyclerViewMovieComment = view.findViewById(R.id.RecyclerViewMovieComment);
+        buttonMovieComment = view.findViewById(R.id.buttonMovieComment);
+        editTextMovieComment = view.findViewById(R.id.editTextMovieComment);
+
+
 
         textViewTitle.setText(title);
         textViewTitle.setTextColor(Color.parseColor("#181D31"));
         textViewOverView.setText(overView);
         textViewReleaseDate.setText(releaseDate);
         Glide.with(getActivity()).load(posterURL).into(imageviewPoster);
-
+        buttonMovieComment.setOnClickListener(onClickListener);
+        ratingBar.setRating(rate);
 
         recyclerViewMovieComment.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
         recyclerViewMovieComment.setLayoutManager(new LinearLayoutManager(getActivity())); // recyclerview를 수직으로 보여주는 linearlayoutmanager
@@ -133,15 +153,16 @@ public class MovieInfo extends Fragment {
         movie.put("releaseDate", releaseDate);
         movie.put("rate", rate);
 
-        //firebase에 추가
-        firestore.collection("movie").add(movie).
-                addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        //firebase에 영화 정보 추가
+        firestore.collection("movie").document(title).set(movie).
+                addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
+                    public void onSuccess(Void unused) {
                         Toast toast = Toast.makeText(getActivity(), "성공", Toast.LENGTH_SHORT);
                         toast.show();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+                })
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast toast = Toast.makeText(getActivity(), "실패", Toast.LENGTH_SHORT);
@@ -149,7 +170,7 @@ public class MovieInfo extends Fragment {
                     }
                 });
 
-        //savelocationforReply = postInfo.getsaveLocation();
+        savelocationforReply = title;
 
         firestore.collection("replys")
                 .get()
@@ -161,6 +182,8 @@ public class MovieInfo extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 if (savelocationforReply.equals(document.getData().get("saveLocation").toString())) {
+                                    Toast toast = Toast.makeText(getActivity(), "리사이클러뷰", Toast.LENGTH_SHORT);
+                                    toast.show();
                                     replyList.add(new ReplyInfo(
                                             document.getData().get("contents").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
@@ -170,7 +193,8 @@ public class MovieInfo extends Fragment {
 
 
 
-
+                            recyclerViewMovieComment.setHasFixedSize(true);
+                            recyclerViewMovieComment.setLayoutManager(new LinearLayoutManager(getActivity()));
 
                             RecyclerView.Adapter mAdapter = new ReplyAdapter(getActivity(), replyList);
                             recyclerViewMovieComment.setAdapter(mAdapter);
@@ -180,10 +204,6 @@ public class MovieInfo extends Fragment {
                         }
                     }
                 });
-
-        //findViewById(R.id.replySend).setOnClickListener(onClickListener);
-        //parent = findViewById(R.id.replyLayout);
-
 
         /*
 
@@ -230,7 +250,61 @@ public class MovieInfo extends Fragment {
 
         return view;
 
-
-
     }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.buttonMovieComment:
+                    storageUpload();
+                    editTextMovieComment.setText("");
+            }
+        }
+    };
+
+    private void storageUpload() {
+        final String contents = editTextMovieComment.getText().toString();
+
+        if (contents.length() > 0) {
+            // 파이어베이스에서 유저 정보를 가져옴
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+            final DocumentReference documentReference = replyInfo == null ?
+                    firebaseFirestore.collection("replys").document() :
+                    firebaseFirestore.collection("replys").document(replyInfo.getId());
+            final Date date = replyInfo == null ? new Date() : replyInfo.getCreatedAt(); // postInfo가 NULL이면 new Date값을 NULL이 아니면 postinfo의 createdAt값을 넣어줌
+            // 게시글 수정을 위한 코드드
+
+            storeUpload(documentReference, new ReplyInfo(contents, date, title));
+        } else {
+            Toast toast = Toast.makeText(getActivity(), "제목입력해주세요", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+
+    // 파이어베이스에서 제공하는 게시글 업로드 함수 코드
+    private void storeUpload(DocumentReference documentReference, ReplyInfo replyInfo) {
+        documentReference.set(replyInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast toast = Toast.makeText(getActivity(), "성공", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast toast = Toast.makeText(getActivity(), "실패", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
+    }
+
+
+
+
 }

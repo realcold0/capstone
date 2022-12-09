@@ -126,7 +126,7 @@ public class Fragment01 extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                makeRequest("https://api.themoviedb.org/3/trending/all/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
+                makeRequest("https://api.themoviedb.org/3/trending/movie/week?api_key=3c314dc629a0e72e9328fe7c33981cf2&page=1&language=ko-KR");
             }
         }).start();
 
