@@ -383,7 +383,7 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
         Intent intent = new Intent(getActivity(), c);
         intent.putExtra("postInfo", postInfo);
         startActivity(intent);
-    }//
+    }
 
     private void startToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
