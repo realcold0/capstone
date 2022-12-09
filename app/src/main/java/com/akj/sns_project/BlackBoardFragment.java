@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.akj.sns_project.activity.LoginActivity;
@@ -27,6 +29,7 @@ import com.akj.sns_project.activity.MemberInitActivity;
 import com.akj.sns_project.activity.WriteBlackPostActivity;
 import com.akj.sns_project.activity.WritePostActivity;
 import com.akj.sns_project.adapter.BlackAdapter;
+import com.akj.sns_project.adapter.MainAdapter;
 import com.akj.sns_project.listener.OnPostListener;
 
 import com.android.volley.RequestQueue;
@@ -53,7 +56,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 
-public class BlackBoardFragment extends Fragment {
+public class BlackBoardFragment extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "BlackBoardActicity";
     private FirebaseUser firebaseUser;              // 파이어베이스 유저 정보 가져오기 위해 생성한 이름
@@ -134,9 +137,52 @@ public class BlackBoardFragment extends Fragment {
         userUid = user.getUid().toString();
 
         initRecyclerViewAndAdapter();
+        SearchView searchView = view.findViewById(R.id.search_view);
+        Button Btn = view.findViewById(R.id.button6);
+        Btn.setOnClickListener(this);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                blackAdapter = new BlackAdapter(getActivity(), search(query));
+                //postList = search(query);
+                recyclerView.setAdapter(blackAdapter);
+                //mainAdapter.notifyDataSetChanged();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                return false;
+            }
+        });
         return view;
     }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.button6){
+            blackAdapter = new BlackAdapter(getActivity(), postList);
+            recyclerView.setAdapter(blackAdapter);
+            //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
+        }
+    }
+
+    private ArrayList<PostInfo> search(String query){
+        ArrayList<PostInfo> postlist = new ArrayList<>();
+        for(int i = 0; i < postList.size(); i++) {
+            String title = postList.get(i).getTitle();
+            if(title.toLowerCase().contains(query.toLowerCase())){
+                postlist.add(postList.get(i));
+            }
+        }
+        return postlist;
+    }
+
     private void initRecyclerViewAndAdapter() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
         recyclerView.setLayoutManager(gridLayoutManager);
