@@ -76,6 +76,11 @@
                 android:numStars="10"
                 android:rating="3"
                 android:stepSize="0.1" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RecyclerViewMovieComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
