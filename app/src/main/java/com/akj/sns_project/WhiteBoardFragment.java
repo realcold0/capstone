@@ -290,8 +290,7 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
                     });
         }
     }
-
-
+    
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(getActivity(), c);
         startActivity(intent);
