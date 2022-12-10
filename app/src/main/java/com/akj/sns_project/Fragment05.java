@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.akj.sns_project.activity.BoardActivity;
-
+import com.akj.sns_project.activity.AdminActivity;
+import com.akj.sns_project.activity.LoginActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -62,6 +64,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
 
         Button PostBtn = root.findViewById(R.id.button4);
         Button adminBtn = root.findViewById(R.id.button2);
+        Button logoutBtn = root.findViewById(R.id.logoutButton);
 
         // DB에서 user 컬렉션 선택 후 로그인된 아이디에 맞는 정보 가져오기
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -76,7 +79,6 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                         //아이디가 관리자일 경우 버튼생성
                         //무슨 버튼해야 하는거지? 왜 커밋안되지? 휴
                         if (nickname.getText().toString().equals("관리자")){
-
                             Button btn2=root.findViewById(R.id.button2);
                             btn2.setVisibility(View.VISIBLE);
                         }
@@ -95,6 +97,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
 
         PostBtn.setOnClickListener(this);
         adminBtn.setOnClickListener(this);
+        logoutBtn.setOnClickListener(this);
         return root;
 
     }
@@ -109,15 +112,28 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
             //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
         }
         else if(view.getId() == R.id.button2){
-            Intent intent = new Intent(this.getContext(), BoardActivity.class);
+            Intent intent = new Intent(this.getContext(), AdminActivity.class);
             startActivity(intent);
             //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
+        }
+        else if(view.getId() == R.id.logoutButton){
+            FirebaseAuth.getInstance().signOut();   // 파이어베이스에 로그아웃 신호 보내줌 _ 대규
+            myStartActivity(LoginActivity.class);   // 로그인 액티비티로 이동 _ 대규
+            startToast("로그아웃");
+            ActivityCompat.finishAffinity(getActivity());
         }
         /*
         else if(view.getId() == R.id.button3){
             Log.d("Button3","work");
         }
          */
+    }
+    private void myStartActivity(Class c) { // 액티비티 이동하는 함수
+        Intent intent = new Intent(getActivity(), c);
+        startActivity(intent);
+    }
+    private void startToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 
  }

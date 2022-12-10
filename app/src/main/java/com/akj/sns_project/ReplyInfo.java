@@ -10,10 +10,11 @@ public class ReplyInfo {
     private String saveLocation;
 
 
-    public ReplyInfo(String contents, Date createdAt, String saveLocation){
+    public ReplyInfo(String contents, Date createdAt, String saveLocation,String id){
         this.contents = contents;
         this.createdAt = createdAt;
         this.saveLocation = saveLocation;
+        this.id = id;
     }
 
 
