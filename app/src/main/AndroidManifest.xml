@@ -38,6 +38,7 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.AdminActivity" />
         <activity android:name=".activity.BoardActivity" />
         <activity android:name=".activity.MypageActivity" />
         <activity android:name=".activity.LoginActivity" />
