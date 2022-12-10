@@ -68,12 +68,15 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/likeManage"
             android:layout_width="50dp"
-            android:layout_height="31dp">
+            android:layout_height="31dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp">
 
             <ImageView
                 android:id="@+id/imageView5"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
                 app:srcCompat="@drawable/thumbs_up" />
 
             <TextView
@@ -82,19 +85,22 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
 
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/unlikeManage"
             android:layout_width="50dp"
-            android:layout_height="31dp">
+            android:layout_height="31dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp">
 
             <ImageView
                 android:id="@+id/imageView6"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="1dp"
                 app:srcCompat="@drawable/thumbs_down" />
 
             <TextView
@@ -103,7 +109,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
 
         </androidx.cardview.widget.CardView>
 
