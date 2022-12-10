@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,8 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,10 +69,12 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     //파이어스토어에 접근하기 위한 객체를 생성한다.
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private HashtagAdapter hashtagAdapter;
+    public static WritePostActivity Apost;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Apost = WritePostActivity.this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_post);
 
@@ -142,6 +147,11 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             }
         });
 
+        // 해시태그 클릭시 가장 위 텍스트뷰에 값 저장
+        TextView text = findViewById(R.id.textView7rename);
+        String hash = getIntent().getStringExtra("hash");
+        text.setText(hash);
+
         // 해시태그 검색
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -151,7 +161,6 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("Test", " 이거 되는거 맞냐? "+items);
                 hashtagAdapter.setFriendList(search(newText));
                 return false;
             }
