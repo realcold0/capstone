@@ -100,36 +100,36 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                                 Glide.with(root).load(photoUrl).into(userimage);
                             }
                         }
+
+                        // 여기부터 해시태그 정보 가져오기
+                        CollectionReference productRef = db.collection("posts");
+                        //get()을 통해서 해당 컬렉션의 정보를 가져온다.
+                        productRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                //작업이 성공적으로 마쳤을때
+                                if (task.isSuccessful()) {
+                                    //document.getData() or document.getId() 등등 여러 방법으로
+                                    //데이터를 가져올 수 있다.
+                                    hash = "";
+                                    //컬렉션 아래에 있는 모든 정보를 가져온다.
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.d("yyyyyyyyyyyy", document.getData().get("id").toString() + " => " + userid);
+                                        if(document.getData().get("id").toString().equals(userid)) {
+                                            hash = hash + " " + document.getData().get("hashtag").toString();
+                                            Log.d("yyyyyyyyyyyy", hash);
+                                        }
+                                    }
+                                    hashText.setText(hash);
+                                    //그렇지 않을때
+                                } else {
+
+                                }
+                            }
+                        });
                     } else { // 정보가 존재하지 않을 시
                     }
                 } else { // 불러오기 실패시
-                }
-            }
-        });
-
-        // 여기부터 해시태그 정보 가져오기
-        CollectionReference productRef = db.collection("posts");
-        //get()을 통해서 해당 컬렉션의 정보를 가져온다.
-        productRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                //작업이 성공적으로 마쳤을때
-                if (task.isSuccessful()) {
-                    //document.getData() or document.getId() 등등 여러 방법으로
-                    //데이터를 가져올 수 있다.
-                    hash = "";
-                    //컬렉션 아래에 있는 모든 정보를 가져온다.
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d("yyyyyyyyyyyy", document.getData().get("id").toString() + " => " + userid);
-                        if(document.getData().get("id").toString().equals(userid)) {
-                            hash = hash + " " + document.getData().get("hashtag").toString();
-                            Log.d("yyyyyyyyyyyy", hash);
-                        }
-                    }
-                    hashText.setText(hash);
-                    //그렇지 않을때
-                } else {
-
                 }
             }
         });
