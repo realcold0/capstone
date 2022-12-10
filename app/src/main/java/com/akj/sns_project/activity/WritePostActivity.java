@@ -114,7 +114,8 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
         /* initiate recyclerview */
         hashview.setAdapter(hashtagAdapter);
-        hashview.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        hashview.setLayoutManager(layoutManager);
 
         items = new ArrayList<>();
         // items 해시태그 가져오기
