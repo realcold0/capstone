@@ -12,6 +12,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+
             android:id="@+id/linearLayout5"
             android:layout_width="410dp"
             android:layout_height="34dp"
@@ -30,8 +31,7 @@
         <LinearLayout
             android:id="@+id/linearLayout7"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_height="535dp"
             android:orientation="vertical">
 
             <TextView
@@ -44,8 +44,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btn_all_genre"
@@ -76,8 +76,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnRomance"
@@ -105,8 +105,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnSF"
@@ -134,8 +134,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnHorror"
@@ -164,8 +164,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnComedy"
@@ -189,128 +189,77 @@
                     android:background="@drawable/button_round"
                     android:text="모험" />
 
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayout8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="국가"
-                android:textSize="24sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
-
-                <Button
-                    android:id="@+id/btn_all_country"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginRight="50dp"
-                    android:background="@drawable/button_round"
-                    android:text="전체" />
-
-
-                <Button
-                    android:id="@+id/japan_button2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginRight="50dp"
-                    android:background="@drawable/button_round"
-                    android:text="일본" />
-
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/hongkong_button2"
+                    android:id="@+id/btnFamily"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button_round"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="50dp"
-                    android:text="홍콩" />
+                    android:layout_weight="1"
+                    android:background="@drawable/button_round"
+                    android:text="가족" />
 
                 <Button
-                    android:id="@+id/america_button2"
+                    android:id="@+id/btnFantasy"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button_round"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="50dp"
-                    android:text="미국" />
-
+                    android:layout_weight="1"
+                    android:background="@drawable/button_round"
+                    android:text="판타지" />
 
 
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/france_button2"
+                    android:id="@+id/btnMystery"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="50dp"
+                    android:layout_weight="1"
                     android:background="@drawable/button_round"
-                    android:text="프랑스" />
+                    android:text="미스테리" />
 
                 <Button
-                    android:id="@+id/china_button2"
+                    android:id="@+id/btnWar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="50dp"
+                    android:layout_weight="1"
                     android:background="@drawable/button_round"
-                    android:text="중국" />
+                    android:text="전쟁" />
+
 
             </LinearLayout>
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="5dp">
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/korea_button2"
+                    android:id="@+id/btnHistory"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -318,10 +267,10 @@
                     android:layout_marginRight="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_round"
-                    android:text="한국" />
+                    android:text="역사" />
 
                 <Button
-                    android:id="@+id/etc_button2"
+                    android:id="@+id/btnDocumentary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -329,9 +278,11 @@
                     android:layout_marginRight="50dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_round"
-                    android:text="그 외" />
+                    android:text="다큐멘터리" />
+
 
             </LinearLayout>
+
 
 
         </LinearLayout>
