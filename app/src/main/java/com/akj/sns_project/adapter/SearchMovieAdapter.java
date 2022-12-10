@@ -7,9 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.akj.sns_project.Movie;
+import com.akj.sns_project.MovieInfo;
 import com.akj.sns_project.Poster;
 import com.akj.sns_project.R;
 import com.bumptech.glide.Glide;
@@ -18,14 +21,25 @@ import java.util.ArrayList;
 
 public class SearchMovieAdapter extends RecyclerView.Adapter<SearchMovieAdapter.SearchMovieViewHolder>{
     private Context context;
-    private ArrayList<Poster> posterList = new ArrayList<>();
+    private ArrayList<Movie> posterList = new ArrayList<Movie>();
+
+    public interface OnItemCllickListener{
+        void onItemClick(View view, int pos);
+    }
+
+    private PosterAdapter.OnItemCllickListener itemCllickListener;
+
+    public void setOnItemClickListener(PosterAdapter.OnItemCllickListener listner)
+    {
+        this.itemCllickListener = listner;
+    }
 
     public SearchMovieAdapter()
     {
 
     }
 
-    public SearchMovieAdapter(Context context, ArrayList<Poster> posterList){
+    public SearchMovieAdapter(Context context, ArrayList<Movie> posterList){
         this.context = context;
         this.posterList = posterList;
     }
@@ -39,9 +53,19 @@ public class SearchMovieAdapter extends RecyclerView.Adapter<SearchMovieAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final SearchMovieAdapter.SearchMovieViewHolder  holder, int position) {
-        Poster currentPoster = posterList.get(position);
-        String imageUrl = currentPoster.getImageUrl();
+        Movie currentPoster = posterList.get(position);
+        String imageUrl = currentPoster.GetPosterPath();
         Glide.with(context).load(imageUrl).into(holder.view);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity)v.getContext();
+                MovieInfo movieInfo =  new MovieInfo(currentPoster);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, movieInfo).addToBackStack(null).commit();
+            }
+        });
+
     }
 
     @Override
