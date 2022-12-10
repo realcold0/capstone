@@ -327,7 +327,7 @@ public class MovieInfo extends Fragment {
             final Date date = replyInfo == null ? new Date() : replyInfo.getCreatedAt(); // postInfo가 NULL이면 new Date값을 NULL이 아니면 postinfo의 createdAt값을 넣어줌
             // 게시글 수정을 위한 코드드
 
-            storeUpload(documentReference, new ReplyInfo(contents, date, title,userUid));
+            storeUpload(documentReference, new ReplyInfo(contents, date, title, userUid));
         } else {
             Toast toast = Toast.makeText(getActivity(), "제목입력해주세요", Toast.LENGTH_SHORT);
             toast.show();

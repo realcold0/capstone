@@ -149,7 +149,7 @@ public class BlackAdapter extends RecyclerView.Adapter<BlackAdapter.BlackViewHol
                     break;
                 }
                 String contents = contentsList.get(i);
-                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/blackposts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/")) {   // 글 내용에 사진이나 동영상이 있을 경우
                     // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
                     ImageView imageView = new ImageView(activity);
                     imageView.setLayoutParams(layoutParams);
