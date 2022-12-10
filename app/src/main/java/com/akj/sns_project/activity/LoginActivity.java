@@ -49,7 +49,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
         // 로그인xml에 클릭 listner를 달아주는 코드들
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
         findViewById(R.id.gotoPasswordResetButton).setOnClickListener(onClickListener);
-        findViewById(R.id.googleLoginButton).setOnClickListener(onClickListener);
+        //findViewById(R.id.googleLoginButton).setOnClickListener(onClickListener);
         findViewById(R.id.gotoSignUpButton).setOnClickListener(onClickListener);
 
         //emailTextView = findViewById(R.id.emailEditText);
@@ -57,7 +57,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
 
 
         //구글 로그인 여기서부터
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        /*GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
@@ -78,7 +78,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
 
             }
         }); // 구글 로그인 마무리
-
+*/
     }
 
     // 클릭 이벤트 정리
@@ -155,6 +155,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
 
 
     // 구글 로그인 파트
+    /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {   // 구글 로그인 인증을 요청 했을 때 결과 값을 되돌려 받는 곳
         super.onActivityResult(requestCode, resultCode, data);
@@ -186,7 +187,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
                         }
                     }
                 });
-    }
+    }*/
     // 구글 로그인 파트 마무리    이 파트는 firebase에서 제공하는 구글 로그인 파트 _ 대규
 
    private void startToast(String msg) {

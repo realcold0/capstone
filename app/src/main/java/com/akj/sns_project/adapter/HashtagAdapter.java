@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.R;
@@ -27,7 +28,30 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull HashtagAdapter.ViewHolder holder, int position) {
-        holder.onBind(mFriendList.get(position));
+        //holder.onBind(mFriendList.get(position));
+        String string = mFriendList.get(position);
+        holder.HashText.setText(string);
+
+
+        holder.HashText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity)v.getContext();
+                TextView textView = activity.findViewById(R.id.textView7rename);
+                if(textView.getText() == null)
+                {
+                    textView.setText(string);
+                }
+                else
+                {
+                    textView.append(string);
+                }
+
+
+            }
+        });
+
+
     }
 
     public void setFriendList(ArrayList<String> list){
@@ -42,12 +66,15 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView HashText;
+        TextView showList;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             HashText = (TextView) itemView.findViewById(R.id.HashText);
+
         }
 
+        /*
         void onBind(String item){
             HashText.setText(item);
 
@@ -62,6 +89,9 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
 
                 }
             });
-        }
+
+
+        }*/
     }
 }
+
