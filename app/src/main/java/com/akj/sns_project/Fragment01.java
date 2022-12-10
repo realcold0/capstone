@@ -360,7 +360,6 @@ public class Fragment01 extends Fragment {
     private void postsUpdate() {
         if (firebaseUser != null) {
             CollectionReference collectionReference = firebaseFirestore.collection("posts");    // 파이어베이스 posts폴더를 사용
-            //collectionReference.document().update()
             collectionReference.orderBy("like", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
