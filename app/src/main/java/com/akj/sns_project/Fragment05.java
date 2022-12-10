@@ -108,7 +108,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
             //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
         }
         else if(view.getId() == R.id.button2){
-            Intent intent = new Intent(this.getContext(), AdminActivity.class);
+            Intent intent = new Intent(this.getContext(), adminActivity.class);
             startActivity(intent);
             //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
         }
