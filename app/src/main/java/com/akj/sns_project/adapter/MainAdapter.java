@@ -9,6 +9,7 @@ import static com.akj.sns_project.Util.ADMIN_YJ;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -31,6 +32,8 @@ import com.akj.sns_project.activity.PostActivity;
 import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -38,7 +41,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
     private ArrayList<PostInfo> mDataset;
@@ -276,6 +281,47 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         mDataset.get(position).setunlike(unlikenum);
 
         documentReference.set(mDataset.get(position));
+
+        // 싫어요 - 좋아요 수가 5를 넘으면 게시판 이동
+        // 흰색 -> 검은색
+        if((unlikenum - likenum) > 5){
+            // 검은색 게시판에 업로드
+            // 게시글 가져와서 map에 넣기
+            DocumentReference post = firebaseFirestore.collection("blackposts").document();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", mDataset.get(position).getTitle());
+            data.put("contents", mDataset.get(position).getContents());
+            data.put("publisher", mDataset.get(position).getPublisher());
+            data.put("createdAt", mDataset.get(position).getCreatedAt());
+            data.put("id", mDataset.get(position).getId());
+            data.put("like", mDataset.get(position).getlike());
+            data.put("unlike", mDataset.get(position).getUnlike());
+            data.put("saveLocation", mDataset.get(position).getsaveLocation());
+            post.set(data);
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // 해당 게시글 흰색 게시판에서 삭제하기
+            db.collection("posts").document(mDataset.get(position).getsaveLocation())
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+
+        }
+
+        // 실시간으로 이동 반영 x : 게시판 다시 클릭해서 다시 로드하면
+        // 그때 이동된 정보들 반영 됨
     }
 
     @Override
