@@ -16,12 +16,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akj.sns_project.activity.LoginActivity;
@@ -198,7 +200,7 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
 
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
         @Override
-        public void onDelete(int position) {       // 게시글 삭제 기능_대규 여기서부터
+        public void onDelete(int position) {// 게시글 삭제 기능_대규 여기서부터
             final String id = postList.get(position).getId();
             ArrayList<String> contentsList = postList.get(position).getContents();
             publisher = postList.get(position).getPublisher();
@@ -231,7 +233,7 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
                 storeUploader(id);
             }
             else{
-                startToast("다른사람의 게시글을 삭제할 수 없습니다");
+                startToast("다른 사람의 게시글은 삭제할 수 없습니다.");
             }
         }
 
@@ -250,7 +252,7 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.floatingActionButton:
-                    myStartActivity(WriteBlackPostActivity.class);   // 글쓰기 버튼 클릭 시 이동 _ 대규
+                    myStartActivity(WriteBlackPostActivity.class);// 글쓰기 버튼 클릭 시 이동 _ 대규
                     break;
             }
         }
@@ -325,5 +327,4 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
     private void startToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
-
 }
