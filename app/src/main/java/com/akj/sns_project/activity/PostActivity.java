@@ -134,7 +134,7 @@ public class PostActivity extends BasicActivity {
                                 }
                             }
 
-                            Collections.sort(replyList,new ListCompartor());
+                            Collections.sort(replyList,new ListCompartor());  //만든 날짜에 따라 정렬
 
 
 
@@ -182,7 +182,7 @@ public class PostActivity extends BasicActivity {
                                             }
                                         }
 
-                                        Collections.sort(replyList,new ListCompartor());
+                                        Collections.sort(replyList,new ListCompartor());//만든 날짜에 따라 정렬
 
 
                                         recyclerView = findViewById(R.id.recyclerView);
@@ -191,7 +191,7 @@ public class PostActivity extends BasicActivity {
 
                                         RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
                                         recyclerView.setAdapter(mAdapter);
-                                        recyclerView.scrollToPosition(replyList.size()-1);
+                                        recyclerView.scrollToPosition(replyList.size()-1);   //마지막 위치로 땡기기
                                     } else {
                                         Log.d(TAG, "Error getting documents: ", task.getException());
                                     }
