@@ -283,29 +283,22 @@ public class Fragment01 extends Fragment {
         }   // 게시글 수정 기능_대규
         @Override
         public void onGoBlack(int position) {
-            String controllNum = postList.get(position).getId();
-            final DocumentReference docRef = postInfo == null ?
-                    firebaseFirestore.collection("posts").document() :
-                    firebaseFirestore.collection("posts").document(postInfo.getId());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    PostInfo post = documentSnapshot.toObject(PostInfo.class);
-                    firebaseFirestore.collection("blackposts").document(docRef.getId())
-                            .set(post).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "Success : 검은색 게시판 이동");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error : 검은색 게시판 이동", e);
-                                }
-                            });
-                }
-            });
+            // 검은색 게시판에 업로드
+            // 1. 흰색 게시판에서 게시글 가져와서 넣기
+            DocumentReference post = firebaseFirestore.collection("blackposts").document();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", postList.get(position).getTitle());
+            data.put("contents", postList.get(position).getContents());
+            data.put("publisher", postList.get(position).getPublisher());
+            data.put("createdAt", postList.get(position).getCreatedAt());
+            data.put("id", postList.get(position).getId());
+            data.put("like", postList.get(position).getlike());
+            data.put("unlike", postList.get(position).getUnlike());
+            data.put("saveLocation", postList.get(position).getsaveLocation());
+            post.set(data);
+
+            // 2. 흰색 게시판의 게시글 삭제
             final String id = postList.get(position).getId();
             ArrayList<String> contentsList = postList.get(position).getContents();
 
@@ -329,12 +322,12 @@ public class Fragment01 extends Fragment {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            startToast("화이트에서 제거 실패");
+                            startToast("3. 화이트에서 제거 실패");
                         }
                     });
                 }
             }
-            storeUploader_Black(id);
+            storeUploader(id);
         }
     };
 
@@ -410,25 +403,6 @@ public class Fragment01 extends Fragment {
         }
     }
 
-    private void storeUploader_Black(String id){
-        if(successCount == 0) {
-            firebaseFirestore.collection("posts").document(id)
-                    .delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            startToast("검은색 이동 : 게시글을 삭제하였습니다.");
-                            postsUpdate();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            startToast("검은색 이동 : 게시글을 삭제하지 못하였습니다.");
-                        }
-                    });
-        }
-    }
 
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(getActivity(), c);
