@@ -160,6 +160,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                 favoriteList.add(userUid);
             }
             mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
         } else if (likeOverlap == 0 && unlikeOverlap >= 1) {     // 싫어요를 눌렀던적이 있을때
             addlikeCount = 1;
             addunlikeCount = -1;
@@ -182,6 +183,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
             favoriteList.remove(userUid);          // 요부분 만약 userUid가 안에 있으면 userUid를 삭제한다로 수정 필요
             mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
         }
 
         int likenum = mDataset.get(position).getlike() + addlikeCount;
@@ -239,6 +241,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             if(isExists != true){
                 unFavoriteList.add(userUid);
             }
+            mDataset.get(position).setFavorites(favoriteList);
             mDataset.get(position).setUnfavorites(unFavoriteList);
         } else if (unlikeOverlap == 0 && likeOverlap >= 1) {
             addunlikeCount = 1;
@@ -246,7 +249,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
-            boolean isExists = favoriteList.contains(userUid);
+            boolean isExists = unFavoriteList.contains(userUid);
             if(isExists != true){
                 unFavoriteList.add(userUid);
             }
@@ -261,6 +264,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
             unFavoriteList.remove(userUid);
+            mDataset.get(position).setFavorites(favoriteList);
             mDataset.get(position).setUnfavorites(unFavoriteList);
         }
         int likenum = mDataset.get(position).getlike() + addlikeCount;

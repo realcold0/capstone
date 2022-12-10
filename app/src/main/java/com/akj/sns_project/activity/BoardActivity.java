@@ -164,7 +164,8 @@ public class BoardActivity extends BasicActivity {
                     }
                 }
                 storeUploader(id);
-            }else{
+            }
+            else{
                 startToast("다른사람의 게시글을 삭제할 수 없습니다");
             }
         }
@@ -258,6 +259,7 @@ public class BoardActivity extends BasicActivity {
                                             (ArrayList<String>) document.getData().get("contents"),
                                             document.getData().get("publisher").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
+                                            document.getId(),
                                             Integer.parseInt(document.getData().get("like").toString()),
                                             Integer.parseInt(document.getData().get("unlike").toString()),
                                             document.getData().get("saveLocation").toString(),
