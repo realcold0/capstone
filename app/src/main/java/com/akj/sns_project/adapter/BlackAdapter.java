@@ -23,6 +23,10 @@ import com.akj.sns_project.R;
 import com.akj.sns_project.activity.PostActivity;
 import com.akj.sns_project.listener.OnPostListener;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +37,8 @@ public class BlackAdapter extends RecyclerView.Adapter<BlackAdapter.BlackViewHol
     private Activity activity;
     private OnPostListener onPostListener;
     private ImageView imageView;
-
+    private FirebaseUser user;
+    private String userUid;
     //RecyclerView와 cardView를 이용하여 게시글들을 보며줄 것으로 선언
     static class BlackViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -100,14 +105,164 @@ public class BlackAdapter extends RecyclerView.Adapter<BlackAdapter.BlackViewHol
     public void countup(@NonNull final BlackViewHolder holder, int position) {    // 여기 수정함 11.21  이제 셋팅한 카운트 숫자를 파이어베이스로 넣어야함
         CardView cardView = holder.cardView;
         TextView likeCount = cardView.findViewById(R.id.likeCount);
-        likeCount.setText(String.valueOf(mDataset.get(position).getlike() + 1));
-        //여기 수정함 11.21 22시
+        TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
+
+        int addlikeCount = 0;
+        int addunlikeCount = 0;
+        int likeOverlap = 0;
+        int unlikeOverlap = 0;
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
+
+        ArrayList<String> favoriteList = new ArrayList<>();
+        favoriteList = mDataset.get(position).getFavorites();
+        ArrayList<String> unFavoriteList = new ArrayList<>();
+        unFavoriteList = mDataset.get(position).getUnfavorites();
+
+        if (favoriteList != null) {
+            for (int i = 0; i < favoriteList.size(); i++) {
+                if (favoriteList.get(i).equals(userUid)) {
+                    likeOverlap = likeOverlap + 1;
+                }
+            }
+        }
+        if (unFavoriteList != null) {
+            for (int i = 0; i < unFavoriteList.size(); i++) {
+                if (unFavoriteList.get(i).equals(userUid)) {
+                    unlikeOverlap = unlikeOverlap + 1;
+                }
+            }
+        }
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final DocumentReference documentReference = mDataset.get(position) == null ?
+                firebaseFirestore.collection("posts").document() :
+                firebaseFirestore.collection("posts").document(mDataset.get(position).getId());
+
+        if (likeOverlap == 0 && unlikeOverlap == 0) {           // 첫번째 의문 왜 이게 실행됨...?
+            addlikeCount = 1;
+            addunlikeCount = 0;
+
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+            boolean isExists = favoriteList.contains(userUid);
+            if (isExists != true) {
+                favoriteList.add(userUid);
+            }
+            mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
+        } else if (likeOverlap == 0 && unlikeOverlap >= 1) {     // 싫어요를 눌렀던적이 있을때
+            addlikeCount = 1;
+            addunlikeCount = -1;
+
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+            boolean isExists = favoriteList.contains(userUid);
+            if (isExists != true) {
+                favoriteList.add(userUid);
+            }
+            unFavoriteList.remove(userUid);
+
+            mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
+        } else if (likeOverlap >= 1 && unlikeOverlap == 0) {
+            addlikeCount = -1;
+            addunlikeCount = 0;
+
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+            favoriteList.remove(userUid);          // 요부분 만약 userUid가 안에 있으면 userUid를 삭제한다로 수정 필요
+            mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
+        }
+
+        int likenum = mDataset.get(position).getlike() + addlikeCount;
+        mDataset.get(position).setlike(likenum);
+        int unlikenum = mDataset.get(position).getUnlike() + addunlikeCount;
+        mDataset.get(position).setunlike(unlikenum);
+        documentReference.set(mDataset.get(position));
     }
 
     public void countdown(@NonNull final BlackViewHolder holder, int position) {    // 여기 수정함 11.21
         CardView cardView = holder.cardView;
+        TextView likeCount = cardView.findViewById(R.id.likeCount);
         TextView unlikeCount = cardView.findViewById(R.id.unlikeCount);
-        unlikeCount.setText(String.valueOf(mDataset.get(position).getlike() + 1));
+
+        int addlikeCount = 0;
+        int addunlikeCount = 0;
+        int likeOverlap = 0;
+        int unlikeOverlap = 0;
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
+
+
+        ArrayList<String> favoriteList = new ArrayList<>();
+        favoriteList = mDataset.get(position).getFavorites();
+        ArrayList<String> unFavoriteList = new ArrayList<>();
+        unFavoriteList = mDataset.get(position).getUnfavorites();
+
+        if (favoriteList != null) {
+            for (int i = 0; i < favoriteList.size(); i++) {
+                if (favoriteList.get(i).equals(userUid)) {
+                    likeOverlap = likeOverlap + 1;
+                }
+            }
+        }
+        if (unFavoriteList != null) {
+            for (int i = 0; i < unFavoriteList.size(); i++) {
+                if (unFavoriteList.get(i).equals(userUid)) {
+                    unlikeOverlap = unlikeOverlap + 1;
+                }
+            }
+        }
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final DocumentReference documentReference = mDataset.get(position) == null ?
+                firebaseFirestore.collection("posts").document() :
+                firebaseFirestore.collection("posts").document(mDataset.get(position).getId());
+
+        if (likeOverlap == 0 && unlikeOverlap == 0) {
+            addunlikeCount = 1;
+            addlikeCount = 0;
+
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+            boolean isExists = unFavoriteList.contains(userUid);
+            if (isExists != true) {
+                unFavoriteList.add(userUid);
+            }
+            mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
+        } else if (unlikeOverlap == 0 && likeOverlap >= 1) {
+            addunlikeCount = 1;
+            addlikeCount = -1;
+
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+            boolean isExists = unFavoriteList.contains(userUid);
+            if (isExists != true) {
+                unFavoriteList.add(userUid);
+            }
+            favoriteList.remove(userUid);
+
+            mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
+        } else if (unlikeOverlap >= 1 && likeOverlap == 0) {
+            addunlikeCount = -1;
+            addlikeCount = 0;
+
+            likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
+            unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
+            unFavoriteList.remove(userUid);
+            mDataset.get(position).setFavorites(favoriteList);
+            mDataset.get(position).setUnfavorites(unFavoriteList);
+        }
+        int likenum = mDataset.get(position).getlike() + addlikeCount;
+        mDataset.get(position).setlike(likenum);
+        int unlikenum = mDataset.get(position).getUnlike() + addunlikeCount;
+        mDataset.get(position).setunlike(unlikenum);
+
+        documentReference.set(mDataset.get(position));
     }
 
     @Override
