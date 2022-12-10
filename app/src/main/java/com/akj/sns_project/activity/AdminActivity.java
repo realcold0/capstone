@@ -6,17 +6,17 @@ import static com.akj.sns_project.Util.ADMIN_JY;
 import static com.akj.sns_project.Util.ADMIN_SH;
 import static com.akj.sns_project.Util.ADMIN_YJ;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BoardActivity extends BasicActivity {
+public class AdminActivity extends BasicActivity{
     private static final String TAG = "BoardActicity";
     private FirebaseUser firebaseUser;              // 파이어베이스 유저 정보 가져오기 위해 생성한 이름
     private FirebaseFirestore firebaseFirestore;    // 파이어베이스스토어에서 정보 가져오기 위해 사용한 이름
@@ -60,7 +60,7 @@ public class BoardActivity extends BasicActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_board);        // 이 액티비티는 activity_board.xml과 연결되어 있음
+        setContentView(R.layout.activity_admin);        // 이 액티비티는 activity_board.xml과 연결되어 있음
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스에서 유저정보를 받아오는데 _ 대규
 
@@ -100,15 +100,14 @@ public class BoardActivity extends BasicActivity {
 
         //게시물 업데이트(새로고침)을 위한 메서드. 데이터가 업데이트 되면 adapter를 다시 바꿔줘야함.
         //MainAdaper에서 넘겨줌.
-        mainAdapter = new MainAdapter(BoardActivity.this, postList);
+        mainAdapter = new MainAdapter(AdminActivity.this, postList);
         mainAdapter.setOnPostListener(onPostListener); //onPostListener를 넘겨주면 MainAdapter에서도 쓸수있음.
 
         recyclerView = findViewById(R.id.recyclerView); // board xml에서 recyclerview를 사용한다
-        findViewById(R.id.floatingActionButton).setOnClickListener(onClickListener);    // 글쓰기 버튼에 클릭 이벤트 달아주는 코드
-        findViewById(R.id.logoutButton).setOnClickListener(onClickListener);            // 로그아웃 버튼에 클릭 이벤트 달아주는 코드
+
 
         recyclerView.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
-        recyclerView.setLayoutManager(new LinearLayoutManager(BoardActivity.this)); // recyclerview를 수직으로 보여주는 linearlayoutmanager
+        recyclerView.setLayoutManager(new LinearLayoutManager(AdminActivity.this)); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(mainAdapter);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -224,18 +223,6 @@ public class BoardActivity extends BasicActivity {
         }
     };
 
-    //게시글 추가 버튼을 클릭할 때 처리하는 기능
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-
-                case R.id.floatingActionButton:
-                    myStartActivity(WritePostActivity.class);   // 글쓰기 버튼 클릭 시 이동 _ 대규
-                    break;
-            }
-        }
-    };
 
     //실제 게시물을 보여주고 업데이트 해주는 코드
     private void postsUpdate() {
@@ -308,5 +295,4 @@ public class BoardActivity extends BasicActivity {
     private void startToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
-
 }

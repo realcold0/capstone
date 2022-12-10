@@ -60,6 +60,8 @@ public class MovieInfo extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private String userUid;
+
     private String mParam1;
     private String mParam2;
 
@@ -194,10 +196,10 @@ public class MovieInfo extends Fragment {
                                     replyList.add(new ReplyInfo(
                                             document.getData().get("contents").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
-                                            document.getData().get("saveLocation").toString()));
+                                            document.getData().get("saveLocation").toString(),
+                                            document.getData().get("id").toString()));
                                 }
                             }
-
 
                             Collections.sort(replyList,new ListCompartor());
 
@@ -206,6 +208,7 @@ public class MovieInfo extends Fragment {
 
                             RecyclerView.Adapter mAdapter = new ReplyAdapter(getActivity(), replyList);
                             recyclerViewMovieComment.setAdapter(mAdapter);
+                            recyclerViewMovieComment.scrollToPosition(replyList.size()-1);
 
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -282,7 +285,8 @@ public class MovieInfo extends Fragment {
                                                 replyList.add(new ReplyInfo(
                                                         document.getData().get("contents").toString(),
                                                         new Date(document.getDate("createdAt").getTime()),
-                                                        document.getData().get("saveLocation").toString()));
+                                                        document.getData().get("saveLocation").toString(),
+                                                        document.getData().get("id").toString()));
                                             }
                                         }
 
@@ -294,6 +298,7 @@ public class MovieInfo extends Fragment {
 
                                         RecyclerView.Adapter mAdapter = new ReplyAdapter(getActivity(), replyList);
                                         recyclerViewMovieComment.setAdapter(mAdapter);
+                                        recyclerViewMovieComment.scrollToPosition(replyList.size()-1);
 
                                     } else {
                                         Log.d(TAG, "Error getting documents: ", task.getException());
@@ -306,6 +311,8 @@ public class MovieInfo extends Fragment {
     };
 
     private void storageUpload() {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
         final String contents = editTextMovieComment.getText().toString();
 
         if (contents.length() > 0) {
@@ -319,7 +326,7 @@ public class MovieInfo extends Fragment {
             final Date date = replyInfo == null ? new Date() : replyInfo.getCreatedAt(); // postInfo가 NULL이면 new Date값을 NULL이 아니면 postinfo의 createdAt값을 넣어줌
             // 게시글 수정을 위한 코드드
 
-            storeUpload(documentReference, new ReplyInfo(contents, date, title));
+            storeUpload(documentReference, new ReplyInfo(contents, date, title, userUid));
         } else {
             Toast toast = Toast.makeText(getActivity(), "제목입력해주세요", Toast.LENGTH_SHORT);
             toast.show();

@@ -69,6 +69,7 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
     private View view;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
+    private PostInfo postInfo;
     private int successCount;
     private FirebaseUser user;
     private String userUid;
@@ -86,6 +87,7 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
         // 파이어베이스 초기화 함수들
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+        postInfo = (PostInfo) getActivity().getIntent().getSerializableExtra("postInfo");
 
         if (requestQueue == null) {
 

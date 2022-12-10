@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,8 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,10 +69,14 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     //파이어스토어에 접근하기 위한 객체를 생성한다.
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private HashtagAdapter hashtagAdapter;
+    public static WritePostActivity Apost;
+    private String showHash;
+    private String hash;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Apost = WritePostActivity.this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_post);
 
@@ -142,6 +149,11 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             }
         });
 
+        // 해시태그 클릭시 가장 위 텍스트뷰에 값 저장
+        TextView text = findViewById(R.id.textView7rename);
+        hash = getIntent().getStringExtra("hash");
+        text.setText(hash);
+
         // 해시태그 검색
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -151,7 +163,6 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("Test", " 이거 되는거 맞냐? "+items);
                 hashtagAdapter.setFriendList(search(newText));
                 return false;
             }
@@ -338,7 +349,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
                                                 PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                                                        documentReference.getId(),favoriteList,unFavoriteList);
+                                                        documentReference.getId(),favoriteList,unFavoriteList, hash);
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -353,9 +364,9 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 }
             }
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
-                Log.w("TAG", "저장위치: " + documentReference.getId() );
+                Log.w("TAG", "저장위치: " + documentReference.getId() + hash );
                 storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                        documentReference.getId(),favoriteList,unFavoriteList));
+                        documentReference.getId(),favoriteList,unFavoriteList, hash));
             }
         } else {
             startToast("제목을 입력해주세요.");
@@ -382,7 +393,6 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                     }
                 });
     }
-
 
     private void postInit() {
         if (postInfo != null) {

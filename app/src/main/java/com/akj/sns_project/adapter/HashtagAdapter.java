@@ -1,4 +1,5 @@
 package com.akj.sns_project.adapter;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -6,9 +7,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.R;
+import com.akj.sns_project.activity.WritePostActivity;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,30 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull HashtagAdapter.ViewHolder holder, int position) {
-        holder.onBind(mFriendList.get(position));
+        //holder.onBind(mFriendList.get(position));
+        String string = mFriendList.get(position);
+        holder.HashText.setText(string);
+
+
+        holder.HashText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity)v.getContext();
+                TextView textView = activity.findViewById(R.id.textView7rename);
+                if(textView.getText() == null)
+                {
+                    textView.setText(string);
+                }
+                else
+                {
+                    textView.append(string);
+                }
+
+
+            }
+        });
+
+
     }
 
     public void setFriendList(ArrayList<String> list){
@@ -40,17 +66,32 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView HashText;
-        Button AddHashBtn;
+        TextView showList;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             HashText = (TextView) itemView.findViewById(R.id.HashText);
 
-
         }
 
+        /*
         void onBind(String item){
             HashText.setText(item);
-        }
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(itemView.getContext(), WritePostActivity.class);
+                    intent.putExtra("hash", item);
+                    WritePostActivity aPost = (WritePostActivity) WritePostActivity.Apost;
+                    aPost.finish();
+                    itemView.getContext().startActivity(intent);
+
+                }
+            });
+
+
+        }*/
     }
 }
+

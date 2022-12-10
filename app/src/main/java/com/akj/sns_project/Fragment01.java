@@ -15,9 +15,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.util.Patterns;
@@ -85,7 +85,6 @@ public class Fragment01 extends Fragment {
     private ArrayList<PostInfo> postList;           // 게시글 정보들을 저장하기 위한 이름
     private StorageReference storageRef;
     private View view;
-    private Button logoutButton;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
     private RecyclerView posterRecyclerView;
@@ -184,11 +183,11 @@ public class Fragment01 extends Fragment {
         mainAdapter = new MainAdapter(getActivity(), postList);
         mainAdapter.setOnPostListener(onPostListener); //onPostListener를 넘겨주면 MainAdapter에서도 쓸수있음.
 
-        logoutButton = view.findViewById(R.id.logoutButton);
+
         floatingActionButton = view.findViewById(R.id.floatingActionButton);
         recyclerView = view.findViewById(R.id.recyclerView);
 
-        logoutButton.setOnClickListener(onClickListener);
+
         floatingActionButton.setOnClickListener(onClickListener);
 
         recyclerView.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
@@ -220,14 +219,14 @@ public class Fragment01 extends Fragment {
 
     private String SearchMovieQuery(String query) //입력하고 엔터 눌렀을때 영화 이름 검색 쿼리 만들어서 화면 전환
     {
-        String search = "https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=" + query.replace(" ","+") + "&lnaguage=ko-KR";
+        String search = "https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=" + query + "&language=ko-KR";
 
         //https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=써니&lnaguage=ko-KR
         return search;
     }
 
     private void initRecyclerViewAndAdapter() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(gridLayoutManager);
     }
 
@@ -335,12 +334,6 @@ public class Fragment01 extends Fragment {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-
-                case R.id.logoutButton:
-                    FirebaseAuth.getInstance().signOut();   // 파이어베이스에 로그아웃 신호 보내줌 _ 대규
-                    myStartActivity(LoginActivity.class);   // 로그인 액티비티로 이동 _ 대규
-                    startToast("로그아웃");
-                    break;
 
                 case R.id.floatingActionButton:
                     myStartActivity(WritePostActivity.class);   // 글쓰기 버튼 클릭 시 이동 _ 대규
