@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import com.akj.sns_project.activity.BoardActivity;
 
-import com.akj.sns_project.activity.adminActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

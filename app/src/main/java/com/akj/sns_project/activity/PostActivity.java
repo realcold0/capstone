@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.akj.sns_project.ListCompartor;
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
 import com.akj.sns_project.ReplyInfo;
@@ -38,6 +39,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -53,6 +55,7 @@ public class PostActivity extends BasicActivity {
     private LinearLayout parent;
     private RecyclerView recyclerView;              // recyclerView
     private String userUid;
+    private FirebaseFirestore db;
 
 
     @Override
@@ -61,7 +64,7 @@ public class PostActivity extends BasicActivity {
         setContentView(R.layout.activity_post);
         user = FirebaseAuth.getInstance().getCurrentUser();
         userUid = user.getUid().toString();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+         db = FirebaseFirestore.getInstance();
 
         PostInfo postInfo = (PostInfo) getIntent().getSerializableExtra("postInfo");    // postinfo 가져오는거
         TextView titleTextView = findViewById(R.id.titleTextView);
@@ -131,6 +134,7 @@ public class PostActivity extends BasicActivity {
                                 }
                             }
 
+                            Collections.sort(replyList,new ListCompartor());
 
                             recyclerView = findViewById(R.id.recyclerView);
                             recyclerView.setHasFixedSize(true);
@@ -156,6 +160,41 @@ public class PostActivity extends BasicActivity {
             switch (view.getId()) {
                 case R.id.replySend:
                     storageUpload();
+                    ((EditText) findViewById(R.id.replyText)).setText("");
+                    db.collection("replys")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        replyList = new ArrayList<>();
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.d(TAG, document.getId() + " => " + document.getData());
+                                            if (savelocationforReply.equals(document.getData().get("saveLocation").toString())) {
+                                                replyList.add(new ReplyInfo(
+                                                        document.getData().get("contents").toString(),
+                                                        new Date(document.getDate("createdAt").getTime()),
+                                                        document.getData().get("saveLocation").toString(),
+                                                        document.getData().get("id").toString()));
+                                            }
+                                        }
+
+                                        Collections.sort(replyList,new ListCompartor());
+
+
+                                        recyclerView = findViewById(R.id.recyclerView);
+                                        recyclerView.setHasFixedSize(true);
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(PostActivity.this));
+
+                                        RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
+                                        recyclerView.setAdapter(mAdapter);
+
+                                    } else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
+
             }
         }
     };
@@ -188,7 +227,6 @@ public class PostActivity extends BasicActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
