@@ -60,8 +60,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterView
             @Override
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity)v.getContext();
-                MovieInfo movieInfo =  new MovieInfo(currentPoster);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, movieInfo).addToBackStack(null).commit();
+                MovieInfo movieInfo =  new MovieInfo(currentPoster); //현재 영화 객체를 담아 영화 화면 프래그먼트 생성
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, movieInfo).addToBackStack(null).commit(); //프레그먼트 이동
             }
         });
 
