@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.akj.sns_project.activity.AdminActivity;
 import com.akj.sns_project.activity.LoginActivity;
@@ -72,6 +73,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         TextView nickname = root.findViewById(R.id.nickname); // 닉네임
         ImageView userimage = root.findViewById(R.id.userImage);
 
+        Button ReviewBtn = root.findViewById(R.id.button3);
         Button ReplyBtn = root.findViewById(R.id.button5);
         Button PostBtn = root.findViewById(R.id.button4);
         Button adminBtn = root.findViewById(R.id.button2);
@@ -134,12 +136,13 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                 }
             }
         });
+
+        ReviewBtn.setOnClickListener(this);
         ReplyBtn.setOnClickListener(this);
         PostBtn.setOnClickListener(this);
         adminBtn.setOnClickListener(this);
         logoutBtn.setOnClickListener(this);
         return root;
-
     }
 
 
@@ -165,6 +168,12 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
 
         else if(view.getId() == R.id.button5){
             Intent intent = new Intent(this.getContext(), Fragment_Reply.class);
+            intent.putExtra("userid", userid);
+            startActivity(intent);
+        }
+
+        else if(view.getId() == R.id.button3){
+            Intent intent = new Intent(this.getContext(), Fragment_Review.class);
             intent.putExtra("userid", userid);
             startActivity(intent);
         }

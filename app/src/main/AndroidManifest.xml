@@ -52,6 +52,7 @@
         <activity android:name=".activity.PostActivity" />
         <activity android:name=".Fragment_Post"></activity>
         <activity android:name=".Fragment_Reply"></activity>
+        <activity android:name=".Fragment_Review"></activity>
         <activity android:name=".activity.BlackBoardActivity"></activity>
         <activity android:name=".activity.WriteBlackPostActivity"></activity>
     </application>
