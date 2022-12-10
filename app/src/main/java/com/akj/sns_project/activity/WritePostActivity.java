@@ -105,7 +105,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
         postInfo = (PostInfo) getIntent().getSerializableExtra("postInfo");    // postinfo 가져오는거
         postInit();
-
+/*
         SearchView searchView = findViewById(R.id.search_view);
         TextView textView = findViewById(R.id.textView);
 
@@ -158,6 +158,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             }
         }
         return sb.toString();
+        */
     }
 
     @Override
@@ -278,6 +279,8 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
         if (title.length() > 0) {
             loaderLayout.setVisibility(View.VISIBLE); // 로딩창 보여줌
             final ArrayList<String> contentsList = new ArrayList<>();
+            final ArrayList<String> favoriteList = new ArrayList<>();
+            final ArrayList<String> unFavoriteList = new ArrayList<>();
 
             // 파이어베이스에서 유저 정보를 가져옴
             user = FirebaseAuth.getInstance().getCurrentUser();
@@ -325,7 +328,8 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                             successCount--;
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
-                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0, documentReference.getId());
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
+                                                        documentReference.getId(),favoriteList,unFavoriteList);
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -341,7 +345,8 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             }
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
                 Log.w("TAG", "저장위치: " + documentReference.getId() );
-                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,documentReference.getId()));
+                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
+                        documentReference.getId(),favoriteList,unFavoriteList));
             }
         } else {
             startToast("제목을 입력해주세요.");

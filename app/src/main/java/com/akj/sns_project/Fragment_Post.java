@@ -254,7 +254,9 @@ public class Fragment_Post extends BasicActivity {
                                                 new Date(document.getDate("createdAt").getTime()),
                                                 Integer.parseInt(document.getData().get("like").toString()),
                                                 Integer.parseInt(document.getData().get("unlike").toString()),
-                                                document.getData().get("saveLocation").toString()
+                                                document.getData().get("saveLocation").toString(),
+                                                (ArrayList<String>) document.getData().get("favorites"),
+                                                (ArrayList<String>) document.getData().get("unfavorites")
                                         )); // 여기까지 postinfo 정해진 형식에 따라 가져온 데이터들 대입해줌 _ 대규
                                     }
                                 }
@@ -287,7 +289,9 @@ public class Fragment_Post extends BasicActivity {
                                             document.getId(),
                                             Integer.parseInt(document.getData().get("like").toString()),
                                             Integer.parseInt(document.getData().get("unlike").toString()),
-                                            document.getData().get("saveLocation").toString()
+                                            document.getData().get("saveLocation").toString(),
+                                            (ArrayList<String>) document.getData().get("favorites"),
+                                            (ArrayList<String>) document.getData().get("unfavorites")
                                     ));
                                 }
                                 mainAdapter.notifyDataSetChanged();

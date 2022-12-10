@@ -278,7 +278,7 @@ public class WriteBlackPostActivity extends BasicActivity {  //   글쓰기 액�
                                             successCount--;
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
-                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0,documentReference.getId());// 이동 관련
+                                                PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0,documentReference.getId(),null,null);// 이동 관련
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -293,7 +293,7 @@ public class WriteBlackPostActivity extends BasicActivity {  //   글쓰기 액�
                 }
             }
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
-                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,documentReference.getId()));
+                storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,documentReference.getId(),null,null));
             }
         } else {
             startToast("제목을 입력해주세요.");

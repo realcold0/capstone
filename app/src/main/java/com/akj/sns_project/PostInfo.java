@@ -15,8 +15,11 @@ public class PostInfo implements Serializable {
     private int like;
     private int unlike;
     private String saveLocation;
+    private ArrayList<String> favorites;
+    private ArrayList<String> unfavorites;
 
-    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, String id, int like, int unlike, String saveLocation){
+    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt,
+                    String id, int like, int unlike, String saveLocation, ArrayList<String> favorites, ArrayList<String> unfavorites ){
         this.title = title;
         this.contents = contents;
         this.publisher = publisher;
@@ -25,9 +28,12 @@ public class PostInfo implements Serializable {
         this.like = like;
         this.unlike = unlike;
         this.saveLocation = saveLocation;
+        this.favorites = favorites;
+        this.unfavorites = unfavorites;
     }
 
-    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt, int like, int unlike, String saveLocation){
+    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt,
+                    int like, int unlike, String saveLocation, ArrayList<String> favorites, ArrayList<String> unfavorites){
         this.title = title;
         this.contents = contents;
         this.publisher = publisher;
@@ -36,6 +42,8 @@ public class PostInfo implements Serializable {
         this.like = like;
         this.unlike = unlike;
         this.saveLocation = saveLocation;
+        this.favorites = favorites;
+        this.unfavorites = unfavorites;
     }
 
 /*
@@ -93,4 +101,19 @@ public class PostInfo implements Serializable {
     public void setsaveLocation(String saveLocation){
         this.saveLocation = saveLocation;
     }
+
+    public ArrayList<String> getFavorites(){
+        return this.favorites;
+    }
+    public void setFavorites(ArrayList<String> favorites){
+        this.favorites = favorites;
+    }
+
+    public ArrayList<String> getUnfavorites(){
+        return this.favorites;
+    }
+    public void setUnfavorites(ArrayList<String> unfavorites){
+        this.unfavorites = unfavorites;
+    }
+
 }

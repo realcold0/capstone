@@ -39,7 +39,7 @@
                         layout="@layout/view_contents_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-
+<!--
                     <androidx.appcompat.widget.SearchView
                         android:id="@+id/search_view"
                         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="20sp" />
-
+-->
                 </LinearLayout>
 
             </LinearLayout>
