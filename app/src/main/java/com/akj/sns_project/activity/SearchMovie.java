@@ -134,20 +134,20 @@ public class SearchMovie extends Fragment {
                 MovieList movieList = gson.fromJson(response, MovieList.class); //gson으로 Json파일 object로 변환
 
 
-                Movie movie = new Movie();
+                ArrayList<Movie> movies = new ArrayList<Movie>();
                 posters = new ArrayList<Poster>();
 
                 for(int i = 0; i< movieList.results.size(); i++)
                 {
-                    movie = movieList.results.get(i);
-                    posters.add(new Poster(movie.title.toString(), movie.poster_path));
+                    Movie movie = movieList.results.get(i);
+                    movies.add(movie);
                 }
 
 
 
-                searchMovieAdapter = new SearchMovieAdapter(getActivity(), posters);
+                searchMovieAdapter = new SearchMovieAdapter(getActivity(), movies);
                 posterRecyclerView.setAdapter(searchMovieAdapter);
-                Log.v("genre Posters", posters.get(0).toString());
+
 
             }
         }, new Response.ErrorListener() {
