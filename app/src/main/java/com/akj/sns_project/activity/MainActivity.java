@@ -2,14 +2,19 @@ package com.akj.sns_project.activity;
 
 import androidx.annotation.NonNull;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+
 import com.akj.sns_project.Fragment01;
 import com.akj.sns_project.Fragment02;
 import com.akj.sns_project.Fragment03;
 import com.akj.sns_project.Fragment05;
 import com.akj.sns_project.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
+import com.google.firebase.storage.StorageReference;
 
 
 public class MainActivity extends BasicActivity {//fragment 코드들
@@ -34,7 +39,6 @@ public class MainActivity extends BasicActivity {//fragment 코드들
         fragment03 = new Fragment03();
         fragment05 = new Fragment05();
 
-
         getSupportFragmentManager().beginTransaction().add(R.id.main_frame, new Fragment01()).commit(); //FrameLayout에 fragment.xml 띄우기
 
         bottomNavigationView = findViewById(R.id.bottomNavi);
@@ -43,12 +47,9 @@ public class MainActivity extends BasicActivity {//fragment 코드들
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                
-                
                 switch (menuItem.getItemId()) {
                     //item을 클릭시 id값을 가져와 FrameLayout에 fragment.xml띄우기
                     case R.id.item_fragment1:
-
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment01).commit();
                         break;
                     case R.id.item_fragment2:
@@ -56,15 +57,13 @@ public class MainActivity extends BasicActivity {//fragment 코드들
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment02).commit();
                         break;
                     case R.id.item_fragment3:
-
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment03).commit();
+
                         break;
                     case R.id.item_fragment5:
-
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment05).commit();
                         break;
                 }
-                
                 return true;
             }
         });
@@ -75,9 +74,7 @@ public class MainActivity extends BasicActivity {//fragment 코드들
     public void GenreSearch(String url){
         searchMovie = new SearchMovie(url);
         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, searchMovie).commit();
-
     }
-    
 }
 
 
