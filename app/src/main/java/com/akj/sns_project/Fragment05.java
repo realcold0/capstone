@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +24,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Fragment05 extends Fragment implements View.OnClickListener {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance(); // 인스턴스 초기화
@@ -33,7 +41,9 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
     private Fragment_Post fragment_post;
     private Fragment05 fragment05;
     private String AdminDK = "KnK0SPLNuGTnEQWoEbcCkkLGrFx2";
-
+    private String userid = "";
+    private String hash = "";
+    private FirebaseFirestore firebaseFirestore;    // 파이어베이스스토어에서 정보 가져오기 위해 사용한 이름
 
 
     @Override
@@ -65,6 +75,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         Button PostBtn = root.findViewById(R.id.button4);
         Button adminBtn = root.findViewById(R.id.button2);
         Button logoutBtn = root.findViewById(R.id.logoutButton);
+        TextView hashText = root.findViewById(R.id.textView8);
 
         // DB에서 user 컬렉션 선택 후 로그인된 아이디에 맞는 정보 가져오기
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -75,6 +86,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                 if (task.isSuccessful()) { // 불러오기 성공시
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) { // 정보가 존재할 시
+                        userid = document.getId();
                         nickname.setText(document.get("name").toString()); // 닉네임 업데이트
                         //아이디가 관리자일 경우 버튼생성
                         //무슨 버튼해야 하는거지? 왜 커밋안되지? 휴
@@ -88,6 +100,33 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                                 Glide.with(root).load(photoUrl).into(userimage);
                             }
                         }
+
+                        // 여기부터 해시태그 정보 가져오기
+                        CollectionReference productRef = db.collection("posts");
+                        //get()을 통해서 해당 컬렉션의 정보를 가져온다.
+                        productRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                //작업이 성공적으로 마쳤을때
+                                if (task.isSuccessful()) {
+                                    //document.getData() or document.getId() 등등 여러 방법으로
+                                    //데이터를 가져올 수 있다.
+                                    hash = "";
+                                    //컬렉션 아래에 있는 모든 정보를 가져온다.
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.d("yyyyyyyyyyyy", document.getData().get("id").toString() + " => " + userid);
+                                        if(document.getData().get("id").toString().equals(userid)) {
+                                            hash = hash + " " + document.getData().get("hashtag").toString();
+                                            Log.d("yyyyyyyyyyyy", hash);
+                                        }
+                                    }
+                                    hashText.setText(hash);
+                                    //그렇지 않을때
+                                } else {
+
+                                }
+                            }
+                        });
                     } else { // 정보가 존재하지 않을 시
                     }
                 } else { // 불러오기 실패시
