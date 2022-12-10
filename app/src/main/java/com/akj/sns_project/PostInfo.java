@@ -17,6 +17,7 @@ public class PostInfo implements Serializable {
     private String saveLocation;
     private ArrayList<String> favorites;
     private ArrayList<String> unfavorites;
+    private String hashtag;
 
     public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt,
                     String id, int like, int unlike, String saveLocation, ArrayList<String> favorites, ArrayList<String> unfavorites ){
@@ -44,6 +45,21 @@ public class PostInfo implements Serializable {
         this.saveLocation = saveLocation;
         this.favorites = favorites;
         this.unfavorites = unfavorites;
+    }
+
+    public PostInfo(String title, ArrayList<String> contents, String publisher, Date createdAt,
+                    int like, int unlike, String saveLocation, ArrayList<String> favorites, ArrayList<String> unfavorites, String hashtag){
+        this.title = title;
+        this.contents = contents;
+        this.publisher = publisher;
+        this.createdAt = createdAt;
+        this.id = publisher;
+        this.like = like;
+        this.unlike = unlike;
+        this.saveLocation = saveLocation;
+        this.favorites = favorites;
+        this.unfavorites = unfavorites;
+        this.hashtag = hashtag;
     }
 
 /*
@@ -116,4 +132,8 @@ public class PostInfo implements Serializable {
         this.unfavorites = unfavorites;
     }
 
+    public String getHashtag(){
+        return this.hashtag;
+    }
+    public void setHashtag(String hashtag) {this.hashtag = hashtag;}
 }

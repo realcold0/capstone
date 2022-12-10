@@ -70,6 +70,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private HashtagAdapter hashtagAdapter;
     public static WritePostActivity Apost;
+    private String hash;
 
 
     @Override
@@ -149,7 +150,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
         // 해시태그 클릭시 가장 위 텍스트뷰에 값 저장
         TextView text = findViewById(R.id.textView7rename);
-        String hash = getIntent().getStringExtra("hash");
+        hash = getIntent().getStringExtra("hash");
         text.setText(hash);
 
         // 해시태그 검색
@@ -347,7 +348,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
                                                 PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                                                        documentReference.getId(),favoriteList,unFavoriteList);
+                                                        documentReference.getId(),favoriteList,unFavoriteList, hash);
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -362,9 +363,9 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                 }
             }
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
-                Log.w("TAG", "저장위치: " + documentReference.getId() );
+                Log.w("TAG", "저장위치: " + documentReference.getId() + hash );
                 storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                        documentReference.getId(),favoriteList,unFavoriteList));
+                        documentReference.getId(),favoriteList,unFavoriteList, hash));
             }
         } else {
             startToast("제목을 입력해주세요.");
@@ -391,7 +392,6 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                     }
                 });
     }
-
 
     private void postInit() {
         if (postInfo != null) {
