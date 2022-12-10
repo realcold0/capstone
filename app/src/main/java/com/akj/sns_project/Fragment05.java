@@ -38,7 +38,7 @@ import java.util.Date;
 public class Fragment05 extends Fragment implements View.OnClickListener {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance(); // 인스턴스 초기화
     private View view;
-    private Fragment_Post fragment_post;
+
     private Fragment05 fragment05;
     private String AdminDK = "KnK0SPLNuGTnEQWoEbcCkkLGrFx2";
     private String userid = "";
@@ -58,7 +58,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        fragment_post = new Fragment_Post();
+
 
 
         // xml 파일 연결
@@ -72,6 +72,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
         TextView nickname = root.findViewById(R.id.nickname); // 닉네임
         ImageView userimage = root.findViewById(R.id.userImage);
 
+        Button ReplyBtn = root.findViewById(R.id.button5);
         Button PostBtn = root.findViewById(R.id.button4);
         Button adminBtn = root.findViewById(R.id.button2);
         Button logoutBtn = root.findViewById(R.id.logoutButton);
@@ -133,7 +134,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                 }
             }
         });
-
+        ReplyBtn.setOnClickListener(this);
         PostBtn.setOnClickListener(this);
         adminBtn.setOnClickListener(this);
         logoutBtn.setOnClickListener(this);
@@ -161,11 +162,13 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
             startToast("로그아웃");
             ActivityCompat.finishAffinity(getActivity());
         }
-        /*
-        else if(view.getId() == R.id.button3){
-            Log.d("Button3","work");
+
+        else if(view.getId() == R.id.button5){
+            Intent intent = new Intent(this.getContext(), Fragment_Reply.class);
+            intent.putExtra("userid", userid);
+            startActivity(intent);
         }
-         */
+
     }
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(getActivity(), c);
