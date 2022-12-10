@@ -222,7 +222,7 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
                 }
                 storeUploader(id);
             }else{
-                startToast("다른사람의 게시글을 삭제할 수 없습니다");
+                startToast("다른 사람의 게시글은 삭제할 수 없습니다.");
             }
         }
 
@@ -245,6 +245,12 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
             data.put("like", postList.get(position).getlike());
             data.put("unlike", postList.get(position).getUnlike());
             data.put("saveLocation", postList.get(position).getsaveLocation());
+
+            // postInfo에 새로 추가된 데이터
+            data.put("favorites", postList.get(position).getFavorites());
+            data.put("unfavorites", postList.get(position).getUnfavorites());
+            data.put("hashtag", postList.get(position).getFavorites());
+
             post.set(data);
 
             // 2. 흰색 게시판의 게시글 삭제

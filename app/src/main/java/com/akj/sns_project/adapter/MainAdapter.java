@@ -282,9 +282,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
         documentReference.set(mDataset.get(position));
 
-        // 싫어요 - 좋아요 수가 5를 넘으면 게시판 이동
-        // 흰색 -> 검은색
-        if((unlikenum - likenum) > 5){
+        // 싫어요 - 좋아요 수가 5를 넘으면 게시판 이동       // 흰색 -> 검은색
+        // 이동 관련 동작
+        int moveCount = unlikenum - likenum;
+
+        if(moveCount > 5){
             // 검은색 게시판에 업로드
             // 게시글 가져와서 map에 넣기
             DocumentReference post = firebaseFirestore.collection("blackposts").document();
@@ -298,6 +300,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             data.put("like", mDataset.get(position).getlike());
             data.put("unlike", mDataset.get(position).getUnlike());
             data.put("saveLocation", mDataset.get(position).getsaveLocation());
+
+            // postInfo에 새로 추가된 데이터
+            data.put("favorites", mDataset.get(position).getFavorites());
+            data.put("unfavorites", mDataset.get(position).getUnfavorites());
+            data.put("hashtag", mDataset.get(position).getFavorites());
+
+
             post.set(data);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();

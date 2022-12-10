@@ -136,8 +136,8 @@ public class BlackAdapter extends RecyclerView.Adapter<BlackAdapter.BlackViewHol
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         final DocumentReference documentReference = mDataset.get(position) == null ?
-                firebaseFirestore.collection("posts").document() :
-                firebaseFirestore.collection("posts").document(mDataset.get(position).getId());
+                firebaseFirestore.collection("blackposts").document() :
+                firebaseFirestore.collection("blackposts").document(mDataset.get(position).getId());
 
         if (likeOverlap == 0 && unlikeOverlap == 0) {           // 첫번째 의문 왜 이게 실행됨...?
             addlikeCount = 1;
@@ -218,8 +218,8 @@ public class BlackAdapter extends RecyclerView.Adapter<BlackAdapter.BlackViewHol
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         final DocumentReference documentReference = mDataset.get(position) == null ?
-                firebaseFirestore.collection("posts").document() :
-                firebaseFirestore.collection("posts").document(mDataset.get(position).getId());
+                firebaseFirestore.collection("blackposts").document() :
+                firebaseFirestore.collection("blackposts").document(mDataset.get(position).getId());
 
         if (likeOverlap == 0 && unlikeOverlap == 0) {
             addunlikeCount = 1;

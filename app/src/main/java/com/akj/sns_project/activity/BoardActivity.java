@@ -189,6 +189,13 @@ public class BoardActivity extends BasicActivity {
             data.put("like", postList.get(position).getlike());
             data.put("unlike", postList.get(position).getUnlike());
             data.put("saveLocation", postList.get(position).getsaveLocation());
+
+            // postInfo에 새로 추가된 데이터
+            data.put("favorites", postList.get(position).getFavorites());
+            data.put("unfavorites", postList.get(position).getUnfavorites());
+            data.put("hashtag", postList.get(position).getFavorites());
+
+
             post.set(data);
 
             // 3. 흰색 게시판의 게시글 삭제
