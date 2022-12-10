@@ -109,7 +109,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
         // 여기부터 해시태그
         SearchView searchView = findViewById(R.id.search_view);
-        RecyclerView hashview = findViewById(R.id.hashview);
+        RecyclerView hashview = findViewById(R.id.hashviewRename);
 
         /* initiate adapter */
         hashtagAdapter = new HashtagAdapter();
