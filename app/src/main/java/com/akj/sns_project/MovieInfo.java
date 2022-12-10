@@ -4,9 +4,11 @@ import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
 
 import android.graphics.Color;
 import android.media.Rating;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,9 +41,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,6 +89,7 @@ public class MovieInfo extends Fragment {
     private ReplyInfo replyInfo;
 
     private FirebaseUser user;
+    FirebaseFirestore firestore;
 
     public MovieInfo(Movie movie) { //영화 정보들 대입
         this.movieID = movie.id;
@@ -145,7 +152,7 @@ public class MovieInfo extends Fragment {
                 //영화 정보를 기반으로 파이어 베이스에 해당 영화 정보가 없다면 영화 데이터 베이스를 생성
         //해당 영화 데이터베이스에 맞는 댓글 리스트를 가져와서 어댑터로 적용
 
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        firestore = FirebaseFirestore.getInstance();
 
         Map<String, Object> movie = new HashMap<>();
         movie.put("ID",movieID);
@@ -192,6 +199,7 @@ public class MovieInfo extends Fragment {
                             }
 
 
+                            Collections.sort(replyList,new ListCompartor());
 
                             recyclerViewMovieComment.setHasFixedSize(true);
                             recyclerViewMovieComment.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -259,6 +267,40 @@ public class MovieInfo extends Fragment {
                 case R.id.buttonMovieComment:
                     storageUpload();
                     editTextMovieComment.setText("");
+                    firestore.collection("replys")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        replyList = new ArrayList<>();
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.d(TAG, document.getId() + " => " + document.getData());
+                                            if (savelocationforReply.equals(document.getData().get("saveLocation").toString())) {
+                                                Toast toast = Toast.makeText(getActivity(), "리사이클러뷰", Toast.LENGTH_SHORT);
+                                                toast.show();
+                                                replyList.add(new ReplyInfo(
+                                                        document.getData().get("contents").toString(),
+                                                        new Date(document.getDate("createdAt").getTime()),
+                                                        document.getData().get("saveLocation").toString()));
+                                            }
+                                        }
+
+
+                                        Collections.sort(replyList,new ListCompartor());
+
+                                        recyclerViewMovieComment.setHasFixedSize(true);
+                                        recyclerViewMovieComment.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                                        RecyclerView.Adapter mAdapter = new ReplyAdapter(getActivity(), replyList);
+                                        recyclerViewMovieComment.setAdapter(mAdapter);
+
+                                    } else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
+
             }
         }
     };
