@@ -110,7 +110,7 @@ public class PostInfo implements Serializable {
     }
 
     public ArrayList<String> getUnfavorites(){
-        return this.favorites;
+        return this.unfavorites;
     }
     public void setUnfavorites(ArrayList<String> unfavorites){
         this.unfavorites = unfavorites;
