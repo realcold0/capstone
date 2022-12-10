@@ -52,13 +52,15 @@ public class PostActivity extends BasicActivity {
     private String savelocationforReply;
     private LinearLayout parent;
     private RecyclerView recyclerView;              // recyclerView
+    private String userUid;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         PostInfo postInfo = (PostInfo) getIntent().getSerializableExtra("postInfo");    // postinfo 가져오는거
@@ -124,7 +126,8 @@ public class PostActivity extends BasicActivity {
                                     replyList.add(new ReplyInfo(
                                             document.getData().get("contents").toString(),
                                             new Date(document.getDate("createdAt").getTime()),
-                                            document.getData().get("saveLocation").toString()));
+                                            document.getData().get("saveLocation").toString(),
+                                            document.getData().get("id").toString()));
                                 }
                             }
 
@@ -171,7 +174,7 @@ public class PostActivity extends BasicActivity {
             final Date date = replyInfo == null ? new Date() : replyInfo.getCreatedAt(); // postInfo가 NULL이면 new Date값을 NULL이 아니면 postinfo의 createdAt값을 넣어줌
             // 게시글 수정을 위한 코드드
 
-            storeUpload(documentReference, new ReplyInfo(contents, date, savelocationforReply));
+            storeUpload(documentReference, new ReplyInfo(contents, date, savelocationforReply, userUid));
         } else {
             startToast("제목을 입력해주세요.");
         }
