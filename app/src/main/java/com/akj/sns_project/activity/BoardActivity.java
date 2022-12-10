@@ -230,11 +230,6 @@ public class BoardActivity extends BasicActivity {
         public void onClick(View v) {
             switch (v.getId()) {
 
-                case R.id.logoutButton:
-                    FirebaseAuth.getInstance().signOut();   // 파이어베이스에 로그아웃 신호 보내줌 _ 대규
-                    myStartActivity(LoginActivity.class);   // 로그인 액티비티로 이동 _ 대규
-                    break;
-
                 case R.id.floatingActionButton:
                     myStartActivity(WritePostActivity.class);   // 글쓰기 버튼 클릭 시 이동 _ 대규
                     break;
