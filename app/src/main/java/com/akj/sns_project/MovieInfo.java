@@ -201,7 +201,6 @@ public class MovieInfo extends Fragment {
                                 }
                             }
 
-
                             Collections.sort(replyList,new ListCompartor());
 
                             recyclerViewMovieComment.setHasFixedSize(true);
