@@ -1,25 +1,14 @@
 package com.akj.sns_project.adapter;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.akj.sns_project.Fragment04;
-import com.akj.sns_project.Movie;
-import com.akj.sns_project.MovieInfo;
-import com.akj.sns_project.Poster;
 import com.akj.sns_project.R;
-import com.akj.sns_project.activity.WritePostActivity;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 

@@ -55,7 +55,6 @@ public class Fragment03 extends Fragment {
                 return true;
             }
         });
-
         return view;
     }
 }

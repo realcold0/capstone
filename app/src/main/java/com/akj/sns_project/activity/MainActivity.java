@@ -6,7 +6,6 @@ import android.view.MenuItem;
 import com.akj.sns_project.Fragment01;
 import com.akj.sns_project.Fragment02;
 import com.akj.sns_project.Fragment03;
-import com.akj.sns_project.Fragment04;
 import com.akj.sns_project.Fragment05;
 import com.akj.sns_project.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -19,7 +18,6 @@ public class MainActivity extends BasicActivity {//fragment 코드들
     Fragment01 fragment01;
     Fragment02 fragment02;
     Fragment03 fragment03;
-    Fragment04 fragment04;
     Fragment05 fragment05;
     SearchMovie searchMovie;
     BottomNavigationView bottomNavigationView; // 아래 네비게이션 바 - 준범
@@ -34,7 +32,6 @@ public class MainActivity extends BasicActivity {//fragment 코드들
         fragment01 = new Fragment01();
         fragment02 = new Fragment02();
         fragment03 = new Fragment03();
-        fragment04 = new Fragment04();
         fragment05 = new Fragment05();
 
 
@@ -61,10 +58,6 @@ public class MainActivity extends BasicActivity {//fragment 코드들
                     case R.id.item_fragment3:
 
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment03).commit();
-                        break;
-                    case R.id.item_fragment4:
-
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment04).commit();
                         break;
                     case R.id.item_fragment5:
 
