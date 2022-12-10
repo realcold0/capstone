@@ -132,12 +132,15 @@ public class PostActivity extends BasicActivity {
 
                             Collections.sort(replyList,new ListCompartor());
 
+
+
                             recyclerView = findViewById(R.id.recyclerView);
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setLayoutManager(new LinearLayoutManager(PostActivity.this));
 
                             RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
                             recyclerView.setAdapter(mAdapter);
+                            recyclerView.scrollToPosition(replyList.size()-1);
 
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -183,7 +186,7 @@ public class PostActivity extends BasicActivity {
 
                                         RecyclerView.Adapter mAdapter = new ReplyAdapter(PostActivity.this, replyList);
                                         recyclerView.setAdapter(mAdapter);
-
+                                        recyclerView.scrollToPosition(replyList.size()-1);
                                     } else {
                                         Log.d(TAG, "Error getting documents: ", task.getException());
                                     }

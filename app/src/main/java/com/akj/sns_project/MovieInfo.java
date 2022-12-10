@@ -206,6 +206,7 @@ public class MovieInfo extends Fragment {
 
                             RecyclerView.Adapter mAdapter = new ReplyAdapter(getActivity(), replyList);
                             recyclerViewMovieComment.setAdapter(mAdapter);
+                            recyclerViewMovieComment.scrollToPosition(replyList.size()-1);
 
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -294,6 +295,7 @@ public class MovieInfo extends Fragment {
 
                                         RecyclerView.Adapter mAdapter = new ReplyAdapter(getActivity(), replyList);
                                         recyclerViewMovieComment.setAdapter(mAdapter);
+                                        recyclerViewMovieComment.scrollToPosition(replyList.size()-1);
 
                                     } else {
                                         Log.d(TAG, "Error getting documents: ", task.getException());

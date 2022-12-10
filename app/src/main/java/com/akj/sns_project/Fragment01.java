@@ -220,7 +220,7 @@ public class Fragment01 extends Fragment {
 
     private String SearchMovieQuery(String query) //입력하고 엔터 눌렀을때 영화 이름 검색 쿼리 만들어서 화면 전환
     {
-        String search = "https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=" + query.replace(" ","+") + "&lnaguage=ko-KR";
+        String search = "https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=" + query + "&language=ko-KR";
 
         //https://api.themoviedb.org/3/search/movie?api_key=3c314dc629a0e72e9328fe7c33981cf2&query=써니&lnaguage=ko-KR
         return search;
