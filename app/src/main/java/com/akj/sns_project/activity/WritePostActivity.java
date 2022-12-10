@@ -63,6 +63,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     public static Context context_main;
     private EditText contentsEditText;
     private EditText titleEditText;
+    private TextView showHash;
     private PostInfo postInfo;
     private StorageReference storageRef;
     private ArrayList<String> items;
@@ -70,7 +71,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private HashtagAdapter hashtagAdapter;
     public static WritePostActivity Apost;
-    private String showHash;
+
     private String hash;
 
 
@@ -85,6 +86,9 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
         loaderLayout = findViewById(R.id.loaderLayout);
         contentsEditText = findViewById(R.id.contentsEditText);
         titleEditText = findViewById(R.id.titleEditText);
+        showHash = findViewById(R.id.textView7rename);
+        showHash.setText("");
+
 
 
         findViewById(R.id.checkWrite).setOnClickListener(onClickListener);
@@ -93,6 +97,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
         findViewById(R.id.imageModify).setOnClickListener(onClickListener);
         findViewById(R.id.videoModify).setOnClickListener(onClickListener);
         findViewById(R.id.delete).setOnClickListener(onClickListener);
+
 
         buttonsBackgroundLayout.setOnClickListener(onClickListener);
         contentsEditText.setOnFocusChangeListener(onFocusChangeListener);
@@ -149,10 +154,6 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             }
         });
 
-        // 해시태그 클릭시 가장 위 텍스트뷰에 값 저장
-        TextView text = findViewById(R.id.textView7rename);
-        hash = getIntent().getStringExtra("hash");
-        text.setText(hash);
 
         // 해시태그 검색
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -349,7 +350,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
                                                 PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                                                        documentReference.getId(),favoriteList,unFavoriteList, hash);
+                                                        documentReference.getId(),favoriteList,unFavoriteList, showHash.getText().toString());
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -366,7 +367,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
                 Log.w("TAG", "저장위치: " + documentReference.getId() + hash );
                 storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                        documentReference.getId(),favoriteList,unFavoriteList, hash));
+                        documentReference.getId(),favoriteList,unFavoriteList, showHash.getText().toString()));
             }
         } else {
             startToast("제목을 입력해주세요.");

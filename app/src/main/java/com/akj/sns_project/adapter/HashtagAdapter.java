@@ -44,7 +44,7 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
                 }
                 else //1개 추가 하고 나서
                 {
-                    textView.append(string);
+                    textView.append(" "+ string);
                 }
 
             }
