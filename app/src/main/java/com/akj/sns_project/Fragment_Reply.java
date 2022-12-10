@@ -82,7 +82,8 @@ public class Fragment_Reply extends BasicActivity {
                                     if (task.isSuccessful()) {
                                         replyList = new ArrayList<>();
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            if(user == document.getData().get("id"))
+                                            Log.d("gk WKwmdskrp dho EH", user + " => " + document.getData().get("id"));
+                                            if(user.equals(document.getData().get("id").toString()))
                                                 for (int i = 0; i<postid.size(); i++){
                                                     if (postid.get(i).equals(document.getData().get("saveLocation").toString())){
                                                         replyList.add(new ReplyInfo(
