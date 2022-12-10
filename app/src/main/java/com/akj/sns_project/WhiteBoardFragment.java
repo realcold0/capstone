@@ -325,38 +325,6 @@ public class WhiteBoardFragment extends Fragment implements View.OnClickListener
                     });
         }
     }
-    private void postsUpdate_Black() {
-        if (firebaseUser != null) {
-            CollectionReference collectionReference = firebaseFirestore.collection("blackposts");    // 파이어베이스 posts폴더를 사용
-            collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()  // 파이어베이스 posts안에 있는 내용을 createdAt 순서로 정렬
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                postList.clear();   // 초기화 하고 가져오는 방식으로 업데이트
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData().get("like"));
-                                    postList.add(new PostInfo(  // 여기서부터
-                                            document.getData().get("title").toString(),
-                                            (ArrayList<String>) document.getData().get("contents"),
-                                            document.getData().get("publisher").toString(),
-                                            new Date(document.getDate("createdAt").getTime()),
-                                            document.getId(),
-                                            Integer.parseInt(document.getData().get("like").toString()),
-                                            Integer.parseInt(document.getData().get("unlike").toString()),
-                                            document.getData().get("saveLocation").toString(),
-                                            (ArrayList<String>) document.getData().get("favorites"),
-                                            (ArrayList<String>) document.getData().get("unfavorites")
-                                    ));
-                                }
-                                mainAdapter.notifyDataSetChanged();
-                            } else {
-                                Log.d(TAG, "Error getting documents: ", task.getException());
-                            }
-                        }
-                    });
-        }
-    }
 
     private void storeUploader(String id){
         if(successCount == 0) {
