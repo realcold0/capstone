@@ -109,7 +109,9 @@ public class MemberInitActivity extends BasicActivity { // 멤버 회원정보 �
         final String birthDay = ((EditText) findViewById(R.id.birthDayEditText)).getText().toString();
         final String address = ((EditText) findViewById(R.id.addressEditText)).getText().toString();
 
-        if (name.length() > 0 && phoneNumber.length() > 9 && birthDay.length() > 5 && address.length() > 0) {   // 입력조건들 충족 시 파이어베이스 입력 _ 대규
+
+
+        if (name.length() > 0 && phoneNumber.length() > 9 && birthDay.length() > 5 && address.length() > 0 && !name.equals("관리자")) {   // 입력조건들 충족 시 파이어베이스 입력 _ 대규
             loaderLayout.setVisibility(View.VISIBLE);   // 회원정보 업로드가 완료될때까지 로딩창 보여줌
             FirebaseStorage storage = FirebaseStorage.getInstance();    // 파이어베이스 저장소 정보 받아옴
             StorageReference storageRef = storage.getReference();
@@ -150,7 +152,11 @@ public class MemberInitActivity extends BasicActivity { // 멤버 회원정보 �
                 }
             }
         } else {
-            startToast("회원정보를 입력해주세요.");
+            if(name.equals("관리자")){
+                startToast("관리자 이름은 사용하실 수 없습니다.");
+            }else{
+                startToast("회원정보를 입력해주세요.");
+            }
         }
     }
 

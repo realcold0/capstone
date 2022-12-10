@@ -238,7 +238,9 @@ public class BlackBoardFragment extends Fragment implements View.OnClickListener
             myStartActivity(WritePostActivity.class, postList.get(position));
         }   // 게시글 수정 기능_대규
         @Override
-        public void onGoBlack(int position) {        }
+        public void onGoBlack(int position) {
+            //검은색 게시판에서 검은색 게시판으로의 이동은 필요 없으므로 비워둠
+        }
     };
 
     View.OnClickListener onClickListener = new View.OnClickListener() {

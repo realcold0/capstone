@@ -1,11 +1,14 @@
 package com.akj.sns_project.adapter;
 
-import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
+import static com.akj.sns_project.Util.ADMIN_DK;
+import static com.akj.sns_project.Util.ADMIN_JB;
+import static com.akj.sns_project.Util.ADMIN_JY;
+import static com.akj.sns_project.Util.ADMIN_SH;
+import static com.akj.sns_project.Util.ADMIN_YJ;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -16,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -31,10 +35,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -78,6 +79,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     public MainAdapter.MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //layout을 view객체로 만들기 위해 layoutInflater를 이용한다.
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
+
         final MainViewHolder mainViewHolder = new MainViewHolder(cardView);
         cardView.setOnClickListener(new View.OnClickListener() { //하나의 카드뷰를 클릭 시 intent로 해당하는 값을 BoardActivity로 넘겨줌
             @Override
@@ -89,6 +91,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         });
 
         cardView.findViewById(R.id.menu).setOnClickListener(new View.OnClickListener() {    // cardview의 menu버튼
+
             @Override
             public void onClick(View view) {
                 showPopup(view, mainViewHolder.getAdapterPosition());    // 설정창 나오게 하는거
@@ -129,14 +132,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         ArrayList<String> unFavoriteList = new ArrayList<>();
         unFavoriteList = mDataset.get(position).getUnfavorites();
 
-        if(favoriteList != null) {
+        if (favoriteList != null) {
             for (int i = 0; i < favoriteList.size(); i++) {
                 if (favoriteList.get(i).equals(userUid)) {
                     likeOverlap = likeOverlap + 1;
                 }
             }
         }
-        if(unFavoriteList != null) {
+        if (unFavoriteList != null) {
             for (int i = 0; i < unFavoriteList.size(); i++) {
                 if (unFavoriteList.get(i).equals(userUid)) {
                     unlikeOverlap = unlikeOverlap + 1;
@@ -156,7 +159,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
             boolean isExists = favoriteList.contains(userUid);
-            if(isExists != true){
+            if (isExists != true) {
                 favoriteList.add(userUid);
             }
             mDataset.get(position).setFavorites(favoriteList);
@@ -168,14 +171,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
             boolean isExists = favoriteList.contains(userUid);
-            if(isExists != true){
+            if (isExists != true) {
                 favoriteList.add(userUid);
             }
             unFavoriteList.remove(userUid);
 
             mDataset.get(position).setFavorites(favoriteList);
             mDataset.get(position).setUnfavorites(unFavoriteList);
-        } else if (likeOverlap >= 1 && unlikeOverlap == 0){
+        } else if (likeOverlap >= 1 && unlikeOverlap == 0) {
             addlikeCount = -1;
             addunlikeCount = 0;
 
@@ -211,14 +214,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         ArrayList<String> unFavoriteList = new ArrayList<>();
         unFavoriteList = mDataset.get(position).getUnfavorites();
 
-        if(favoriteList != null) {
+        if (favoriteList != null) {
             for (int i = 0; i < favoriteList.size(); i++) {
                 if (favoriteList.get(i).equals(userUid)) {
                     likeOverlap = likeOverlap + 1;
                 }
             }
         }
-        if(unFavoriteList != null) {
+        if (unFavoriteList != null) {
             for (int i = 0; i < unFavoriteList.size(); i++) {
                 if (unFavoriteList.get(i).equals(userUid)) {
                     unlikeOverlap = unlikeOverlap + 1;
@@ -238,7 +241,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
             boolean isExists = unFavoriteList.contains(userUid);
-            if(isExists != true){
+            if (isExists != true) {
                 unFavoriteList.add(userUid);
             }
             mDataset.get(position).setFavorites(favoriteList);
@@ -250,7 +253,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             likeCount.setText(String.valueOf(mDataset.get(position).getlike() + addlikeCount));
             unlikeCount.setText(String.valueOf(mDataset.get(position).getUnlike() + addunlikeCount));
             boolean isExists = unFavoriteList.contains(userUid);
-            if(isExists != true){
+            if (isExists != true) {
                 unFavoriteList.add(userUid);
             }
             favoriteList.remove(userUid);
@@ -341,6 +344,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     //popup메뉴를 만들기 위한 메서드. view로 받아오기 위해 activity사용함. 여기서 popup메뉴는 수정 삭제가 내려오는 메뉴임.
     private void showPopup(View v, final int position) {
         //db값을 갖고오고, 선택된 post값을 알아오기 위해 사용함. view와 위치값(position)을 갖고와서 사용하기. 하나의 postID를 알아야함.
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
+        if (userUid.equals(ADMIN_DK) || userUid.equals(ADMIN_JB) || userUid.equals(ADMIN_JY) || userUid.equals(ADMIN_SH) || userUid.equals(ADMIN_YJ)) {
+
+        }
         PopupMenu popup = new PopupMenu(activity, v);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override //popup메뉴 내의 삭제버튼, 수정버튼을 눌렀을 때 삭제,수정기능 구현
@@ -354,7 +362,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                         onPostListener.onDelete(position); //인터페이스의 onDelete를 이용
                         return true;
                     case R.id.goBlack:
-                        onPostListener.onGoBlack(position); //인터페이스의 onGoBlack를 이용
+                        if (userUid.equals(ADMIN_DK) || userUid.equals(ADMIN_JB) || userUid.equals(ADMIN_JY) || userUid.equals(ADMIN_SH) || userUid.equals(ADMIN_YJ)) {
+                            onPostListener.onGoBlack(position); //인터페이스의 onGoBlack를 이용
+                        }
+                        else{
+                            Toast.makeText(v.getContext(), "관리자만 사용할 수 있는 기능입니다", Toast.LENGTH_SHORT).show();
+                        }
+
                         return true;
                     default:
                         return false;

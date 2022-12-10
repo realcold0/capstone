@@ -403,25 +403,6 @@ public class Fragment01 extends Fragment {
         }
     }
 
-    private void storeUploader_Black(String id){
-        if(successCount == 0) {
-            firebaseFirestore.collection("posts").document(id)
-                    .delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            startToast("검은색 이동 : 게시글을 삭제하였습니다.");
-                            postsUpdate();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            startToast("검은색 이동 : 게시글을 삭제하지 못하였습니다.");
-                        }
-                    });
-        }
-    }
 
     private void myStartActivity(Class c) { // 액티비티 이동하는 함수
         Intent intent = new Intent(getActivity(), c);
