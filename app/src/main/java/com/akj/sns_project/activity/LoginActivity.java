@@ -33,6 +33,7 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
     private GoogleApiClient googleApiClient;    // 구글 API 클라이언트 객체
     private static final int REQ_SIGN_GOOGLE = 100; // 구글 로그인 결과 코드
     private FirebaseAuth auth;
+    private long backKeyPressedTime = 0;
 
     //private EditText emailTextView;
 
@@ -98,6 +99,24 @@ public class LoginActivity extends BasicActivity implements GoogleApiClient.OnCo
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        // 기존의 뒤로가기 버튼의 기능 제거
+        // super.onBackPressed();
+
+        // 2000 milliseconds = 2 seconds
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 2초 이내에 뒤로가기 버튼을 한번 더 클릭시 finish()(앱 종료)
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+            finish();
+        }
+    }
 
     // 로그인 함수
     private void login() {
