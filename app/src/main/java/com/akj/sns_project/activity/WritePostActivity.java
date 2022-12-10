@@ -70,6 +70,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private HashtagAdapter hashtagAdapter;
     public static WritePostActivity Apost;
+    private String showHash;
 
 
     @Override
