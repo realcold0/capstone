@@ -11,6 +11,6 @@ public class ListCompartor implements Comparator {
         Date testString2 = ((ReplyInfo)o2).getCreatedAt();
 
 
-        return testString2.compareTo(testString1);
+        return testString1.compareTo(testString2);
     }
 }
