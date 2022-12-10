@@ -16,11 +16,6 @@
         android:icon="@drawable/ic_baseline_connect_without_contact_24"
         android:title="아이템3" />
     <item
-        android:id="@+id/item_fragment4"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_notifications_24"
-        android:title="아이템4" />
-    <item
         android:id="@+id/item_fragment5"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_perm_identity_24"

@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.akj.sns_project.R;
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.adapter.HashtagAdapter;
-import com.akj.sns_project.adapter.MainAdapter;
 import com.akj.sns_project.view.ContentsItemView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -109,7 +107,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
 
         // 여기부터 해시태그
         SearchView searchView = findViewById(R.id.search_view);
-        RecyclerView hashview = findViewById(R.id.hashviewRename);
+        RecyclerView hashview = findViewById(R.id.hashviewrename);
 
         /* initiate adapter */
         hashtagAdapter = new HashtagAdapter();

@@ -10,10 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.akj.sns_project.Fragment04;
 import com.akj.sns_project.Movie;
 import com.akj.sns_project.MovieInfo;
-import com.akj.sns_project.Poster;
 import com.akj.sns_project.R;
 import com.bumptech.glide.Glide;
 
