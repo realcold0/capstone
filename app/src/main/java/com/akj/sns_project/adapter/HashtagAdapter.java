@@ -30,23 +30,22 @@ public class HashtagAdapter extends RecyclerView.Adapter<HashtagAdapter.ViewHold
     public void onBindViewHolder(@NonNull HashtagAdapter.ViewHolder holder, int position) {
         //holder.onBind(mFriendList.get(position));
         String string = mFriendList.get(position);
-        holder.HashText.setText(string);
+        holder.HashText.setText(string);  //받아온 어레이의 텍스트를 각각 넣어준다.
 
 
         holder.HashText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppCompatActivity activity = (AppCompatActivity)v.getContext();
-                TextView textView = activity.findViewById(R.id.textView7rename);
-                if(textView.getText() == null)
+                AppCompatActivity activity = (AppCompatActivity)v.getContext();  //현재 액티비티를 가져온다.
+                TextView textView = activity.findViewById(R.id.textView7rename);  //위에 보여줄 텍스트 박스를 넣어준다.
+                if(textView.getText() == null)   //아무것도 추가 안했을때
                 {
                     textView.setText(string);
                 }
-                else
+                else //1개 추가 하고 나서
                 {
-                    textView.append(string);
+                    textView.append(" "+ string);
                 }
-
 
             }
         });

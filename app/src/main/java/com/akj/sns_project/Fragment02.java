@@ -107,6 +107,8 @@ public class Fragment02 extends Fragment {
         btnFamily = view.findViewById(R.id.btnFamily);
         btnFamily.setOnClickListener(onClickListener);
 
+
+
         Fragment01 fragment01;
 
 
@@ -120,7 +122,7 @@ public class Fragment02 extends Fragment {
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(View v) {   //각각 클릭시 이벤트, 장르 코드만 바꾸어 검색 함수 실행한다.
             switch (v.getId()) {
 
                 case R.id.btnAction:
