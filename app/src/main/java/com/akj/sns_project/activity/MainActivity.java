@@ -1,6 +1,8 @@
 package com.akj.sns_project.activity;
 
 import androidx.annotation.NonNull;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +16,8 @@ import com.akj.sns_project.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
 
@@ -25,50 +29,59 @@ public class MainActivity extends BasicActivity {//fragment 코드들
     Fragment03 fragment03;
     Fragment05 fragment05;
     SearchMovie searchMovie;
+    private FirebaseUser firebaseUser;
     BottomNavigationView bottomNavigationView; // 아래 네비게이션 바 - 준범
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null) {// 위에서 받아온 유저정보가 NULL값이면 == 로그인이 안되어 있으면 로그인 액티비티부터 시작
+            myStartActivity(LoginActivity.class);
+        } else {
+            // 프레그먼트 변경으로 화면 전환 - 준범
+            // 여기서부터 - 준범
+            fragment01 = new Fragment01();
+            fragment02 = new Fragment02();
+            fragment03 = new Fragment03();
+            fragment05 = new Fragment05();
 
-        // 프레그먼트 변경으로 화면 전환 - 준범
-        // 여기서부터 - 준범
-        fragment01 = new Fragment01();
-        fragment02 = new Fragment02();
-        fragment03 = new Fragment03();
-        fragment05 = new Fragment05();
+            getSupportFragmentManager().beginTransaction().add(R.id.main_frame, new Fragment01()).commit(); //FrameLayout에 fragment.xml 띄우기
 
-        getSupportFragmentManager().beginTransaction().add(R.id.main_frame, new Fragment01()).commit(); //FrameLayout에 fragment.xml 띄우기
+            bottomNavigationView = findViewById(R.id.bottomNavi);
 
-        bottomNavigationView = findViewById(R.id.bottomNavi);
+            //바텀 네비게이션뷰 안의 아이템 설정
+            bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        //item을 클릭시 id값을 가져와 FrameLayout에 fragment.xml띄우기
+                        case R.id.item_fragment1:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment01).commit();
+                            break;
+                        case R.id.item_fragment2:
 
-        //바텀 네비게이션뷰 안의 아이템 설정
-        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    //item을 클릭시 id값을 가져와 FrameLayout에 fragment.xml띄우기
-                    case R.id.item_fragment1:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment01).commit();
-                        break;
-                    case R.id.item_fragment2:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment02).commit();
+                            break;
+                        case R.id.item_fragment3:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment03).commit();
 
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment02).commit();
-                        break;
-                    case R.id.item_fragment3:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment03).commit();
-
-                        break;
-                    case R.id.item_fragment5:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment05).commit();
-                        break;
+                            break;
+                        case R.id.item_fragment5:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment05).commit();
+                            break;
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
-        // 여기까지는 건드리기x - 준범
+            });
+            // 여기까지는 건드리기x - 준범
 
+        }
+    }
+    private void myStartActivity(Class c) { // 액티비티 이동하는 함수
+        Intent intent = new Intent(this, c);
+        startActivity(intent);
     }
 
     public void GenreSearch(String url){

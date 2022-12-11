@@ -154,6 +154,9 @@ public class Fragment01 extends Fragment {
         } else {
             //여기서부터
             firebaseFirestore = FirebaseFirestore.getInstance();    // 로그인이 되어 있으면 FirebaseStore에서 정보를 받아오는데
+            // 유저정보
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            userUid = user.getUid().toString();
             DocumentReference documentReference = firebaseFirestore.collection("users").document(firebaseUser.getUid());    // 파이어베이스스토어의 users폴더 안에서 유저의 UID를 받아온다
             documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -210,9 +213,7 @@ public class Fragment01 extends Fragment {
 
         initRecyclerViewAndAdapter();
 
-        // 유저정보
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userUid = user.getUid().toString();
+
 
         return view;
     }

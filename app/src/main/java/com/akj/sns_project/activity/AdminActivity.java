@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.akj.sns_project.PostInfo;
 import com.akj.sns_project.R;
@@ -117,7 +118,7 @@ public class AdminActivity extends BasicActivity{
     }
 
     private void initRecyclerViewAndAdapter() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(gridLayoutManager);
     }
 
