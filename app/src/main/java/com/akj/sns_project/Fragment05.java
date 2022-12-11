@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +36,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class Fragment05 extends Fragment implements View.OnClickListener {
@@ -45,6 +48,8 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
     private String userid = "";
     private String hash = "";
     private FirebaseFirestore firebaseFirestore;    // 파이어베이스스토어에서 정보 가져오기 위해 사용한 이름
+
+    private String hashStr = "";
 
 
     @Override
@@ -108,6 +113,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                         CollectionReference productRef = db.collection("posts");
                         //get()을 통해서 해당 컬렉션의 정보를 가져온다.
                         productRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 //작업이 성공적으로 마쳤을때
@@ -123,7 +129,13 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
                                             Log.d("yyyyyyyyyyyy", hash);
                                         }
                                     }
-                                    hashText.setText(hash);
+                                    String[] arr = hash.split(" ");
+                                    String[] resultArr = Arrays.stream(arr).distinct().toArray(String[]::new);
+                                    String hashStr = "";
+                                    for(int i = 0; i<resultArr.length; i++){
+                                        hashStr = hashStr + resultArr[i].toString() + " ";
+                                    }
+                                    hashText.setText(hashStr);
                                     //그렇지 않을때
                                 } else {
 
