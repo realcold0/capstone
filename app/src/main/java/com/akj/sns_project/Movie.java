@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Movie {
+    int[] genre_ids;
     int id;
     String adult;
     String backdrop_path;

@@ -27,6 +27,13 @@ import android.widget.Toast;
 import com.akj.sns_project.activity.PostActivity;
 import com.akj.sns_project.adapter.PosterAdapter;
 import com.akj.sns_project.adapter.ReplyAdapter;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,6 +46,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,12 +81,15 @@ public class MovieInfo extends Fragment {
     private String releaseDate;
     private String overView;
     private String posterURL;
+    private int[] genreList;
+    private ArrayList<String> genres;
 
     private TextView textViewTitle;
     private TextView textViewReleaseDate;
     private TextView textViewOverView;
+    private TextView textViewGenre;
 
-
+    static RequestQueue requestQueue;
     private RatingBar ratingBar;
     private ImageView imageviewPoster;
     private RecyclerView recyclerViewMovieComment;
@@ -94,6 +105,7 @@ public class MovieInfo extends Fragment {
     FirebaseFirestore firestore;
 
     public MovieInfo(Movie movie) { //영화 정보들 대입
+        this.genreList = movie.genre_ids;
         this.movieID = movie.id;
         this.movie = movie;
         this.title = movie.title;
@@ -135,7 +147,7 @@ public class MovieInfo extends Fragment {
         recyclerViewMovieComment = view.findViewById(R.id.RecyclerViewMovieComment);
         buttonMovieComment = view.findViewById(R.id.buttonMovieComment);
         editTextMovieComment = view.findViewById(R.id.editTextMovieComment);
-
+        textViewGenre = view.findViewById(R.id.textViewGenre);
 
 
         textViewTitle.setText(title);
@@ -149,9 +161,23 @@ public class MovieInfo extends Fragment {
         recyclerViewMovieComment.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
         recyclerViewMovieComment.setLayoutManager(new LinearLayoutManager(getActivity())); // recyclerview를 수직으로 보여주는 linearlayoutmanager
 
+        //장르 요청 보내고 비교해서 스트링으로 받아온다.
+        genres = new ArrayList<String>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                makeRequest("https://api.themoviedb.org/3/genre/movie/list?api_key=3c314dc629a0e72e9328fe7c33981cf2&language=ko-KR");
+            }
+        }).start();
+
+        if (requestQueue == null) {
+
+            requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        }
 
 
-                //영화 정보를 기반으로 파이어 베이스에 해당 영화 정보가 없다면 영화 데이터 베이스를 생성
+        //영화 정보를 기반으로 파이어 베이스에 해당 영화 정보가 없다면 영화 데이터 베이스를 생성
         //해당 영화 데이터베이스에 맞는 댓글 리스트를 가져와서 어댑터로 적용
 
         firestore = FirebaseFirestore.getInstance();
@@ -351,6 +377,59 @@ public class MovieInfo extends Fragment {
                         toast.show();
                     }
                 });
+    }
+    public void makeRequest(String url) {
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.v("output popular", response); //요청 출력해보기
+                Gson gson = new Gson();  //gson라이브러리 선언
+
+
+                MovieGenreList MovieGenreList = gson.fromJson(response, MovieGenreList.class); //gson으로 Json파일 object로 변환
+
+                //genreList안의 장르 하나 씩 꺼내서 MoviegenreList 안의 장르 id와 비교한뒤 맞으면 리턴
+                for(int j =0; j < MovieGenreList.genres.size(); j++)
+                {
+                    for(int i = 0; i < genreList.length;  i++)
+                    {
+                        if(genreList[i] == MovieGenreList.genres.get(j).getId())
+                        {
+                            genres.add(MovieGenreList.genres.get(j).getName());
+                        }
+                    }
+                }
+
+
+                for(int k = 0; k < genres.size(); k++)
+                {
+                    if(k == 0)
+                    {
+                        textViewGenre.setText("#" + genres.get(0) + " ");
+                    }
+                    else
+                    {
+                        textViewGenre.append("#" + genres.get(k) +" " );
+                    }
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("error ", error.getMessage());
+            }
+        }
+        ) {
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                return params;
+            }
+        };
+        request.setShouldCache(false);
+        Log.v("SendRequest", "요청 보냄");
+        //requestQueue.add(request);
+        AppController.getInstance(getActivity()).addToRequestQueue(request);  //gson리퀘스트 큐에 넣기
     }
 
 
