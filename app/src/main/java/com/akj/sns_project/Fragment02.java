@@ -1,17 +1,30 @@
 package com.akj.sns_project;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.akj.sns_project.activity.MainActivity;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Arrays;
 
 public class Fragment02 extends Fragment {
     private Button btnAction;
@@ -107,7 +120,33 @@ public class Fragment02 extends Fragment {
         btnFamily = view.findViewById(R.id.btnFamily);
         btnFamily.setOnClickListener(onClickListener);
 
+        // 파이어베이스 DB 초기화
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // 여기부터 해시태그 정보 가져오기
+        //CollectionReference 는 파이어스토어의 컬렉션을 참조하는 객체다.
+        CollectionReference productRef = db.collection("hashtag");
+        //get()을 통해서 해당 컬렉션의 정보를 가져온다.
+        productRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                //작업이 성공적으로 마쳤을때
+                if (task.isSuccessful()) {
+                    String str = "";
+                    //컬렉션 아래에 있는 모든 정보를 가져온다.
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        str = document.getId().toString() + " " + str;
+                        //document.getData() or document.getId() 등등 여러 방법으로
+                        //데이터를 가져올 수 있다.
+                    }
+                    TextView textViewhash = view.findViewById(R.id.textViewvvv);
+                    textViewhash.setText(str);
+                    //그렇지 않을때
+                } else {
+
+                }
+            }
+        });
 
         Fragment01 fragment01;
 

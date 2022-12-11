@@ -105,7 +105,7 @@ public class BoardActivity extends BasicActivity {
 
         recyclerView = findViewById(R.id.recyclerView); // board xml에서 recyclerview를 사용한다
         findViewById(R.id.floatingActionButton).setOnClickListener(onClickListener);    // 글쓰기 버튼에 클릭 이벤트 달아주는 코드
-        findViewById(R.id.logoutButton).setOnClickListener(onClickListener);            // 로그아웃 버튼에 클릭 이벤트 달아주는 코드
+        //findViewById(R.id.logoutButton).setOnClickListener(onClickListener);            // 로그아웃 버튼에 클릭 이벤트 달아주는 코드
 
         recyclerView.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
         recyclerView.setLayoutManager(new LinearLayoutManager(BoardActivity.this)); // recyclerview를 수직으로 보여주는 linearlayoutmanager
@@ -189,6 +189,13 @@ public class BoardActivity extends BasicActivity {
             data.put("like", postList.get(position).getlike());
             data.put("unlike", postList.get(position).getUnlike());
             data.put("saveLocation", postList.get(position).getsaveLocation());
+
+            // postInfo에 새로 추가된 데이터
+            data.put("favorites", postList.get(position).getFavorites());
+            data.put("unfavorites", postList.get(position).getUnfavorites());
+            data.put("hashtag", postList.get(position).getFavorites());
+
+
             post.set(data);
 
             // 3. 흰색 게시판의 게시글 삭제

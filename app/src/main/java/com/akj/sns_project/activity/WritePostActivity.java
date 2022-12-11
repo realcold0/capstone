@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +50,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비티 _ 대규
@@ -294,6 +297,7 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
     };
 
     // 게시글 업로드 기능
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void storageUpload() {
         final String title = ((EditText) findViewById(R.id.titleEditText)).getText().toString();
 
@@ -344,13 +348,20 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     final int index = Integer.parseInt(taskSnapshot.getMetadata().getCustomMetadata("index"));
                                     mountainImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @RequiresApi(api = Build.VERSION_CODES.N)
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             successCount--;
                                             contentsList.set(index, uri.toString());
                                             if (successCount == 0) {
+                                                String[] arr = showHash.getText().toString().split(" ");
+                                                String[] resultArr = Arrays.stream(arr).distinct().toArray(String[]::new);
+                                                String hash = "";
+                                                for(int i = 0; i<resultArr.length; i++){
+                                                    hash = hash + resultArr[i].toString() + " ";
+                                                }
                                                 PostInfo postInfo = new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                                                        documentReference.getId(),favoriteList,unFavoriteList, showHash.getText().toString());
+                                                        documentReference.getId(),favoriteList,unFavoriteList, hash);
                                                 storeUpload(documentReference, postInfo);
                                             }
                                         }
@@ -366,8 +377,14 @@ public class WritePostActivity extends BasicActivity {  //   글쓰기 액티비
             }
             if (successCount == 0) {   // 사진없이 글만 올리는 경우
                 Log.w("TAG", "저장위치: " + documentReference.getId() + hash );
+                String[] arr = showHash.getText().toString().split(" ");
+                String[] resultArr = Arrays.stream(arr).distinct().toArray(String[]::new);
+                String hash = "";
+                for(int i = 0; i<resultArr.length; i++){
+                    hash = hash + resultArr[i].toString() + " ";
+                }
                 storeUpload(documentReference, new PostInfo(title, contentsList, user.getUid(), date, 0, 0,
-                        documentReference.getId(),favoriteList,unFavoriteList, showHash.getText().toString()));
+                        documentReference.getId(),favoriteList,unFavoriteList, hash));
             }
         } else {
             startToast("제목을 입력해주세요.");
