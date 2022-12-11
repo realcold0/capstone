@@ -65,8 +65,6 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-
-
         // xml 파일 연결
         View root = inflater.inflate(R.layout.fragment_05, container, false);
 
@@ -163,6 +161,7 @@ public class Fragment05 extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if(view.getId() == R.id.button4){
             Intent intent = new Intent(this.getContext(), Fragment_Post.class);
+            intent.putExtra("userid", userid);
             startActivity(intent);
             //getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,fragment_post).commit();
         }

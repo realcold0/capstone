@@ -1,5 +1,11 @@
 package com.akj.sns_project;
 
+import static com.akj.sns_project.Util.ADMIN_DK;
+import static com.akj.sns_project.Util.ADMIN_JB;
+import static com.akj.sns_project.Util.ADMIN_JY;
+import static com.akj.sns_project.Util.ADMIN_SH;
+import static com.akj.sns_project.Util.ADMIN_YJ;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -59,6 +65,10 @@ public class Fragment_Post extends BasicActivity {
     private ArrayList<String> pathList = new ArrayList<>();
     private PostInfo postInfo;
     private int successCount;
+    private String userUid;
+    private String publisher;
+    private FirebaseUser user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +76,7 @@ public class Fragment_Post extends BasicActivity {
         setContentView(R.layout.fragment_post);        // 이 액티비티는 activity_board.xml과 연결되어 있음
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 파이어베이스에서 유저정보를 받아오는데 _ 대규
-
+        //userUid = getIntent().getStringExtra("userid");
         // 파이어베이스 초기화 함수들
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -113,7 +123,9 @@ public class Fragment_Post extends BasicActivity {
         recyclerView.setHasFixedSize(true); // 글을 불러오고 나서는 recyclerview를 글 갯수에 따라서 크기를 조절한다
         recyclerView.setLayoutManager(new LinearLayoutManager(Fragment_Post.this)); // recyclerview를 수직으로 보여주는 linearlayoutmanager
         recyclerView.setAdapter(mainAdapter);
-        
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        userUid = user.getUid().toString();
     }
 
     @Override
@@ -127,35 +139,41 @@ public class Fragment_Post extends BasicActivity {
     OnPostListener onPostListener = new OnPostListener() { //인터페이스인 OnPostListener를 가져와서 구현해줌
         @Override
         public void onDelete(int position) {       // 게시글 삭제 기능_대규 여기서부터   // String id를 int position으로 변환
-            final String id = postList.get(position).getId();
-            ArrayList<String> contentsList = postList.get(position).getContents();
 
-            for (int i = 0; i < contentsList.size(); i++) {
-                String contents = contentsList.get(i);
-                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
-                    // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
-                    successCount++;
-                    String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
-                    String[] list2 = list[0].split("%2F");
-                    String name = list2[list2.length - 1];
-                    // Create a reference to the file to delete
-                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
-                    // Delete the file
-                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            successCount--;
-                            storeUploader(id);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            startToast("삭제 실패");
-                        }
-                    });
+            final String id = postList.get(position).getsaveLocation();
+            ArrayList<String> contentsList = postList.get(position).getContents();
+            publisher = postList.get(position).getPublisher();
+            if(userUid.equals(publisher)||userUid.equals(ADMIN_DK)||userUid.equals(ADMIN_JB)||userUid.equals(ADMIN_JY)||userUid.equals(ADMIN_SH)||userUid.equals(ADMIN_YJ)) {
+                for (int i = 0; i < contentsList.size(); i++) {
+                    String contents = contentsList.get(i);
+                    if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-29021.appspot.com/o/posts")) {   // 글 내용에 사진이나 동영상이 있을 경우
+                        // 앞에 조건만 있으면 URL들어오기만하면 다 이미지로 변환해버리니까 뒤에 파이어베이스에서 가져오는 주소인 사진들만 사진변환하게추가 11.23 대규
+                        successCount++;
+                        String[] list = contents.split("\\?"); // 저장되는 이미지 주소를 \\와 %2F로 잘라서 저장하여
+                        String[] list2 = list[0].split("%2F");
+                        String name = list2[list2.length - 1];
+                        // Create a reference to the file to delete
+                        StorageReference desertRef = storageRef.child("posts/" + id + "/" + name);
+                        // Delete the file
+                        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                successCount--;
+                                storeUploader(id);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                startToast("삭제 실패");
+                            }
+                        });
+                    }
                 }
+                storeUploader(id);
             }
-            storeUploader(id);
+            else{
+                startToast("다른사람의 게시글을 삭제할 수 없습니다");
+            }
         }
 
         @Override

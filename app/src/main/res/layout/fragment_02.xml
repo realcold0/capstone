@@ -27,6 +27,18 @@
             android:layout_marginBottom="10dp"
             android:text="인기 해시태그"
             android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/textViewvvv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
     </LinearLayout>
 
     <LinearLayout
